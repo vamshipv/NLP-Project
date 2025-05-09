@@ -12,7 +12,7 @@ class Retriever:
     def __init__(self, model_name="all-MiniLM-L6-v2"):
         self.model = SentenceTransformer("all-MiniLM-L6-v2")
         #Default Split length
-        self.split_len = 100
+        self.split_len = 200
         self.document_file = "cats"
         self.index_file = f"{self.document_file}_faiss.index"
         self.subtext_file = f"{self.document_file}_subtexts.json"
@@ -100,6 +100,7 @@ def main():
 
     def localQuery():
         while True:
+            appendlist = []
             user_query = input("Your query: ").strip()
             if user_query.lower() in ['exit', 'quit']:
                 print("Bye")
@@ -110,8 +111,9 @@ def main():
                 print("Results")
                 print("`````````````````````````````````````````````````````````````")
                 for res in results:
-                    res.replace("\n", " ").strip()
-                    print(res)
+                    cleaned_res = res.replace("\n", " ").strip()
+                    appendlist.append(cleaned_res)
+                print(appendlist)
                 print("`````````````````````````````````````````````````````````````")
             except Exception as e:
                 print("Yo, somethings wrong with code. Try again:")
@@ -119,7 +121,7 @@ def main():
     while True:
         print("Hello user, check for all the information on World of cats")
         print("Please choose options to Continue")
-        document_file = "winnie_the_pooh.txt"
+        document_file = "cats.txt"
         base_name = os.path.splitext(os.path.basename(document_file))[0]
         index_file = f"{base_name}_faiss.index"
         subtext_file = f"{base_name}_subtexts.json"

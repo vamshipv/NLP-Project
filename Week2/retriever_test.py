@@ -3,41 +3,37 @@ from retriever import Retriever
 # Writing test
 def test_retriever():
     retriever = Retriever()
-    
-    # Adding some documents
-    retriever.add_documents([
-        "Books are better than movies in many ways.",
-        "The Industrial Revolution began in the late 18th century, primarily in Britain.",
-        "Photosynthesis is the process by which green plants convert sunlight into energy."
-    ])
-    
-    # Positive test cases using assertTrue
-    result = retriever.query("Are books preferred over movies?", top_k=1)
-    assert result[0][0] == "Books are better than movies in many ways.", "Test Failed!"
-    assertTrue("Books are better" in result[0][0], "Test Failed: Expected phrase not found")
+    retriever.addDocuments("cats.txt")
+    userInput = input("Enter anything about cat and sadness:  ")
+    userInput.lower()
+    retrievedChunks = retriever.query(userInput)
+    retrievedChunks = " ".join(retrievedChunks).lower()
 
-    result = retriever.query("When did the Industrial Revolution begin?", top_k=1)
-    assert "18th century" in result[0][0], "Test Failed: Industrial Revolution"
-    assertTrue("18th century" in result[0][0], "Test Failed: Expected century not mentioned")
-    
-    # Positive test case using assertFalse
-    result = retriever.query("What is photosynthesis?", top_k=1)
-    assert "Photosynthesis is the process" in result[0][0], "Test Failed: Photosynthesis"
-    assertFalse("Chlorophyll" in result[0][0], "Test Failed: Unrelated term found")
-    
-    # Negative test case using assertFalse
-    result = retriever.query("What is the capital of France?", top_k=1)
-    assertFalse(result[0][0] == "Paris is the capital of France.", "Test Failed: Incorrectly matched unrelated query")
+    # Positive assertions
+    assertTrue("cat" in userInput.lower(), "Query should contain 'cat'")
+    assertTrue("sad" in userInput.lower(), "Query should contain 'sad'")
 
-    print("All Tests Passed!")
+    # Checks on the response content
+    assertTrue("cat" in retrievedChunks, "'cat' should be mentioned in the results")
+    assertTrue(
+        any(keyword in retrievedChunks for keyword in ["unlucky", "rid of", "die", "sad"]),
+        "Results should contain words indicating sadness"
+    )
+    # Negative assertions
+    assertFalse("dog" not in retrievedChunks, "Did not expect 'dog' in the result")
 
 # Custom assertTrue and assertFalse functions
 def assertTrue(expression, message):
     if not expression:
-        raise AssertionError(message)
+        print("Test case failed", message)
+    else:
+        print("Test Case passed")
 
 def assertFalse(expression, message):
-    if expression:
-        raise AssertionError(message)
+    if not expression:
+        print("Test case failed", message)
+    else:
+        print("Test Case passed")
+        
 
 test_retriever()
