@@ -8,6 +8,13 @@ So here in the code we defined two distinct ways of expressing a similar inquiry
 
 ## Requirements
 
-Make sure you have Python installed and run the requirements file before running the main file
+Make sure you have Python installed and run the requirements file before running the main file<br/>
 ** pip install -r requirements.txt
 
+
+## Usage Instruction
+
+Navigate to the approriate directory to run the program, use python3 FileName.py to run the program <br/>
+Retriever Program is already loaded with default document on Cats <br/>
+User has the option to choose to load new document, overwrite and add to the existing document.<br/>
+Enter the User Query to find the results based on input <br/>
