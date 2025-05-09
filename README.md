@@ -4,3 +4,17 @@ For the main task in the implementation of semantic similarity search we have us
 
 
 So here in the code we defined two distinct ways of expressing a similar inquiry, both of which ask the question "do we prefer books or movies?". Every query is accompanied by the same model and then it is transmitted to the FAISS index for identification of two most similar documents. The output will be the matched documents with their distances, and shows how close to each document embedding is the query embedded. The comparison output of both queries enables an examination of FAISS's ability to retrieve semantically similar content, despite differences in phrasing, and offers insights into the effectiveness of vector-based search over traditional keyword matching.
+
+
+## Requirements
+
+Make sure you have Python installed and run the requirements file before running the main file<br/>
+** pip install -r requirements.txt
+
+
+## Usage Instruction
+
+Navigate to the approriate directory to run the program, use python3 FileName.py to run the program <br/>
+Retriever Program is already loaded with default document on Cats <br/>
+User has the option to choose to load new document, overwrite and add to the existing document.<br/>
+Enter the User Query to find the results based on input <br/>
