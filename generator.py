@@ -16,6 +16,9 @@ class Generator:
         return f"Answer the question based on the context.\n\nContext:\n{context}\n\nQuestion:\n{question}"
 
     def generate_answer(self, results: str,context: str, question: str, group_id: str ) -> str:
+        nullInput = "Please enter something"
+        if(question == ""):
+            return nullInput
         prompt = self.build_prompt(context, question)
         inputs = self.tokenizer(prompt, return_tensors="pt", truncation=True)
         with torch.no_grad():

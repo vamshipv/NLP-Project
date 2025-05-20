@@ -6,7 +6,7 @@ import numpy as np
 from sentence_transformers import SentenceTransformer
 import json
 import re
-from baseline.generator.generator import Generator
+from generator import Generator
 
 """
     Class Retriever has function to load the document, generate chunk and provide ouput for the input query
@@ -94,6 +94,9 @@ class Retriever:
         It search the user query against the chunk to find the most similar chunks
 
         """
+        nullInput = "Please enter something"
+        if(query_text == ""):
+            return nullInput
         k = 2
         # query_embedding = self.model.encode([query_text])
         # D, I = self.index.search(np.array(query_embedding), k)
@@ -161,23 +164,27 @@ def main():
         while True:
             appendlist = []
             user_query = input("Your query: ").strip()
+            
             try:
                 results = retriever.query(user_query)
-                print("`````````````````````````````````````````````````````````````")
-                print("Results")
-                print("`````````````````````````````````````````````````````````````")
-                for res in results:
-                    cleaned_res = res.replace("\n", " ").strip()
-                    appendlist.append(cleaned_res)
-                print(appendlist)
-                print("`````````````````````````````````````````````````````````````")
-                print("Context")
-                context = "\n\n".join(results)
-                print(context)
-                print("```````````````````end context```````````````````````````````")
-                # Generate answer from your generator
-                answer = gen.generate_answer(appendlist, context, user_query, group_id)
-                print("Answer:", answer)
+                if(user_query == ""):
+                    print("Answer:", results)
+                else:
+                    # print("`````````````````````````````````````````````````````````````")
+                    # print("Results")
+                    # print("`````````````````````````````````````````````````````````````")
+                    for res in results:
+                        cleaned_res = res.replace("\n", " ").strip()
+                        appendlist.append(cleaned_res)
+                    # print(appendlist)
+                    # print("`````````````````````````````````````````````````````````````")
+                    # print("Context")
+                    context = "\n\n".join(results)
+                    # print(context)
+                    # print("```````````````````end context```````````````````````````````")
+                    # Generate answer from your generator
+                    answer = gen.generate_answer(appendlist, context, user_query, group_id)
+                    print("Answer:", answer)
             except Exception as e:
                 print("Yo, somethings wrong with code. Try again:")
             
@@ -190,7 +197,7 @@ def main():
     while True:
         print("Hello user, check for all the information on World of cats")
         print("Please choose options to Continue or type exit to exit")
-        document_file = "baseline/data/winnie_the_pooh.txt"
+        document_file = "winnie_the_pooh.txt"
         group_id = "Team Dave"
         base_name = os.path.splitext(os.path.basename(document_file))[0]
         index_file = f"{base_name}_faiss.index"
@@ -213,7 +220,7 @@ def main():
             pattern = r'^[\w,\s-]+\.(txt|pdf)$'
             newDocument = input()
             if re.match(pattern, newDocument):
-                full_path = os.path.join("baseline/data", newDocument)
+                full_path = os.path.join("data", newDocument)
                 # base_name = os.path.splitext(os.path.basename(newDocument))[0]
                 base_name = os.path.splitext(os.path.basename(full_path))[0]
 

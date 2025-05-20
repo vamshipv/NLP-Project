@@ -2,3 +2,4 @@
 {"question": "Who cried?", "expected_answer_contains": "Piglet"}
 {"question": "Who is pooh?", "expected_answer_contains": "a bear"}
 {"question": "who has been Foolish and Deluded?", "expected_answer_contains": "Winnie-the-Pooh"}
+{"question": "", "expected_answer_contains": "Please enter something"}
