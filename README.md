@@ -1,20 +1,40 @@
-# NLP-Project
+# Project Overview
 
-For the main task in the implementation of semantic similarity search we have used FAISS and Sentence Transformers as demonstrated in the code. At first a sample documents set are defined and it is transformed into vector embeddings using some specialized training methods from the sentence transformers library using an all-MiniLM-L6-v2. These embeddings capture the semantic meaning of each sentence in high dimensional space. By using Euclidean (L2) distance, these embeddings are then indexed by using FAISS which is a library designed for efficient similarity search. For a newly entered query vector after the indexing the most similar document vectors are identified and retrieved using FAISS.
+This project implements a Retriever-Generator architecture that allows users to query a document corpus and receive relevant, generated answers based on context. It combines the power of FAISS-based similarity search and a Transformer-based text generation model (FLAN-T5).
 
-
-So here in the code we defined two distinct ways of expressing a similar inquiry, both of which ask the question "do we prefer books or movies?". Every query is accompanied by the same model and then it is transmitted to the FAISS index for identification of two most similar documents. The output will be the matched documents with their distances, and shows how close to each document embedding is the query embedded. The comparison output of both queries enables an examination of FAISS's ability to retrieve semantically similar content, despite differences in phrasing, and offers insights into the effectiveness of vector-based search over traditional keyword matching.
-
+The system:
+1.  Indexes text documents using vector embeddings (via SentenceTransformers).<br/>
+2.  Retrieves the most relevant chunks of a document for a given query using FAISS.<br/>
+3.  Generates human-readable answers to the user's question using the FLAN-T5 model.<br/>
+4.  Logs responses with metadata like timestamp, similarity score, and document context.<br/>
 
 ## Requirements
-
 Make sure you have Python installed and run the requirements file before running the main file<br/>
-** pip install -r requirements.txt
-
+**pip install -r requirements.txt**
 
 ## Usage Instruction
+1.  Navigate to the approriate directory to run the program, use python3 FileName.py to run the program <br/>
+2.  Retriever Program is already loaded with default document on Cats <br/>
+3.  User has the option to choose to load new document, overwrite and add to the existing document.<br/>
+4.  Enter the User Query to find the results based on input <br/>
 
-Navigate to the approriate directory to run the program, use python3 FileName.py to run the program <br/>
-Retriever Program is already loaded with default document on Cats <br/>
-User has the option to choose to load new document, overwrite and add to the existing document.<br/>
-Enter the User Query to find the results based on input <br/>
+## Example Flow
+1.  Launch the program.<br/>
+2.  Choose to load cats.txt.<br/>
+3.  Ask a question like : "Who is pooh?"<br/>
+4.  The system retrieves relevant chunks.<br/>
+5.  Sends them to the generator.<br/>
+6.  Returns an answer like : "a bear"<br/>
+7.  All logs are saved in generation_log.jsonl.<br/>
+
+## How it works
+**Retriever (retriever.py)**<br/>
+1.  Splits documents into chunks.<br/>
+2.  Encodes with SentenceTransformer.<br/>
+3.  Stores embeddings using FAISS index.<br/>
+4.  Retrieves top-k similar chunks for a user query.<br/>
+
+**Generator (generator.py)**<br/>
+1.  Builds prompts with retrieved chunks.<br/>
+2.  Uses google/flan-t5-base to generate answers.<br/>
+3.  Logs session details with timestamp and relevance label.<br/>

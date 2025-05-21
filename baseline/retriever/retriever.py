@@ -9,10 +9,17 @@ import re
 from generator import Generator
 import sys
 
-"""
-    Class Retriever has function to load the document, generate chunk and provide ouput for the input query
-"""
 class Retriever:
+    """
+    A class to handle document retrieval using FAISS and SentenceTransformers.
+
+    Attributes:
+        model_name (str): Name of the embedding model.
+        split_len (int): Length of text chunks for indexing.
+        document_file (str): Name of the default document.
+        index_file (str): Filename for saving/loading FAISS index.
+        subtext_file (str): Filename for saving/loading text chunks.
+    """
     def __init__(self, model_name="all-MiniLM-L6-v2"):
         self.model = SentenceTransformer("all-MiniLM-L6-v2")
         """
@@ -26,20 +33,22 @@ class Retriever:
 
     def split_text(self,text):
         """
-        In this function text file is made in chunks
+        Splits a given text into fixed-length chunks.
 
-        Return text file chunks
+        Args:
+            text (str): The input text.
+
+        Returns:
+            list: A list of text chunks.
         """
         chunks = [text[i:i+self.split_len] for i in range(0, len(text), self.split_len)]
         return chunks
     
     def defaultDocument(self):
         """
-        In this function, it check for the default document avaliability
-
-        returns true when the default document is avaliable
-
-        returns false when default document is not found
+        Checks whether default document, index, and chunk file exist.
+        Returns:
+        bool: True if all default files exist, False otherwise.
         """
         if os.path.exists(self.document_file + ".txt") and os.path.exists(self.index_file) and os.path.exists(self.subtext_file):
             return True
@@ -49,7 +58,10 @@ class Retriever:
         
     def addDocuments(self,path):
         """
-        This function takes the text path and it uses FIASS to give the vectors for the text
+        Adds a new document, splits it into chunks, generates embeddings, and creates a FAISS index.
+
+        Args:
+            path (str): File path to the text document.
         """
         with open(path, 'r') as file:
             text = file.read()
@@ -60,13 +72,11 @@ class Retriever:
     
     def addExistingDocument(self, path):
         """
-        This function takes path to check the to add document new document to the existing default document
-        
-        It also checks if the default document is avaliable 
-        if avalaible it adds chunks to the document
-        else it asks user to add a default document
+        Appends a new document to an existing default document.
+        Loads the existing index and chunks, combines them with new ones, and re-saves.
 
-
+        Args:
+            path (str): Path to the additional text document.
         """
         base = os.path.basename(path)
         Combinedname, _ = os.path.splitext(base)
@@ -91,9 +101,13 @@ class Retriever:
     
     def query(self,query_text):
         """
-        Here the default k (chunks) is set to 2
-        It search the user query against the chunk to find the most similar chunks
+        Retrieves top-k most similar chunks for a given query.
 
+        Args:
+            query_text (str): The user query string.
+
+        Returns:
+            list: A list of top-k similar text chunks.
         """
         nullInput = "Please enter something"
         if(query_text == "" or query_text is None):
@@ -113,9 +127,11 @@ class Retriever:
     
     def save(self, index_filename,splittext_filename):
         """
-        This function saves the chunks to a file to make it easier to load the project 
-        during the file load so it does not compute every time, that is why default data is used
-        for the user search query
+            Saves the FAISS index and chunked text to disk.
+
+        Args:
+            index_filename (str): Filename for FAISS index.
+            splittext_filename (str): Filename for text chunks.
         """
         faiss.write_index(self.index, index_filename)
         with open(splittext_filename, 'w') as f:
@@ -123,19 +139,28 @@ class Retriever:
     
     def load(self, index_filename,splittext_filename):
         """
-        This function loads the files needed for user search query
+        Loads the FAISS index and chunked text from disk.
+
+        Args:
+            index_filename (str): Filename for FAISS index.
+            splittext_filename (str): Filename for text chunks.
         """
         self.index = faiss.read_index(index_filename)
         with open(splittext_filename, 'r') as f:
             self.splitted_text = json.load(f)
 
 def main():
-
+    """
+    Main function that provides a CLI to interact with the RAG system.
+    
+    Functionality:
+        - Choose from loading an existing document, overwriting it, or appending new content.
+        - Load and save FAISS index and chunked text data.
+        - Accepts user queries and retrieves relevant document content.
+        - Generates responses using a generator module.
+    """
     retriever = Retriever()
 
-    """
-    Below function is not used yet
-    """
     def LoadNewDocument(newDocument):
         neighbour_size = 2
         split_len = 100
@@ -156,11 +181,13 @@ def main():
         '4': "Exit"
     }
 
-    """
-    Function localQuery takes the user query to get the results
-    Prints the results based on the user query
-    """
     def localQuery(group_id):
+        """
+            Prompts the user to enter queries and prints the retrieved answers using the generator.
+
+            Args:
+            group_id (str): Identifier for the team or group (used in generator).
+        """
         gen = Generator()
         while True:
             appendlist = []
