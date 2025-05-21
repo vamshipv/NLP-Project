@@ -20,15 +20,16 @@ class TestGen(unittest.TestCase):
                     continue
                 item = json.loads(line)
                 question = item.get("question")
-                expected_answer = item.get("expected_answer_contains")
-                print(f"Question is : {question}")
+                if question is not None:
+                    expected_answer = item.get("expected_answer_contains")
+                    print(f"Question is : {question}")
 
-                retrievedChunks = ret.query(question)
-                context = "\n\n".join(retrievedChunks)
-                answer = gen.generate_answer(retrievedChunks, context, question, group_id="Dave")
-                print("Answer is : ", answer)
-                print("Expected Answer is : ", expected_answer)
-                self.AssertCheck(answer, expected_answer)
+                    retrievedChunks = ret.query(question)
+                    context = "\n\n".join(retrievedChunks)
+                    answer = gen.generate_answer(retrievedChunks, context, question, group_id="Dave")
+                    print("Answer is : ", answer)
+                    print("Expected Answer is : ", expected_answer)
+                    self.AssertCheck(answer, expected_answer)
 
     def AssertCheck(self, answer, expected_answer):
         try:
@@ -36,28 +37,6 @@ class TestGen(unittest.TestCase):
             print("--------------Test passed--------------")
         except AssertionError:
             print("--------------Test failed--------------")    
-
-    def QueryResults(self):
-        gen = Generator()
-        ret = Retriever()
-        ret.addDocuments("winnie_the_pooh.txt")
-        with open('test_ques_and_ans.jsonl', 'r') as file:
-            for line in file:
-                line = line.strip()
-                if not line:
-                    continue
-                item = json.loads(line)
-                question = item.get("question")
-                if(question == ""):
-                    expected_answer = item.get("expected_answer_contains")
-                    print(f"Question is : {question}")
-
-                retrievedChunks = ret.query(question)
-                context = "\n\n".join(retrievedChunks)
-                answer = gen.generate_answer(retrievedChunks, context, question, group_id="Dave")
-                print("Answer is : ", answer)
-                print("Expected Answer is : ", expected_answer)
-                self.AssertCheck(answer, expected_answer)
 
     def groundedChunks(self):
         gen = Generator()
@@ -76,11 +55,13 @@ class TestGen(unittest.TestCase):
                     if answer in context:
                         answer = "Chunks are present"
                         expected_answer = item.get("expected_answer_contains")
+                        question = "Is the generated answer is present in the chunks"
+                        print("Question is :", question)
                         print("Answer is : ", answer)
                         print("Expected Answer is : ", expected_answer)
                         self.AssertCheck(answer, expected_answer)
                     else:
-                        answer = "Failed"
+                        answer = "Chunks are not present"
                         print("Answer is : ", answer)
                         print("Expected Answer is : ", expected_answer)
                         self.AssertCheck(answer, expected_answer)
@@ -90,5 +71,4 @@ class TestGen(unittest.TestCase):
     
 test = TestGen()
 test.test_generator()
-test.groundedChunks()
-test.     
+test.groundedChunks() 
