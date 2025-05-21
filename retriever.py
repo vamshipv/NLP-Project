@@ -7,6 +7,7 @@ from sentence_transformers import SentenceTransformer
 import json
 import re
 from generator import Generator
+import sys
 
 """
     Class Retriever has function to load the document, generate chunk and provide ouput for the input query
@@ -95,7 +96,7 @@ class Retriever:
 
         """
         nullInput = "Please enter something"
-        if(query_text == ""):
+        if(query_text == "" or query_text is None):
             return nullInput
         k = 2
         # query_embedding = self.model.encode([query_text])
@@ -164,7 +165,8 @@ def main():
         while True:
             appendlist = []
             user_query = input("Your query: ").strip()
-            
+            if user_query == ("exit1"):
+                sys.exit()
             try:
                 results = retriever.query(user_query)
                 if(user_query == ""):

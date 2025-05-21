@@ -59,7 +59,36 @@ class TestGen(unittest.TestCase):
                 print("Expected Answer is : ", expected_answer)
                 self.AssertCheck(answer, expected_answer)
 
+    def groundedChunks(self):
+        gen = Generator()
+        ret = Retriever()
+        ret.addDocuments("winnie_the_pooh.txt")
+        with open('test_ques_and_ans.jsonl', 'r') as file:
+            for line in file:
+                line = line.strip()
+                item = json.loads(line)
+                if item["id"] == "6":
+                    question = item.get("question1")
+                    retrievedChunks = ret.query(question)
+                    context = "\n\n".join(retrievedChunks)
+                    testChunks = item.get("retrieved_chunks")
+                    answer = gen.generate_answer(retrievedChunks, context, question, group_id="Dave")
+                    if answer in context:
+                        answer = "Chunks are present"
+                        expected_answer = item.get("expected_answer_contains")
+                        print("Answer is : ", answer)
+                        print("Expected Answer is : ", expected_answer)
+                        self.AssertCheck(answer, expected_answer)
+                    else:
+                        answer = "Failed"
+                        print("Answer is : ", answer)
+                        print("Expected Answer is : ", expected_answer)
+                        self.AssertCheck(answer, expected_answer)
 
+    def nonEmptyString(self):
+        return
+    
 test = TestGen()
 test.test_generator()
-        
+test.groundedChunks()
+test.     
