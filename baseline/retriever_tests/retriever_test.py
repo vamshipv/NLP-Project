@@ -1,6 +1,12 @@
-from retriever import Retriever
+import os
+import sys
 
-def test_retriever():
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.insert(0, project_root)
+from baseline.retriever.retriever import Retriever
+from baseline.generator.generator import Generator
+
+def test_retriever(test_case):
     """
     Tests the Retriever class by:
     - Adding a document ("cats.txt")
@@ -15,13 +21,13 @@ def test_retriever():
     """
     retriever = Retriever()
     retriever.addDocuments("cats.txt")
-    userInput = input("Enter anything about cat and sadness:  ")
-    userInput.lower()
-    retrievedChunks = retriever.query(userInput)
+    # userInput = "Cat is sad"
+    test_case.lower()
+    retrievedChunks = retriever.query(test_case)
     retrievedChunks = " ".join(retrievedChunks).lower()
 
-    assertTrue("cat" in userInput.lower(), "Query should contain 'cat'")
-    assertTrue("sad" in userInput.lower(), "Query should contain 'sad'")
+    assertTrue("cat" in test_case.lower(), "Query should contain 'cat'")
+    assertTrue("sad" in test_case.lower(), "Query should contain 'sad'")
 
     assertTrue("cat" in retrievedChunks, "'cat' should be mentioned in the results")
     assertTrue(
@@ -58,4 +64,12 @@ def assertFalse(expression, message):
         print("Test Case passed")
         
 
-test_retriever()
+print("Test cases related to Cat and Sadness")
+test_case1_words = "cat is sad"
+test_case1 = (test_case1_words)
+test_retriever(test_case1)
+
+print("Test cases related to Dog and Happy")
+test_case2_words = "Dog is happy"
+test_case2 = (test_case2_words)
+test_retriever(test_case2)

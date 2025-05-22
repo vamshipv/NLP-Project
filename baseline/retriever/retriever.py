@@ -6,8 +6,13 @@ import numpy as np
 from sentence_transformers import SentenceTransformer
 import json
 import re
-from generator import Generator
 import sys
+import os
+
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.insert(0, project_root)
+
+from baseline.generator.generator import Generator
 
 class Retriever:
     """
@@ -27,7 +32,7 @@ class Retriever:
         with default document cats.txt, faiss.index and subtexts.json all loaded by default for the user query
         """
         self.split_len = 200
-        self.document_file = "cats"
+        self.document_file = "../data/winnie_the_pooh"
         self.index_file = f"{self.document_file}_faiss.index"
         self.subtext_file = f"{self.document_file}_subtexts.json"
 
@@ -63,7 +68,13 @@ class Retriever:
         Args:
             path (str): File path to the text document.
         """
-        with open(path, 'r') as file:
+        base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data'))
+        full_path = os.path.join(base_dir, path if path.endswith('.txt') else path + '.txt')
+
+    
+        # Join it with the filename passed in
+        # full_path = os.path.join(data_dir, path)
+        with open(full_path, 'r') as file:
             text = file.read()
         self.splitted_text=self.split_text(text)
         embeddings = self.model.encode(self.splitted_text)
@@ -78,14 +89,17 @@ class Retriever:
         Args:
             path (str): Path to the additional text document.
         """
-        base = os.path.basename(path)
+
+        base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data'))
+        full_path = os.path.join(base_dir, path if path.endswith('.txt') else path + '.txt')
+        base = os.path.basename(full_path)
         Combinedname, _ = os.path.splitext(base)
         combined_prefix = f"{self.document_file}_{Combinedname}"
         combined_index_path = f"{combined_prefix}.index"
         combined_chunk_path = f"{combined_prefix}.json"
         if self.defaultDocument():
             self.load(self.index_file, self.subtext_file)
-            with open(path, 'r', encoding='utf-8') as file:
+            with open(full_path, 'r', encoding='utf-8') as file:
                 new_text = file.read()
             new_chunks = self.split_text(new_text)
             new_embeddings = self.model.encode(new_chunks)
@@ -133,9 +147,13 @@ class Retriever:
             index_filename (str): Filename for FAISS index.
             splittext_filename (str): Filename for text chunks.
         """
-        faiss.write_index(self.index, index_filename)
-        with open(splittext_filename, 'w') as f:
+        data_path = os.path.join(os.path.dirname(__file__), '..', 'data')
+        os.makedirs(data_path, exist_ok=True)
+
+        faiss.write_index(self.index, os.path.join(data_path, index_filename))
+        with open(os.path.join(data_path, splittext_filename), 'w') as f:
             json.dump(self.splitted_text, f)
+
     
     def load(self, index_filename,splittext_filename):
         """
@@ -145,8 +163,9 @@ class Retriever:
             index_filename (str): Filename for FAISS index.
             splittext_filename (str): Filename for text chunks.
         """
-        self.index = faiss.read_index(index_filename)
-        with open(splittext_filename, 'r') as f:
+        p = os.path.join(os.path.dirname(__file__), '..', 'data')
+        self.index = faiss.read_index(os.path.join(p, index_filename))
+        with open(os.path.join(p, splittext_filename), 'r') as f:
             self.splitted_text = json.load(f)
 
 def main():
@@ -193,6 +212,7 @@ def main():
             appendlist = []
             user_query = input("Your query: ").strip()
             if user_query == ("exit1"):
+                print("Have a nice one")
                 sys.exit()
             try:
                 results = retriever.query(user_query)
@@ -213,6 +233,7 @@ def main():
                     # print("```````````````````end context```````````````````````````````")
                     # Generate answer from your generator
                     answer = gen.generate_answer(appendlist, context, user_query, group_id)
+                    # print("Here")
                     print("Answer:", answer)
             except Exception as e:
                 print("Yo, somethings wrong with code. Try again:")
@@ -226,11 +247,13 @@ def main():
     while True:
         print("Hello user, check for all the information on World of cats")
         print("Please choose options to Continue or type exit to exit")
-        document_file = "winnie_the_pooh.txt"
+        document_file = "../data/winnie_the_pooh.txt"
         group_id = "Team Dave"
         base_name = os.path.splitext(os.path.basename(document_file))[0]
-        index_file = f"{base_name}_faiss.index"
-        subtext_file = f"{base_name}_subtexts.json"
+
+        data_dir = os.path.join(os.path.dirname(__file__), '..', 'data')
+        index_file = os.path.join(data_dir, f"{base_name}_faiss.index")
+        subtext_file = os.path.join(data_dir, f"{base_name}_subtexts.json")
         print(docChoices)
         ChoiceUser = input()
         if ChoiceUser == "1":
@@ -249,16 +272,16 @@ def main():
             pattern = r'^[\w,\s-]+\.(txt|pdf)$'
             newDocument = input()
             if re.match(pattern, newDocument):
-                full_path = os.path.join("data", newDocument)
-                # base_name = os.path.splitext(os.path.basename(newDocument))[0]
-                base_name = os.path.splitext(os.path.basename(full_path))[0]
+                # full_path = os.path.join("data", newDocument)
+                base_name = os.path.splitext(os.path.basename(newDocument))[0]
+                # base_name = os.path.splitext(os.path.basename(full_path))[0]
 
                 # Construct dynamic filenames
                 index_file = f"{base_name}_faiss.index"
                 subtext_file = f"{base_name}_subtexts.json"
                 if not (os.path.exists(index_file) and os.path.exists(subtext_file)):
                     print("Please wait loading your new document")
-                    retriever.addDocuments(full_path)
+                    retriever.addDocuments(base_name)
                     retriever.save(index_file,subtext_file)
                     print("Your document was loaded you can start with your query")
                 else:
@@ -274,6 +297,7 @@ def main():
             pattern = r'^[\w,\s-]+\.(txt|pdf)$'
             additionalDocument = input()
             if re.match(pattern, additionalDocument):
+                print("Please wait loading your document")
                 retriever.addExistingDocument(additionalDocument)
                 print("Choice 3")
                 localQuery(group_id)

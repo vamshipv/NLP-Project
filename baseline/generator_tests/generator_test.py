@@ -1,7 +1,12 @@
 import json
-from retriever import Retriever
-from generator import Generator
+import sys
+import os
 import unittest
+
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.insert(0, project_root)
+from baseline.retriever.retriever import Retriever
+from baseline.generator.generator import Generator
 
 class TestGen(unittest.TestCase):
     """
