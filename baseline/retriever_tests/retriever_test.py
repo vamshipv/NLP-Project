@@ -1,4 +1,8 @@
-from retriever import Retriever
+# Add the baseline directory to the Python path
+import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from retriever.retriever import Retriever
 
 def test_retriever():
     """
@@ -14,7 +18,7 @@ def test_retriever():
     - The retrieved content should not contain unrelated words like 'dog'
     """
     retriever = Retriever()
-    retriever.addDocuments("cats.txt")
+    retriever.addDocuments("../data/cats.txt")
     userInput = input("Enter anything about cat and sadness:  ")
     userInput.lower()
     retrievedChunks = retriever.query(userInput)

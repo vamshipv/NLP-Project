@@ -1,0 +1,4 @@
+{"question": "Who is happy?", "expected_answer_contains": "Eeyore"}
+{"question": "Who cried?", "expected_answer_contains": "Piglet"}
+{"question": "Who is pooh?", "expected_answer_contains": "a bear"}
+{"question": "who has been Foolish and Deluded?", "expected_answer_contains": "Winnie-the-Pooh"}

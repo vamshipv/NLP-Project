@@ -1,6 +1,11 @@
 import json
-from retriever import Retriever
-from generator import Generator
+# from retriever import Retriever
+# from generator import Generator
+import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from retriever.retriever import Retriever
+from generator.generator import Generator
 import unittest
 
 class TestGen(unittest.TestCase):
@@ -33,7 +38,7 @@ class TestGen(unittest.TestCase):
         """
         gen = Generator()
         ret = Retriever()
-        ret.addDocuments("winnie_the_pooh.txt")
+        ret.addDocuments("../data/winnie_the_pooh.txt")
         with open('test_ques_and_ans.jsonl', 'r') as file:
             for line in file:
                 line = line.strip()
@@ -83,7 +88,7 @@ class TestGen(unittest.TestCase):
         """
         gen = Generator()
         ret = Retriever()
-        ret.addDocuments("winnie_the_pooh.txt")
+        ret.addDocuments("../data/winnie_the_pooh.txt")
         with open('test_ques_and_ans.jsonl', 'r') as file:
             for line in file:
                 line = line.strip()
