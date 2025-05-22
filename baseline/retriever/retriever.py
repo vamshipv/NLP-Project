@@ -6,8 +6,14 @@ import numpy as np
 from sentence_transformers import SentenceTransformer
 import json
 import re
-from generator import Generator
 import sys
+# Add the baseline directory to the Python path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from generator.generator import Generator
+import sys
+
+#debugger
+# import pdb
 
 class Retriever:
     """
@@ -50,7 +56,9 @@ class Retriever:
         Returns:
         bool: True if all default files exist, False otherwise.
         """
-        if os.path.exists(self.document_file + ".txt") and os.path.exists(self.index_file) and os.path.exists(self.subtext_file):
+        data_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data'))
+        document_path = os.path.join(data_dir, self.document_file + ".txt")
+        if os.path.exists(document_path) and os.path.exists(self.index_file) and os.path.exists(self.subtext_file):
             return True
         else:
             print("No default document found")
@@ -78,14 +86,18 @@ class Retriever:
         Args:
             path (str): Path to the additional text document.
         """
-        base = os.path.basename(path)
+        data_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data'))
+        full_path = os.path.join(data_dir, path)
+        base = os.path.basename(full_path)
         Combinedname, _ = os.path.splitext(base)
         combined_prefix = f"{self.document_file}_{Combinedname}"
         combined_index_path = f"{combined_prefix}.index"
         combined_chunk_path = f"{combined_prefix}.json"
         if self.defaultDocument():
             self.load(self.index_file, self.subtext_file)
-            with open(path, 'r', encoding='utf-8') as file:
+            data_path = os.path.join("..", "data", path)  # Adjust relative path based on your file's location
+            with open(data_path, 'r', encoding='utf-8') as file:
+                # with open(path, 'r', encoding='utf-8') as file:
                 new_text = file.read()
             new_chunks = self.split_text(new_text)
             new_embeddings = self.model.encode(new_chunks)
@@ -226,7 +238,8 @@ def main():
     while True:
         print("Hello user, check for all the information on World of cats")
         print("Please choose options to Continue or type exit to exit")
-        document_file = "winnie_the_pooh.txt"
+        # document_file = "winnie_the_pooh.txt"
+        document_file = os.path.join("..", "data", "winnie_the_pooh.txt")
         group_id = "Team Dave"
         base_name = os.path.splitext(os.path.basename(document_file))[0]
         index_file = f"{base_name}_faiss.index"
@@ -237,6 +250,7 @@ def main():
             if os.path.exists(index_file) and os.path.exists(subtext_file):
                 print("Making sure query works. Hold on")
                 retriever.load(index_file,subtext_file)
+                # pdb.set_trace()
                 localQuery(group_id)
             else:
                 print("File are loading for the first time, Plese wait")
@@ -249,7 +263,7 @@ def main():
             pattern = r'^[\w,\s-]+\.(txt|pdf)$'
             newDocument = input()
             if re.match(pattern, newDocument):
-                full_path = os.path.join("data", newDocument)
+                full_path = os.path.join("..","data", newDocument)
                 # base_name = os.path.splitext(os.path.basename(newDocument))[0]
                 base_name = os.path.splitext(os.path.basename(full_path))[0]
 

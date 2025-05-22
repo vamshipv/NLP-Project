@@ -4,6 +4,9 @@ import torch
 import os
 import json
 from datetime import datetime, UTC
+from sentence_transformers import SentenceTransformer
+from sklearn.metrics.pairwise import cosine_similarity
+import numpy as np
 
 
 class Generator:
@@ -14,6 +17,7 @@ class Generator:
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
         self.model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
         self.max_tokens = max_tokens
+        self.embedder = SentenceTransformer("all-MiniLM-L6-v2")
 
     def build_prompt(self, context: str, question: str) -> str:
         """
