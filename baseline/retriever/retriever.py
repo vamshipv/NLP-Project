@@ -168,148 +168,148 @@ class Retriever:
         with open(os.path.join(p, splittext_filename), 'r') as f:
             self.splitted_text = json.load(f)
 
-def main():
-    """
-    Main function that provides a CLI to interact with the RAG system.
+# def main():
+#     """
+#     Main function that provides a CLI to interact with the RAG system.
     
-    Functionality:
-        - Choose from loading an existing document, overwriting it, or appending new content.
-        - Load and save FAISS index and chunked text data.
-        - Accepts user queries and retrieves relevant document content.
-        - Generates responses using a generator module.
-    """
-    retriever = Retriever()
+#     Functionality:
+#         - Choose from loading an existing document, overwriting it, or appending new content.
+#         - Load and save FAISS index and chunked text data.
+#         - Accepts user queries and retrieves relevant document content.
+#         - Generates responses using a generator module.
+#     """
+#     retriever = Retriever()
 
-    def LoadNewDocument(newDocument):
-        neighbour_size = 2
-        split_len = 100
-        base_name = os.path.splitext(os.path.basename(newDocument))[0]
-        index_file = f"{base_name}_faiss.index"
-        subtext_file = f"{base_name}_subtexts.json"
-    """
-    Below code has user choice to choice from and perform based on the choice
-    Choice 1: loads the default document and procced to the user search query
-    Choice 2: user has a option to overwrite the default document
-    Choice 3: User had a option to add a new document to the default document
-    """
+#     def LoadNewDocument(newDocument):
+#         neighbour_size = 2
+#         split_len = 100
+#         base_name = os.path.splitext(os.path.basename(newDocument))[0]
+#         index_file = f"{base_name}_faiss.index"
+#         subtext_file = f"{base_name}_subtexts.json"
+#     """
+#     Below code has user choice to choice from and perform based on the choice
+#     Choice 1: loads the default document and procced to the user search query
+#     Choice 2: user has a option to overwrite the default document
+#     Choice 3: User had a option to add a new document to the default document
+#     """
 
-    docChoices = {
-        '1': "Local query with existing document",
-        '2': "Overwrite with New document",
-        '3': "Add to existing document",
-        '4': "Exit"
-    }
+#     docChoices = {
+#         '1': "Local query with existing document",
+#         '2': "Overwrite with New document",
+#         '3': "Add to existing document",
+#         '4': "Exit"
+#     }
 
-    def localQuery(group_id):
-        """
-            Prompts the user to enter queries and prints the retrieved answers using the generator.
+#     def localQuery(group_id):
+#         """
+#             Prompts the user to enter queries and prints the retrieved answers using the generator.
 
-            Args:
-            group_id (str): Identifier for the team or group (used in generator).
-        """
-        gen = Generator()
-        while True:
-            appendlist = []
-            user_query = input("Your query: ").strip()
-            if user_query == ("exit1"):
-                print("Have a nice one")
-                sys.exit()
-            try:
-                results = retriever.query(user_query)
-                if(user_query == ""):
-                    print("Answer:", results)
-                else:
-                    # print("`````````````````````````````````````````````````````````````")
-                    # print("Results")
-                    # print("`````````````````````````````````````````````````````````````")
-                    for res in results:
-                        cleaned_res = res.replace("\n", " ").strip()
-                        appendlist.append(cleaned_res)
-                    # print(appendlist)
-                    # print("`````````````````````````````````````````````````````````````")
-                    # print("Context")
-                    context = "\n\n".join(results)
-                    # print(context)
-                    # print("```````````````````end context```````````````````````````````")
-                    # Generate answer from your generator
-                    answer = gen.generate_answer(appendlist, context, user_query, group_id)
-                    # print("Here")
-                    print("Answer:", answer)
-            except Exception as e:
-                print("Yo, somethings wrong with code. Try again:")
+#             Args:
+#             group_id (str): Identifier for the team or group (used in generator).
+#         """
+#         gen = Generator()
+#         while True:
+#             appendlist = []
+#             user_query = input("Your query: ").strip()
+#             if user_query == ("exit1"):
+#                 print("Have a nice one")
+#                 sys.exit()
+#             try:
+#                 results = retriever.query(user_query)
+#                 if(user_query == ""):
+#                     print("Answer:", results)
+#                 else:
+#                     # print("`````````````````````````````````````````````````````````````")
+#                     # print("Results")
+#                     # print("`````````````````````````````````````````````````````````````")
+#                     for res in results:
+#                         cleaned_res = res.replace("\n", " ").strip()
+#                         appendlist.append(cleaned_res)
+#                     # print(appendlist)
+#                     # print("`````````````````````````````````````````````````````````````")
+#                     # print("Context")
+#                     context = "\n\n".join(results)
+#                     # print(context)
+#                     # print("```````````````````end context```````````````````````````````")
+#                     # Generate answer from your generator
+#                     answer = gen.generate_answer(appendlist, context, user_query, group_id)
+#                     # print("Here")
+#                     print("Answer:", answer)
+#             except Exception as e:
+#                 print("Yo, somethings wrong with code. Try again:")
             
 
-    """
-    Below code promts user with a welcome message and choices about the document
-    User get promots based on the choice
+#     """
+#     Below code promts user with a welcome message and choices about the document
+#     User get promots based on the choice
     
-    """
-    while True:
-        print("Hello user, check for all the information on World of cats")
-        print("Please choose options to Continue or type exit to exit")
-        document_file = "../data/winnie_the_pooh.txt"
-        group_id = "Team Dave"
-        base_name = os.path.splitext(os.path.basename(document_file))[0]
+#     """
+#     while True:
+#         print("Hello user, check for all the information on World of cats")
+#         print("Please choose options to Continue or type exit to exit")
+#         document_file = "../data/winnie_the_pooh.txt"
+#         group_id = "Team Dave"
+#         base_name = os.path.splitext(os.path.basename(document_file))[0]
 
-        data_dir = os.path.join(os.path.dirname(__file__), '..', 'data')
-        index_file = os.path.join(data_dir, f"{base_name}_faiss.index")
-        subtext_file = os.path.join(data_dir, f"{base_name}_subtexts.json")
-        print(docChoices)
-        ChoiceUser = input()
-        if ChoiceUser == "1":
-            if os.path.exists(index_file) and os.path.exists(subtext_file):
-                print("Making sure query works. Hold on")
-                retriever.load(index_file,subtext_file)
-                localQuery(group_id)
-            else:
-                print("File are loading for the first time, Plese wait")
-                retriever.addDocuments(document_file)
-                retriever.save(index_file,subtext_file)
-                localQuery(group_id)
+#         data_dir = os.path.join(os.path.dirname(__file__), '..', 'data')
+#         index_file = os.path.join(data_dir, f"{base_name}_faiss.index")
+#         subtext_file = os.path.join(data_dir, f"{base_name}_subtexts.json")
+#         print(docChoices)
+#         ChoiceUser = input()
+#         if ChoiceUser == "1":
+#             if os.path.exists(index_file) and os.path.exists(subtext_file):
+#                 print("Making sure query works. Hold on")
+#                 retriever.load(index_file,subtext_file)
+#                 localQuery(group_id)
+#             else:
+#                 print("File are loading for the first time, Plese wait")
+#                 retriever.addDocuments(document_file)
+#                 retriever.save(index_file,subtext_file)
+#                 localQuery(group_id)
 
-        elif ChoiceUser == "2":
-            print("Enter document name, inculding document extenstion")
-            pattern = r'^[\w,\s-]+\.(txt|pdf)$'
-            newDocument = input()
-            if re.match(pattern, newDocument):
-                # full_path = os.path.join("data", newDocument)
-                base_name = os.path.splitext(os.path.basename(newDocument))[0]
-                # base_name = os.path.splitext(os.path.basename(full_path))[0]
+#         elif ChoiceUser == "2":
+#             print("Enter document name, inculding document extenstion")
+#             pattern = r'^[\w,\s-]+\.(txt|pdf)$'
+#             newDocument = input()
+#             if re.match(pattern, newDocument):
+#                 # full_path = os.path.join("data", newDocument)
+#                 base_name = os.path.splitext(os.path.basename(newDocument))[0]
+#                 # base_name = os.path.splitext(os.path.basename(full_path))[0]
 
-                # Construct dynamic filenames
-                index_file = f"{base_name}_faiss.index"
-                subtext_file = f"{base_name}_subtexts.json"
-                if not (os.path.exists(index_file) and os.path.exists(subtext_file)):
-                    print("Please wait loading your new document")
-                    retriever.addDocuments(base_name)
-                    retriever.save(index_file,subtext_file)
-                    print("Your document was loaded you can start with your query")
-                else:
-                    retriever.load(index_file,subtext_file)
-                    print("This document already exists, Using the existing document")
-                localQuery(group_id)
-            else:
-                print("Oops, you have to check again the document name")
+#                 # Construct dynamic filenames
+#                 index_file = f"{base_name}_faiss.index"
+#                 subtext_file = f"{base_name}_subtexts.json"
+#                 if not (os.path.exists(index_file) and os.path.exists(subtext_file)):
+#                     print("Please wait loading your new document")
+#                     retriever.addDocuments(base_name)
+#                     retriever.save(index_file,subtext_file)
+#                     print("Your document was loaded you can start with your query")
+#                 else:
+#                     retriever.load(index_file,subtext_file)
+#                     print("This document already exists, Using the existing document")
+#                 localQuery(group_id)
+#             else:
+#                 print("Oops, you have to check again the document name")
 
 
-        elif ChoiceUser == "3":
-            print("Enter document name, inculding document extenstion")
-            pattern = r'^[\w,\s-]+\.(txt|pdf)$'
-            additionalDocument = input()
-            if re.match(pattern, additionalDocument):
-                print("Please wait loading your document")
-                retriever.addExistingDocument(additionalDocument)
-                print("Choice 3")
-                localQuery(group_id)
-            else:
-                print("Document name is wrong or Document already exists")
-        elif ChoiceUser == '4':
-            print("Good Day")
-            break
-        else:
-            print("Please try again")
+#         elif ChoiceUser == "3":
+#             print("Enter document name, inculding document extenstion")
+#             pattern = r'^[\w,\s-]+\.(txt|pdf)$'
+#             additionalDocument = input()
+#             if re.match(pattern, additionalDocument):
+#                 print("Please wait loading your document")
+#                 retriever.addExistingDocument(additionalDocument)
+#                 print("Choice 3")
+#                 localQuery(group_id)
+#             else:
+#                 print("Document name is wrong or Document already exists")
+#         elif ChoiceUser == '4':
+#             print("Good Day")
+#             break
+#         else:
+#             print("Please try again")
 
         
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()
