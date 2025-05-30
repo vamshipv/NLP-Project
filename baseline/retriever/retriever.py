@@ -8,6 +8,8 @@ import json
 import re
 import sys
 import os
+import pandas as pd
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 sys.path.insert(0, project_root)
@@ -31,10 +33,31 @@ class Retriever:
         Here the Split length is default set to 200
         with default document cats.txt, faiss.index and subtexts.json all loaded by default for the user query
         """
-        self.split_len = 200
+        self.chunk_size = 200
+        self.chunk_overlap = 50
         self.document_file = "../data/winnie_the_pooh"
-        self.index_file = f"{self.document_file}_faiss.index"
-        self.subtext_file = f"{self.document_file}_subtexts.json"
+        self.index_file = f"amazon_faiss.index"
+        self.subtext_file = f"amazon_subtexts.json"
+
+    def load_data(self):
+        reviews_file_path  = "../data/reviews/reviews_Cell_Phones_and_Accessories.json"
+        reviews = []
+        with open(reviews_file_path, 'r') as f:
+            for line in f:
+                reviews.append(json.loads(line))
+        reviews_dataframes = pd.DataFrame(reviews)
+        print("Loaded")
+
+        metadata_file_path = '../data/reviews/meta_Cell_Phones_and_Accessories.json'
+        matadata = []
+        with open(metadata_file_path, 'r') as f:
+            for line in f:
+                matadata.append(json.loads(line))
+        meta_dataframes = pd.DataFrame(matadata)
+        print("loaded meta")
+        merged_df = pd.merge(reviews_dataframes, meta_dataframes, on='asin', how='left', suffixes=('_review', '_meta'))
+        print(f"Data loaded and merged. Total rows: {len(merged_df)}")
+        return merged_df
 
     def split_text(self,text):
         """
@@ -168,6 +191,9 @@ class Retriever:
         with open(os.path.join(p, splittext_filename), 'r') as f:
             self.splitted_text = json.load(f)
 
+def main():
+    retriever = Retriever()
+    retriever.load_data()
 # def main():
 #     """
 #     Main function that provides a CLI to interact with the RAG system.
@@ -311,5 +337,5 @@ class Retriever:
 
         
 
-# if __name__ == "__main__":
-#     main()
+if __name__ == "__main__":
+    main()
