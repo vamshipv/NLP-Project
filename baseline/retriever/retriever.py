@@ -1,304 +1,154 @@
 import os
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
-import torch
+import pandas as pd
+import json
 import faiss
 import numpy as np
 from sentence_transformers import SentenceTransformer
-import json
-import re
-import sys
-# Add the baseline directory to the Python path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from generator.generator import Generator
-
-#debugger
-# import pdb
 
 class Retriever:
-    """
-    A class to handle document retrieval using FAISS and SentenceTransformers.
-
-    Attributes:
-        model_name (str): Name of the embedding model.
-        split_len (int): Length of text chunks for indexing.
-        document_file (str): Name of the default document.
-        index_file (str): Filename for saving/loading FAISS index.
-        subtext_file (str): Filename for saving/loading text chunks.
-    """
     def __init__(self, model_name="all-MiniLM-L6-v2"):
-        self.model = SentenceTransformer("all-MiniLM-L6-v2")
-        """
-        Here the Split length is default set to 200
-        with default document cats.txt, faiss.index and subtexts.json all loaded by default for the user query
-        """
-        self.split_len = 200
-        self.document_file = "cats"
-        self.index_file = f"{self.document_file}_faiss.index"
-        self.subtext_file = f"{self.document_file}_subtexts.json"
+        self.model = SentenceTransformer(model_name)
+        self.index = None
+        self.combined_texts = []
 
-    def split_text(self,text):
-        """
-        Splits a given text into fixed-length chunks.
+    def load_csv_and_prepare_texts(self, csv_path):
+        # Read the CSV
+        df = pd.read_csv(csv_path)
 
-        Args:
-            text (str): The input text.
+        # Convert all column names to lowercase and strip spaces
+        df.columns = [col.strip().lower() for col in df.columns]
 
-        Returns:
-            list: A list of text chunks.
-        """
-        chunks = [text[i:i+self.split_len] for i in range(0, len(text), self.split_len)]
-        return chunks
-    
-    def defaultDocument(self):
-        """
-        Checks whether default document, index, and chunk file exist.
-        Returns:
-        bool: True if all default files exist, False otherwise.
-        """
-        data_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data'))
-        document_path = os.path.join(data_dir, self.document_file + ".txt")
-        if os.path.exists(document_path) and os.path.exists(self.index_file) and os.path.exists(self.subtext_file):
-            return True
-        else:
-            print("No default document found")
-            return False
-        
-    def addDocuments(self,path):
-        """
-        Adds a new document, splits it into chunks, generates embeddings, and creates a FAISS index.
+        print("Available columns after normalization:", df.columns.tolist())
 
-        Args:
-            path (str): File path to the text document.
+        # Check if required columns are present
+        if 'model' not in df.columns or 'comment' not in df.columns:
+            raise KeyError("Required columns 'model' and 'comment' not found in CSV.")
+
+        # Drop rows with missing values and combine fields
+        df = df[['model', 'comment']].dropna()
+        self.combined_texts = df.apply(
+            lambda row: f"Model: {row['model']}. Comment: {row['comment']}", axis=1
+        ).tolist()
+
+        return self.combined_texts
+
+    def embed_texts(self):
         """
-        with open(path, 'r') as file:
-            text = file.read()
-        self.splitted_text=self.split_text(text)
-        embeddings = self.model.encode(self.splitted_text)
+        Embeds the combined model+comment texts using SentenceTransformer.
+        """
+        embeddings = self.model.encode(self.combined_texts, show_progress_bar=True)
         self.index = faiss.IndexFlatL2(embeddings[0].shape[0])
-        self.index.add(np.array(embeddings))
+        self.index.add(np.array(embeddings, dtype=np.float32))
+
+    def save(self, index_path, text_path):
+        """
+        Saves FAISS index and the combined texts to disk.
+        """
+        faiss.write_index(self.index, index_path)
+        with open(text_path, 'w', encoding='utf-8') as f:
+            json.dump(self.combined_texts, f)
     
-    def addExistingDocument(self, path):
+    def load(self, index_path, text_path):
         """
-        Appends a new document to an existing default document.
-        Loads the existing index and chunks, combines them with new ones, and re-saves.
-
-        Args:
-            path (str): Path to the additional text document.
+        Load FAISS index and combined texts from disk.
         """
-        data_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data'))
-        full_path = os.path.join(data_dir, path)
-        base = os.path.basename(full_path)
-        Combinedname, _ = os.path.splitext(base)
-        combined_prefix = f"{self.document_file}_{Combinedname}"
-        combined_index_path = f"{combined_prefix}.index"
-        combined_chunk_path = f"{combined_prefix}.json"
-        if self.defaultDocument():
-            self.load(self.index_file, self.subtext_file)
-            data_path = os.path.join("..", "data", path)  # Adjust relative path based on your file's location
-            with open(data_path, 'r', encoding='utf-8') as file:
-                # with open(path, 'r', encoding='utf-8') as file:
-                new_text = file.read()
-            new_chunks = self.split_text(new_text)
-            new_embeddings = self.model.encode(new_chunks)
-
-            self.index.add(np.array(new_embeddings))
-            self.splitted_text.extend(new_chunks)
-
-            self.save(combined_index_path, combined_chunk_path)
-            print("Default document is avaliable, Appending it to the default document")
-        else:
-            print("Could not add document to existing one. Please add a default first")
+        self.index = faiss.read_index(index_path)
+        with open(text_path, 'r', encoding='utf-8') as f:
+            self.combined_texts = json.load(f)
 
     
-    def query(self,query_text):
+    def query(self, question, top_k=3):
         """
-        Retrieves top-k most similar chunks for a given query.
-
+        Embed the query and retrieve top_k similar texts.
+        
         Args:
-            query_text (str): The user query string.
-
+            question (str): The user question to query.
+            top_k (int): Number of top similar chunks to return.
+        
         Returns:
-            list: A list of top-k similar text chunks.
+            List of tuples: (score, text)
         """
-        nullInput = "Please enter something"
-        if(query_text == "" or query_text is None):
-            return nullInput
-        k = 2
-        # query_embedding = self.model.encode([query_text])
-        # D, I = self.index.search(np.array(query_embedding), k)
-        # self.retrieved_chunks = [self.splitted_text[i] for i in I[0]]
-        # return self.retrieved_chunks
-        query_embedding = self.model.encode([query_text])
-        query_embedding = np.array(query_embedding, dtype=np.float32)
+        if self.index is None or not self.combined_texts:
+            raise ValueError("Index or texts are not loaded. Please run embed_texts() first.")
 
-        D, I = self.index.search(query_embedding, k)
+        # Embed the query
+        query_embedding = self.model.encode([question], convert_to_numpy=True)
 
-        self.retrieved_chunks = [self.splitted_text[i] for i in I[0]]
-        return self.retrieved_chunks
+        # Search in the FAISS index
+        distances, indices = self.index.search(query_embedding, top_k)
+
+        results = []
+        for dist, idx in zip(distances[0], indices[0]):
+            results.append((dist, self.combined_texts[idx]))
+
+        return results
+
     
-    def save(self, index_filename,splittext_filename):
+    def print_embeddings(self, num_samples=5):
         """
-            Saves the FAISS index and chunked text to disk.
-
+        Prints embeddings for a few sample texts.
+        
         Args:
-            index_filename (str): Filename for FAISS index.
-            splittext_filename (str): Filename for text chunks.
+            num_samples (int): Number of samples to display.
         """
-        faiss.write_index(self.index, index_filename)
-        with open(splittext_filename, 'w') as f:
-            json.dump(self.splitted_text, f)
-    
-    def load(self, index_filename,splittext_filename):
-        """
-        Loads the FAISS index and chunked text from disk.
+        if not hasattr(self, 'combined_texts'):
+            print("No combined texts found. Load and process CSV first.")
+            return
 
-        Args:
-            index_filename (str): Filename for FAISS index.
-            splittext_filename (str): Filename for text chunks.
+        sample_texts = self.combined_texts[:num_samples]
+        embeddings = self.model.encode(sample_texts)
+
+        for i, (text, emb) in enumerate(zip(sample_texts, embeddings), 1):
+            print(f"\nText {i}: {text}")
+            print(f"Embedding shape: {emb.shape}")
+            print(f"First 5 values: {emb[:5]}")
+
+    def get_top_chunks(self, question, top_k=3):
         """
-        self.index = faiss.read_index(index_filename)
-        with open(splittext_filename, 'r') as f:
-            self.splitted_text = json.load(f)
+        Returns top_k most similar text chunks for a given question.
+        """
+        query_embedding = self.model.encode([question], convert_to_numpy=True)
+        distances, indices = self.index.search(query_embedding, top_k)
+
+        top_chunks = [self.combined_texts[i] for i in indices[0]]
+        return top_chunks
+
+
 
 def main():
-    """
-    Main function that provides a CLI to interact with the RAG system.
-    
-    Functionality:
-        - Choose from loading an existing document, overwriting it, or appending new content.
-        - Load and save FAISS index and chunked text data.
-        - Accepts user queries and retrieves relevant document content.
-        - Generates responses using a generator module.
-    """
+    current_dir = os.path.dirname(__file__)
+    csv_path = os.path.join(current_dir, "../data/final_dataset.csv")
+    index_path = os.path.join(current_dir, "reviews_faiss.index")
+    text_path = os.path.join(current_dir, "reviews_combined_texts.json")
+
     retriever = Retriever()
+    retriever.load_csv_and_prepare_texts(csv_path)
+    retriever.embed_texts()
+    retriever.save(index_path, text_path)
+    # retriever.print_embeddings()
+    print("✅ Embeddings created and saved successfully!")
 
-    def LoadNewDocument(newDocument):
-        neighbour_size = 2
-        split_len = 100
-        base_name = os.path.splitext(os.path.basename(newDocument))[0]
-        index_file = f"{base_name}_faiss.index"
-        subtext_file = f"{base_name}_subtexts.json"
-    """
-    Below code has user choice to choice from and perform based on the choice
-    Choice 1: loads the default document and procced to the user search query
-    Choice 2: user has a option to overwrite the default document
-    Choice 3: User had a option to add a new document to the default document
-    """
+def interactive_query():
+    current_dir = os.path.dirname(__file__)
+    index_path = os.path.join(current_dir, "reviews_faiss.index")
+    text_path = os.path.join(current_dir, "reviews_combined_texts.json")
 
-    docChoices = {
-        '1': "Local query with existing document",
-        '2': "Overwrite with New document",
-        '3': "Add to existing document",
-        '4': "Exit"
-    }
+    retriever = Retriever()
+    retriever.load(index_path, text_path)
 
-    def localQuery(group_id):
-        """
-            Prompts the user to enter queries and prints the retrieved answers using the generator.
-
-            Args:
-            group_id (str): Identifier for the team or group (used in generator).
-        """
-        gen = Generator()
-        while True:
-            appendlist = []
-            user_query = input("Your query: ").strip()
-            if user_query == ("exit1"):
-                sys.exit()
-            try:
-                results = retriever.query(user_query)
-                if(user_query == ""):
-                    print("Answer:", results)
-                else:
-                    # print("`````````````````````````````````````````````````````````````")
-                    # print("Results")
-                    # print("`````````````````````````````````````````````````````````````")
-                    for res in results:
-                        cleaned_res = res.replace("\n", " ").strip()
-                        appendlist.append(cleaned_res)
-                    # print(appendlist)
-                    # print("`````````````````````````````````````````````````````````````")
-                    # print("Context")
-                    context = "\n\n".join(results)
-                    # print(context)
-                    # print("```````````````````end context```````````````````````````````")
-                    # Generate answer from your generator
-                    answer = gen.generate_answer(appendlist, context, user_query, group_id)
-                    print("Answer:", answer)
-            except Exception as e:
-                print("Yo, somethings wrong with code. Try again:")
-            
-
-    """
-    Below code promts user with a welcome message and choices about the document
-    User get promots based on the choice
-    
-    """
     while True:
-        print("Hello user, check for all the information on World of cats")
-        print("Please choose options to Continue or type exit to exit")
-        # document_file = "winnie_the_pooh.txt"
-        document_file = os.path.join("..", "data", "winnie_the_pooh.txt")
-        group_id = "Team Dave"
-        base_name = os.path.splitext(os.path.basename(document_file))[0]
-        index_file = f"{base_name}_faiss.index"
-        subtext_file = f"{base_name}_subtexts.json"
-        print(docChoices)
-        ChoiceUser = input()
-        if ChoiceUser == "1":
-            if os.path.exists(index_file) and os.path.exists(subtext_file):
-                print("Making sure query works. Hold on")
-                retriever.load(index_file,subtext_file)
-                # pdb.set_trace()
-                localQuery(group_id)
-            else:
-                print("File are loading for the first time, Plese wait")
-                retriever.addDocuments(document_file)
-                retriever.save(index_file,subtext_file)
-                localQuery(group_id)
-
-        elif ChoiceUser == "2":
-            print("Enter document name, inculding document extenstion")
-            pattern = r'^[\w,\s-]+\.(txt|pdf)$'
-            newDocument = input()
-            if re.match(pattern, newDocument):
-                full_path = os.path.join("..","data", newDocument)
-                # base_name = os.path.splitext(os.path.basename(newDocument))[0]
-                base_name = os.path.splitext(os.path.basename(full_path))[0]
-
-                # Construct dynamic filenames
-                index_file = f"{base_name}_faiss.index"
-                subtext_file = f"{base_name}_subtexts.json"
-                if not (os.path.exists(index_file) and os.path.exists(subtext_file)):
-                    print("Please wait loading your new document")
-                    retriever.addDocuments(full_path)
-                    retriever.save(index_file,subtext_file)
-                    print("Your document was loaded you can start with your query")
-                else:
-                    retriever.load(index_file,subtext_file)
-                    print("This document already exists, Using the existing document")
-                localQuery(group_id)
-            else:
-                print("Oops, you have to check again the document name")
-
-
-        elif ChoiceUser == "3":
-            print("Enter document name, inculding document extenstion")
-            pattern = r'^[\w,\s-]+\.(txt|pdf)$'
-            additionalDocument = input()
-            if re.match(pattern, additionalDocument):
-                retriever.addExistingDocument(additionalDocument)
-                print("Choice 3")
-                localQuery(group_id)
-            else:
-                print("Document name is wrong or Document already exists")
-        elif ChoiceUser == '4':
-            print("Good Day")
+        question = input("Ask your question (or type 'exit' to quit): ")
+        if question.lower() == 'exit':
             break
-        else:
-            print("Please try again")
 
-        
+        top_results = retriever.query(question, top_k=3)
+
+        print("\nTop results:")
+        for score, text in top_results:
+            print(f"Score: {score:.4f} — Text: {text}")
+        print("\n")
 
 if __name__ == "__main__":
     main()
+      # 2. Query the index (run many times)
+    # interactive_query()
