@@ -1,0 +1,1086 @@
+POST https://0c31f0620c6c4cba949fc321284a8a73.us-central1.gcp.cloud.es.io:443/reviews_index/_search [status:200 duration:0.708s]
+Xet Storage is enabled for this repo, but the 'hf_xet' package is not installed. Falling back to regular HTTP download. For better performance, install the package with: `pip install huggingface_hub[hf_xet]` or `pip install hf_xet`
+{
+    "timestamp": "2025-06-14 17:26:40",
+    "model_name": "facebook/bart-large-cnn",
+    "user_query": "how is Pink & White 3d Melt Ice - cream Hard for Apple Iphone 4 4s Protect Cell ?",
+    "chunks": [
+        "I really loved the color combination and how the design showed up on the front as well",
+        "I bought this for my iPhone 4s, and unfortunately, it doesn't stay on",
+        "It comes in two pieces, one white piece that snugly fits on the bottom, and the pink drip portion that slides over the white piece",
+        "It's the pink piece that makes this unfortunate",
+        "It doesn't click with the white piece at all, and it easily slides off",
+        "[Feature: 4s] I really loved the color combination and how the design showed up on the front as well",
+        "I bought this for my iPhone 4s, and unfortunately, it doesn't stay on",
+        "It comes in two pieces, one white piece that snugly fits on the bottom, and the pink drip portion that slides over the white piece",
+        "It's the pink piece that makes this unfortunate",
+        "It doesn't click with the white piece at all, and it easily slides off",
+        "I wanted so much to keep this case on, but I also didn't wanna risk my phone having a giant crack on the screen due to a case that doesn't stay on",
+        "For the price, it is neat, but I really doubt I'm going to keep it on my phone",
+        "What a bummer",
+        "[Feature: one] I really loved the color combination and how the design showed up on the front as well",
+        "I bought this for my iPhone 4s, and unfortunately, it doesn't stay on",
+        "It comes in two pieces, one white piece that snugly fits on the bottom, and the pink drip portion that slides over the white piece",
+        "It's the pink piece that makes this unfortunate",
+        "It doesn't click with the white piece at all, and it easily slides off",
+        "I wanted so much to keep this case on, but I also didn't wanna risk my phone having a giant crack on the screen due to a case that doesn't stay on",
+        "For the price, it is neat, but I really doubt I'm going to keep it on my phone",
+        "What a bummer",
+        "[Feature: two] I really loved the color combination and how the design showed up on the front as well",
+        "I bought this for my iPhone 4s, and unfortunately, it doesn't stay on",
+        "It comes in two pieces, one white piece that snugly fits on the bottom, and the pink drip portion that slides over the white piece",
+        "It's the pink piece that makes this unfortunate",
+        "It doesn't click with the white piece at all, and it easily slides off",
+        "I wanted so much to keep this case on, but I also didn't wanna risk my phone having a giant crack on the screen due to a case that doesn't stay on",
+        "For the price, it is neat, but I really doubt I'm going to keep it on my phone",
+        "What a bummer",
+        "[Feature: Bob Squarepants Bubbles Blowing Hard Case Cover Iphone] I love this iPhone cover",
+        "It fits my iPhone perfectly and is sturdy enough to stand up to my having dropped the phone more than a couple times",
+        "The colors have stayed true for the several yearls I've had the case, and it helps me to find my phone in my black purseSponge Bob Squarepants Bubbles Blowing Hard Case Cover Iphone 4/4s because of the bright colors and charming picture",
+        "I received this order in less than a week and was happy to get it."
+    ],
+    "final_summary": "I wanted so much to keep this case on, but I also didn't wanna risk my phone having a giant crack on the screen due to a case that doesn't stay on. I didn't want to risk a crack in my phone's screen because of a case."
+}
+POST https://0c31f0620c6c4cba949fc321284a8a73.us-central1.gcp.cloud.es.io:443/reviews_index/_search [status:200 duration:0.698s]
+{
+    "timestamp": "2025-06-14 17:32:29",
+    "model_name": "facebook/bart-large-cnn",
+    "user_query": "give a review on  Pink & White 3d Melt Ice - cream Hard for Apple Iphone 4 4s Protect Cell ?",
+    "chunks": [
+        "I really loved the color combination and how the design showed up on the front as well",
+        "I bought this for my iPhone 4s, and unfortunately, it doesn't stay on",
+        "It comes in two pieces, one white piece that snugly fits on the bottom, and the pink drip portion that slides over the white piece",
+        "It's the pink piece that makes this unfortunate",
+        "It doesn't click with the white piece at all, and it easily slides off",
+        "[Feature: 4s] I really loved the color combination and how the design showed up on the front as well",
+        "I bought this for my iPhone 4s, and unfortunately, it doesn't stay on",
+        "It comes in two pieces, one white piece that snugly fits on the bottom, and the pink drip portion that slides over the white piece",
+        "It's the pink piece that makes this unfortunate",
+        "It doesn't click with the white piece at all, and it easily slides off",
+        "I wanted so much to keep this case on, but I also didn't wanna risk my phone having a giant crack on the screen due to a case that doesn't stay on",
+        "For the price, it is neat, but I really doubt I'm going to keep it on my phone",
+        "What a bummer",
+        "[Feature: one] I really loved the color combination and how the design showed up on the front as well",
+        "I bought this for my iPhone 4s, and unfortunately, it doesn't stay on",
+        "It comes in two pieces, one white piece that snugly fits on the bottom, and the pink drip portion that slides over the white piece",
+        "It's the pink piece that makes this unfortunate",
+        "It doesn't click with the white piece at all, and it easily slides off",
+        "I wanted so much to keep this case on, but I also didn't wanna risk my phone having a giant crack on the screen due to a case that doesn't stay on",
+        "For the price, it is neat, but I really doubt I'm going to keep it on my phone",
+        "What a bummer",
+        "[Feature: two] I really loved the color combination and how the design showed up on the front as well",
+        "I bought this for my iPhone 4s, and unfortunately, it doesn't stay on",
+        "It comes in two pieces, one white piece that snugly fits on the bottom, and the pink drip portion that slides over the white piece",
+        "It's the pink piece that makes this unfortunate",
+        "It doesn't click with the white piece at all, and it easily slides off",
+        "I wanted so much to keep this case on, but I also didn't wanna risk my phone having a giant crack on the screen due to a case that doesn't stay on",
+        "For the price, it is neat, but I really doubt I'm going to keep it on my phone",
+        "What a bummer",
+        "[Feature: 4S] I was expecting a cute case that fit my Verizon iPhone 4S well",
+        "I got it in the mail and I was so excited to try it on my phone",
+        "It barely fits",
+        "The button holes don't fit the buttons",
+        "(Too high up) Another thing is the melt thingies near the fromt canera and stuff kept peeling my screen protector off whenever i tried to put it on",
+        "i fell head over heels with this case and I'm so upset it doesn't fit right.",
+        "If you have the Verizon iPhone 4S, sadly, beware.."
+    ],
+    "final_summary": "I wanted so much to keep this case on, but I also didn't wanna risk my phone having a giant crack on the screen due to a case that doesn't stay on. I didn't want to risk a crack in my phone's screen because of a case."
+}
+POST https://0c31f0620c6c4cba949fc321284a8a73.us-central1.gcp.cloud.es.io:443/reviews_index/_search [status:200 duration:0.613s]
+{
+    "timestamp": "2025-06-14 17:34:00",
+    "model_name": "facebook/bart-large-cnn",
+    "user_query": "give a review on Pink & White 3d Melt Ice - cream Hard for Apple Iphone 4 4s Protect Cell ?",
+    "chunks": [
+        "I really loved the color combination and how the design showed up on the front as well",
+        "I bought this for my iPhone 4s, and unfortunately, it doesn't stay on",
+        "It comes in two pieces, one white piece that snugly fits on the bottom, and the pink drip portion that slides over the white piece",
+        "It's the pink piece that makes this unfortunate",
+        "It doesn't click with the white piece at all, and it easily slides off",
+        "[Feature: 4s] I really loved the color combination and how the design showed up on the front as well",
+        "I bought this for my iPhone 4s, and unfortunately, it doesn't stay on",
+        "It comes in two pieces, one white piece that snugly fits on the bottom, and the pink drip portion that slides over the white piece",
+        "It's the pink piece that makes this unfortunate",
+        "It doesn't click with the white piece at all, and it easily slides off",
+        "I wanted so much to keep this case on, but I also didn't wanna risk my phone having a giant crack on the screen due to a case that doesn't stay on",
+        "For the price, it is neat, but I really doubt I'm going to keep it on my phone",
+        "What a bummer",
+        "[Feature: one] I really loved the color combination and how the design showed up on the front as well",
+        "I bought this for my iPhone 4s, and unfortunately, it doesn't stay on",
+        "It comes in two pieces, one white piece that snugly fits on the bottom, and the pink drip portion that slides over the white piece",
+        "It's the pink piece that makes this unfortunate",
+        "It doesn't click with the white piece at all, and it easily slides off",
+        "I wanted so much to keep this case on, but I also didn't wanna risk my phone having a giant crack on the screen due to a case that doesn't stay on",
+        "For the price, it is neat, but I really doubt I'm going to keep it on my phone",
+        "What a bummer",
+        "[Feature: two] I really loved the color combination and how the design showed up on the front as well",
+        "I bought this for my iPhone 4s, and unfortunately, it doesn't stay on",
+        "It comes in two pieces, one white piece that snugly fits on the bottom, and the pink drip portion that slides over the white piece",
+        "It's the pink piece that makes this unfortunate",
+        "It doesn't click with the white piece at all, and it easily slides off",
+        "I wanted so much to keep this case on, but I also didn't wanna risk my phone having a giant crack on the screen due to a case that doesn't stay on",
+        "For the price, it is neat, but I really doubt I'm going to keep it on my phone",
+        "What a bummer",
+        "[Feature: 4S] I was expecting a cute case that fit my Verizon iPhone 4S well",
+        "I got it in the mail and I was so excited to try it on my phone",
+        "It barely fits",
+        "The button holes don't fit the buttons",
+        "(Too high up) Another thing is the melt thingies near the fromt canera and stuff kept peeling my screen protector off whenever i tried to put it on",
+        "i fell head over heels with this case and I'm so upset it doesn't fit right.",
+        "If you have the Verizon iPhone 4S, sadly, beware.."
+    ],
+    "final_summary": "I wanted so much to keep this case on, but I also didn't wanna risk my phone having a giant crack on the screen due to a case that doesn't stay on. I didn't want to risk a crack in my phone's screen because of a case."
+}
+POST https://0c31f0620c6c4cba949fc321284a8a73.us-central1.gcp.cloud.es.io:443/reviews_index/_search [status:200 duration:0.746s]
+{
+    "timestamp": "2025-06-14 17:43:35",
+    "model_name": "facebook/bart-large-cnn",
+    "user_query": "give a review on Pink & White 3d Melt Ice - cream Hard for Apple Iphone 4 4s Protect Cell ?",
+    "chunks": [
+        "I really loved the color combination and how the design showed up on the front as well",
+        "I bought this for my iPhone 4s, and unfortunately, it doesn't stay on",
+        "It comes in two pieces, one white piece that snugly fits on the bottom, and the pink drip portion that slides over the white piece",
+        "It's the pink piece that makes this unfortunate",
+        "It doesn't click with the white piece at all, and it easily slides off",
+        "[Feature: 4s] I really loved the color combination and how the design showed up on the front as well",
+        "I bought this for my iPhone 4s, and unfortunately, it doesn't stay on",
+        "It comes in two pieces, one white piece that snugly fits on the bottom, and the pink drip portion that slides over the white piece",
+        "It's the pink piece that makes this unfortunate",
+        "It doesn't click with the white piece at all, and it easily slides off",
+        "I wanted so much to keep this case on, but I also didn't wanna risk my phone having a giant crack on the screen due to a case that doesn't stay on",
+        "For the price, it is neat, but I really doubt I'm going to keep it on my phone",
+        "What a bummer",
+        "[Feature: one] I really loved the color combination and how the design showed up on the front as well",
+        "I bought this for my iPhone 4s, and unfortunately, it doesn't stay on",
+        "It comes in two pieces, one white piece that snugly fits on the bottom, and the pink drip portion that slides over the white piece",
+        "It's the pink piece that makes this unfortunate",
+        "It doesn't click with the white piece at all, and it easily slides off",
+        "I wanted so much to keep this case on, but I also didn't wanna risk my phone having a giant crack on the screen due to a case that doesn't stay on",
+        "For the price, it is neat, but I really doubt I'm going to keep it on my phone",
+        "What a bummer",
+        "[Feature: two] I really loved the color combination and how the design showed up on the front as well",
+        "I bought this for my iPhone 4s, and unfortunately, it doesn't stay on",
+        "It comes in two pieces, one white piece that snugly fits on the bottom, and the pink drip portion that slides over the white piece",
+        "It's the pink piece that makes this unfortunate",
+        "It doesn't click with the white piece at all, and it easily slides off",
+        "I wanted so much to keep this case on, but I also didn't wanna risk my phone having a giant crack on the screen due to a case that doesn't stay on",
+        "For the price, it is neat, but I really doubt I'm going to keep it on my phone",
+        "What a bummer",
+        "[Feature: 4S] I was expecting a cute case that fit my Verizon iPhone 4S well",
+        "I got it in the mail and I was so excited to try it on my phone",
+        "It barely fits",
+        "The button holes don't fit the buttons",
+        "(Too high up) Another thing is the melt thingies near the fromt canera and stuff kept peeling my screen protector off whenever i tried to put it on",
+        "i fell head over heels with this case and I'm so upset it doesn't fit right.",
+        "If you have the Verizon iPhone 4S, sadly, beware.."
+    ],
+    "final_summary": "I wanted so much to keep this case on, but I also didn't wanna risk my phone having a giant crack on the screen due to a case that doesn't stay on. It comes in two pieces, one white piece that snugly fits on the bottom, and the pink drip portion that slides over the white piece."
+}
+POST https://0c31f0620c6c4cba949fc321284a8a73.us-central1.gcp.cloud.es.io:443/reviews_index/_search [status:200 duration:0.625s]
+{
+    "timestamp": "2025-06-14 17:44:58",
+    "model_name": "facebook/bart-large-cnn",
+    "user_query": "how is LG travel wall charger ?",
+    "chunks": [
+        "[Feature: the Wall/Home Charger] This unit, the Wall/Home Charger for the LG Chocolate 3 was exactly the same as the original ..",
+        "except! it was only about 20% of the original price",
+        "Happy with the seller, unhappy that Verizon et al",
+        "mark up their products outrageously I purchased the Samsung Official OEM Travel Wall Charger from Amazon.com for my granddaughter's Samsung Galaxy S Phone",
+        "It worked great and met all our expectations",
+        "Was delivered unblemished and on time",
+        "It was a great buy! Thanks..",
+        "I'll keep on buying from Amazon",
+        "This unit, the Wall/Home Charger for the LG Chocolate 3 was exactly the same as the original ..",
+        "except! it was only about 20% of the original price",
+        "Happy with the seller, unhappy that Verizon et al",
+        "mark up their products outrageously [Feature: Samsung] I purchased the Samsung Official OEM Travel Wall Charger from Amazon.com for my granddaughter's Samsung Galaxy S Phone",
+        "It worked great and met all our expectations",
+        "Was delivered unblemished and on time",
+        "It was a great buy! Thanks..",
+        "I'll keep on buying from Amazon",
+        "[Feature: Amazon.com] I purchased the Samsung Official OEM Travel Wall Charger from Amazon.com for my granddaughter's Samsung Galaxy S Phone",
+        "It worked great and met all our expectations",
+        "Was delivered unblemished and on time",
+        "It was a great buy! Thanks..",
+        "I'll keep on buying from Amazon."
+    ],
+    "final_summary": "The Wall/Home Charger for the LG Chocolate 3 was exactly the same as the original ... except! This unit, the Wall/ home charger for theLG Chocolate 3, is the first of its kind. The Wall/home charger costs $39.99 for a set of three."
+}
+POST https://0c31f0620c6c4cba949fc321284a8a73.us-central1.gcp.cloud.es.io:443/reviews_index/_search [status:200 duration:0.627s]
+POST https://0c31f0620c6c4cba949fc321284a8a73.us-central1.gcp.cloud.es.io:443/reviews_index/_search [status:200 duration:0.654s]
+POST https://0c31f0620c6c4cba949fc321284a8a73.us-central1.gcp.cloud.es.io:443/reviews_index/_search [status:200 duration:0.728s]
+POST https://0c31f0620c6c4cba949fc321284a8a73.us-central1.gcp.cloud.es.io:443/reviews_index/_search [status:200 duration:0.630s]
+{
+    "timestamp": "2025-06-14 17:56:55",
+    "model_name": "facebook/bart-large-cnn",
+    "user_query": "how is LG travel wall charger ?",
+    "chunks": [
+        "[Feature: the Wall/Home Charger] This unit, the Wall/Home Charger for the LG Chocolate 3 was exactly the same as the original ..",
+        "except! it was only about 20% of the original price",
+        "Happy with the seller, unhappy that Verizon et al",
+        "mark up their products outrageously I purchased the Samsung Official OEM Travel Wall Charger from Amazon.com for my granddaughter's Samsung Galaxy S Phone",
+        "It worked great and met all our expectations",
+        "Was delivered unblemished and on time",
+        "It was a great buy! Thanks..",
+        "I'll keep on buying from Amazon",
+        "This unit, the Wall/Home Charger for the LG Chocolate 3 was exactly the same as the original ..",
+        "except! it was only about 20% of the original price",
+        "Happy with the seller, unhappy that Verizon et al",
+        "mark up their products outrageously [Feature: Samsung] I purchased the Samsung Official OEM Travel Wall Charger from Amazon.com for my granddaughter's Samsung Galaxy S Phone",
+        "It worked great and met all our expectations",
+        "Was delivered unblemished and on time",
+        "It was a great buy! Thanks..",
+        "I'll keep on buying from Amazon",
+        "[Feature: Amazon.com] I purchased the Samsung Official OEM Travel Wall Charger from Amazon.com for my granddaughter's Samsung Galaxy S Phone",
+        "It worked great and met all our expectations",
+        "Was delivered unblemished and on time",
+        "It was a great buy! Thanks..",
+        "I'll keep on buying from Amazon."
+    ],
+    "final_summary": "The Wall/Home Charger for the LG Chocolate 3 was exactly the same as the original ... except! This unit, the Wall/ home charger for theLG Chocolate 3, is the first of its kind. The Wall/home charger costs $39.99 for a set of three."
+}
+POST https://0c31f0620c6c4cba949fc321284a8a73.us-central1.gcp.cloud.es.io:443/reviews_index/_search [status:200 duration:0.613s]
+{
+    "timestamp": "2025-06-14 17:57:56",
+    "model_name": "facebook/bart-large-cnn",
+    "user_query": "how is samsung car charger ? give a review",
+    "chunks": [
+        "It's exactly what I thought is was so I give it a good review",
+        "I wouldn't have bought it if I didn't want it",
+        "[Feature: Samsung] This cell phone car charger was purchased at a very inexpensive price, compared to the cost of an official Samsung charger",
+        "Now I know why",
+        "In less than 7 months, it no longer works",
+        "One of the metal spring clips is no longer taut, and doesn't allow the charger to make contact with the car's metal cigarette lighter's contacts",
+        "I've bought many car chargers and home chargers for cell phones before, at inexpensive prices",
+        "This is the first one that has given me a problem",
+        "I've read numerous reviews from people saying to avoid these \"cheap chargers\", while others swear by them",
+        "It's just like going to Atlantic City or Vegas; how much money you're willing to part with all depends on how much you can afford to lose",
+        "The device came quickly, but it did not fit the Droid",
+        "I sent this review about a week ago and have received no response, except for this request to review again",
+        "The review doesn't seem to do much for the customer.I could not give zero stars",
+        "[Feature: about a week ago] The device came quickly, but it did not fit the Droid",
+        "I sent this review about a week ago and have received no response, except for this request to review again",
+        "The review doesn't seem to do much for the customer.I could not give zero stars",
+        "[Feature: Droid] The device came quickly, but it did not fit the Droid",
+        "I sent this review about a week ago and have received no response, except for this request to review again",
+        "The review doesn't seem to do much for the customer.I could not give zero stars."
+    ],
+    "final_summary": "One of the metal spring clips is no longer taut, and doesn't allow the charger to make contact with the car's metal cigarette lighter's contacts. I sent this review about a week ago and have received no response, except for this request to review again."
+}
+POST https://0c31f0620c6c4cba949fc321284a8a73.us-central1.gcp.cloud.es.io:443/reviews_index/_search [status:200 duration:0.730s]
+{
+    "timestamp": "2025-06-14 18:02:33",
+    "model_name": "facebook/bart-large-cnn",
+    "user_query": "how is samsung car charger ? ",
+    "chunks": [
+        "[Feature: Samsung] This cell phone car charger was purchased at a very inexpensive price, compared to the cost of an official Samsung charger",
+        "Now I know why",
+        "In less than 7 months, it no longer works",
+        "One of the metal spring clips is no longer taut, and doesn't allow the charger to make contact with the car's metal cigarette lighter's contacts",
+        "I've bought many car chargers and home chargers for cell phones before, at inexpensive prices",
+        "This is the first one that has given me a problem",
+        "I've read numerous reviews from people saying to avoid these \"cheap chargers\", while others swear by them",
+        "It's just like going to Atlantic City or Vegas; how much money you're willing to part with all depends on how much you can afford to lose",
+        "[Feature: less than 7 months] This cell phone car charger was purchased at a very inexpensive price, compared to the cost of an official Samsung charger",
+        "Now I know why",
+        "In less than 7 months, it no longer works",
+        "One of the metal spring clips is no longer taut, and doesn't allow the charger to make contact with the car's metal cigarette lighter's contacts",
+        "I've bought many car chargers and home chargers for cell phones before, at inexpensive prices",
+        "This is the first one that has given me a problem",
+        "I've read numerous reviews from people saying to avoid these \"cheap chargers\", while others swear by them",
+        "It's just like going to Atlantic City or Vegas; how much money you're willing to part with all depends on how much you can afford to lose",
+        "[Feature: One] This cell phone car charger was purchased at a very inexpensive price, compared to the cost of an official Samsung charger",
+        "Now I know why",
+        "In less than 7 months, it no longer works",
+        "One of the metal spring clips is no longer taut, and doesn't allow the charger to make contact with the car's metal cigarette lighter's contacts",
+        "I've bought many car chargers and home chargers for cell phones before, at inexpensive prices",
+        "This is the first one that has given me a problem",
+        "I've read numerous reviews from people saying to avoid these \"cheap chargers\", while others swear by them",
+        "It's just like going to Atlantic City or Vegas; how much money you're willing to part with all depends on how much you can afford to lose",
+        "[Feature: first] This cell phone car charger was purchased at a very inexpensive price, compared to the cost of an official Samsung charger",
+        "Now I know why",
+        "In less than 7 months, it no longer works",
+        "One of the metal spring clips is no longer taut, and doesn't allow the charger to make contact with the car's metal cigarette lighter's contacts",
+        "I've bought many car chargers and home chargers for cell phones before, at inexpensive prices",
+        "This is the first one that has given me a problem",
+        "I've read numerous reviews from people saying to avoid these \"cheap chargers\", while others swear by them",
+        "It's just like going to Atlantic City or Vegas; how much money you're willing to part with all depends on how much you can afford to lose",
+        "[Feature: Atlantic City] This cell phone car charger was purchased at a very inexpensive price, compared to the cost of an official Samsung charger",
+        "Now I know why",
+        "In less than 7 months, it no longer works",
+        "One of the metal spring clips is no longer taut, and doesn't allow the charger to make contact with the car's metal cigarette lighter's contacts",
+        "I've bought many car chargers and home chargers for cell phones before, at inexpensive prices",
+        "This is the first one that has given me a problem",
+        "I've read numerous reviews from people saying to avoid these \"cheap chargers\", while others swear by them",
+        "It's just like going to Atlantic City or Vegas; how much money you're willing to part with all depends on how much you can afford to lose."
+    ],
+    "final_summary": "One of the metal spring clips is no longer taut, and doesn't allow the charger to make contact with the car's metal cigarette lighter's contacts. One of the spring clips on the charger is also missing, and the other is missing a piece of metal from the battery pack."
+}
+{
+    "timestamp": "2025-06-14 18:34:42",
+    "user_query": "how is LG travel wall charger ?",
+    "model_name": "facebook/bart-large-cnn",
+    "num_chunks": 5,
+    "chunks": [
+        "Never needed this one. Don't know how this charger was sent to me I did not order any wall charge for this type of phone.",
+        "what can i say? pretty much like all the travel chargers for my galaxy 2 phone. price was the best",
+        "I like this charger. It's great for traveling. Also, when your phone is low on charge and you're in traffic, it comes in handy. Thank you",
+        "It did seem to be an official LG car charger, coming in an LG package as well. It worked just fine for my Rumor 2 until i took it out and plugged it back in a couple times over the course of a week. After the 3rd time, it just stopped working. I know it's not from the way I handled it, as I'm no fool when it comes to handling cheap cell phone accessories. So, while it only worked for a little while, you get what you pay for, but it was an overall waste of my time.",
+        "After purchasing my new cell phone, a LG CU 515, I decided to purchase this vehicle charger, too. I do a lot of driving and it just made sense to have a charger for my phone in the car, especially for those long drives. I've had this charger for several months now. I've used it rather frequently and have no complaints. It does what it is supposed to do and seems to be a reliable piece of equipment."
+    ],
+    "final_summary": "It worked just fine for my Rumor 2 until i took it out and plugged it back in a couple times over the course of a week. So, while it only worked for a little while, you get what you pay for, but it was an overall waste of my time."
+}
+{
+    "timestamp": "2025-06-14 18:35:51",
+    "user_query": "how is Pink & White 3d Melt Ice hard case ?",
+    "model_name": "facebook/bart-large-cnn",
+    "num_chunks": 5,
+    "chunks": [
+        "I just love this case!! It's too cute. The only issue I have with it is occasionally it will pop open at the bottom.. but it only seems to happen when there is a significant change in temp.. guess that's probly due to the hard plastic material it is made of. But overall a great and inexpensive product! !",
+        "When i first got this case i really loved it but in a matter of about a week the pink started to rub off just from it being in my bag! It was a real let down!",
+        "This case for some reason is peeling, there isn't much left of the orginal skin, i loved the case with pink being my favorite color but i wouldn't recommend this specific one for anyone.",
+        "This hello kitty case is cute and I really do like it, but its silicone. Its not hard. That's the only thing that I didn't like. I was expecting a hard case.",
+        "I was expecting this case to have the green sides instead of the pink. Maybe a picture of this or info in would be beneficial. Packaging was ripped at all corners - like someone had taken the case out of the box. This was disappointing as it was a gift, but the case itself was fine."
+    ],
+    "final_summary": "When i first got this case i really loved it but in a matter of about a week the pink started to rub off just from it being in my bag! This was disappointing as it was a gift, but the case itself was fine. It was a great gift."
+}
+{
+    "timestamp": "2025-06-14 18:43:47",
+    "user_query": "Summarize customer opinions on the Pink & White 3d Melt Ice hard case, focusing on quality and design.",
+    "model_name": "facebook/bart-large-cnn",
+    "num_chunks": 5,
+    "chunks": [
+        "Beautiful case. No complaints at all...other than the day I got it, my husband gave me an Evo 3D! That's okay. This case will be my step - daughters Christmas present.",
+        "While it is very inexpensively made, this appears to be a much better case than my previous \"bling\" case (my review on other product). It is cute and a good value.",
+        "Case was great until I got a minor surface scratch on it. After that the rubberized coating started peeling off!!!!!! !",
+        "I actually love this case. the design and color is very funky. I got 3 so my sisters can have one too. the only problem is that after 2 months the design and color starting pilling and it eventually broke. I had this product for only 2.5 months the most.",
+        "Beautiful case, bright colors, and sturdy.The picture doesn't do the product justice. I would recommend this case to youngTrident Case AG - SINF - PK AEGIS Series for Samsung Infuse - Pink - 1 Pack - Carrying Case - Retail Packagingand old also a great value."
+    ],
+    "final_summary": "Summarize reviews for Summarize customer opinions on the Pink & White 3d Melt Ice hard case, focusing on quality and design. No complaints at all...other than the day I got it, my husband gave me an Evo 3D! While it is very inexpensively made, this appears to be a much better case than my previous \"bling\" case."
+}
+{
+    "timestamp": "2025-06-14 18:45:02",
+    "user_query": "Summarize customer opinions on the Pink & White 3d Melt Ice hard case for iphone 4s, focusing on quality and design.",
+    "model_name": "facebook/bart-large-cnn",
+    "num_chunks": 5,
+    "chunks": [
+        "The case looks wonerful on the Iphone 4. The screen protector does not work well on my model but I love the color of HotPink.",
+        "I got this case for my new 4s ,( I have the white one )& love it , its very cute . It snaps on easily and comes off better than some of my other cases. I like how the top & bottom is completely open so my charger & headphones fit perfectly . The only down side is that it dose not provide any protection other than from scratches so if you drop your phone a lot than I wouldn't recommend this case but if you don't than I think it's a great value.",
+        "I love this iPhone cover. It fits my iPhone perfectly and is sturdy enough to stand up to my having dropped the phone more than a couple times. The colors have stayed true for the several yearls I've had the case, and it helps me to find my phone in my black purseSponge Bob Squarepants Bubbles Blowing Hard Case Cover Iphone 4/4s because of the bright colors and charming picture. I received this order in less than a week and was happy to get it.",
+        "My daughter orders many phone cases for her iphone and this one is her favorite! It is beautiful and it gets lots of compliments. Also, it's sturdy so just in case the phone gets dropped or falls it can withstand it. Not that you want that happening on a regular basis but just in case...",
+        "I LOVED this case for my evo 4G. its solid (didnt break when i dropped it) and vibrant! my only complaint is that after a few months of having this case the color in the back of the case started to wear down. still an amazing product"
+    ],
+    "final_summary": "Summarize reviews for Summarize customer opinions on the Pink & White 3d Melt Ice hard case for iphone 4s, focusing on quality and design. I like how the top & bottom is completely open so my charger & headphones fit perfectly. My only complaint is that after a few months of having this case the color in the back of the case started to wear down."
+}
+{
+    "timestamp": "2025-06-14 18:46:43",
+    "user_query": "Summarize customer opinions on the Pink & White 3d Melt Ice hard case for iphone 4s, focusing on quality and design.",
+    "model_name": "facebook/bart-large-cnn",
+    "num_chunks": 5,
+    "chunks": [
+        "The case looks wonerful on the Iphone 4. The screen protector does not work well on my model but I love the color of HotPink.",
+        "I got this case for my new 4s ,( I have the white one )& love it , its very cute . It snaps on easily and comes off better than some of my other cases. I like how the top & bottom is completely open so my charger & headphones fit perfectly . The only down side is that it dose not provide any protection other than from scratches so if you drop your phone a lot than I wouldn't recommend this case but if you don't than I think it's a great value.",
+        "I love this iPhone cover. It fits my iPhone perfectly and is sturdy enough to stand up to my having dropped the phone more than a couple times. The colors have stayed true for the several yearls I've had the case, and it helps me to find my phone in my black purseSponge Bob Squarepants Bubbles Blowing Hard Case Cover Iphone 4/4s because of the bright colors and charming picture. I received this order in less than a week and was happy to get it.",
+        "My daughter orders many phone cases for her iphone and this one is her favorite! It is beautiful and it gets lots of compliments. Also, it's sturdy so just in case the phone gets dropped or falls it can withstand it. Not that you want that happening on a regular basis but just in case...",
+        "I LOVED this case for my evo 4G. its solid (didnt break when i dropped it) and vibrant! my only complaint is that after a few months of having this case the color in the back of the case started to wear down. still an amazing product"
+    ],
+    "final_summary": "Summarize reviews for Summarize customer opinions on the Pink & White 3d Melt Ice hard case for iphone 4s, focusing on quality and design. I like how the top & bottom is completely open so my charger & headphones fit perfectly. My only complaint is that after a few months of having this case the color in the back of the case started to wear down."
+}
+Use pytorch device_name: cpu
+Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+{
+    "timestamp": "2025-06-14 18:57:01",
+    "model_name": "facebook/bart-large-cnn",
+    "user_query": "Summarize customer opinions on the Pink & White 3d Melt Ice hard case for iphone 4s, focusing on quality and design.",
+    "num_chunks": 15,
+    "chunks": [
+        "The case looks wonerful on the Iphone 4. The screen protector does not work well on my model but I love the color of HotPink.",
+        "I got this case for my new 4s ,( I have the white one )& love it , its very cute . It snaps on easily and comes off better than some of my other cases. I like how the top & bottom is completely open so my charger & headphones fit perfectly . The only down side is that it dose not provide any protection other than from scratches so if you drop your phone a lot than I wouldn't recommend this case but if you don't than I think it's a great value.",
+        "I love this iPhone cover. It fits my iPhone perfectly and is sturdy enough to stand up to my having dropped the phone more than a couple times. The colors have stayed true for the several yearls I've had the case, and it helps me to find my phone in my black purseSponge Bob Squarepants Bubbles Blowing Hard Case Cover Iphone 4/4s because of the bright colors and charming picture. I received this order in less than a week and was happy to get it.",
+        "My daughter orders many phone cases for her iphone and this one is her favorite! It is beautiful and it gets lots of compliments. Also, it's sturdy so just in case the phone gets dropped or falls it can withstand it. Not that you want that happening on a regular basis but just in case...",
+        "I LOVED this case for my evo 4G. its solid (didnt break when i dropped it) and vibrant! my only complaint is that after a few months of having this case the color in the back of the case started to wear down. still an amazing product",
+        "This case is really fun and i love the texture(some what of a rubber glove feel). I only had it for a a few days before my niece had to have it for her phone and she is also in love with it. gives a nice all over protection without having the phone to over heat like some other cases",
+        "I have bought a lot of iPhone cases, and this was one of those \"you get what you pay for\" kind of things. But not too shabby.",
+        "The second time a piece broke off, and the case suddenly became useless and not flattering anymore. If you are extremely careful with your phone and you know you won't drop it, I would recommend the case because it looks great. If you are like any other normal iPhone user, and drop your phone regularly, don't buy it because I guarantee you it won't last long.",
+        "Case was great until I got a minor surface scratch on it. After that the rubberized coating started peeling off!!!!!! !",
+        "Beautiful case. No complaints at all...other than the day I got it, my husband gave me an Evo 3D! That's okay. This case will be my step - daughters Christmas present.",
+        "I love this case!! its super cute and pretty durable. Only downfall is if you drop your phone on a hard surface the whole case comes off and apart..besides that very nice case.",
+        "While it is very inexpensively made, this appears to be a much better case than my previous \"bling\" case (my review on other product). It is cute and a good value.",
+        "This case is for HTC evo 3D not 4g. Waste of $ and time at least it wasnt a lot of $",
+        "This is one of my favorite cases I have this one on my phone I really love the color a lot.",
+        "Best phone case ever . Everywhere I go I get a ton of compliments on it. It was in perfect condition as well."
+    ],
+    "final_summary": "Sponge Bob Squarepants Bubbles Blowing Hard Case Cover Iphone 4/4s because of the bright colors and charming picture. The screen protector does not work well on my model but I love the color of HotPink. The only down side is that it dose not provide any protection other than from scratches so if you drop your phone a lot than I wouldn't recommend this case."
+}
+Use pytorch device_name: cpu
+Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+{
+    "timestamp": "2025-06-14 19:02:49",
+    "model_name": "facebook/bart-large-cnn",
+    "user_query": "Summarize customer opinions on the SANOXY USB Port Car Charger, focusing on quality and design",
+    "num_chunks": 15,
+    "chunks": [
+        "I could only give this USB car charger 2 stars because although it worked fine for about 3 months, it subsequently died on me.Pros: - Has 2 USB ports for charging, one (the top) is 2.1 amps. The bottom slot is lower, presumably 1 or 1.5 amps. - Fits well in my charging socket - holds tight. I've had some that were loose in my charging socket. - Works well to charge my iPhone in the top slot and the bottom slot works with most Android phones, except the very high end ones.",
+        "I am \"very happy\" with my car charger. The first one I got didnt fit my phone, they sent me a pre - paid envelope along with a \"new charger\" that fit and it is \"great.\" I am very very happy with Amazon and I love the product!",
+        "I was skeptical after having bought a few other car chargers that didn't last (one didn't make it a month), that I had low hopes for this inexpensive charger. I was happily surprised. I have been using this charger for many months and have not had a single issue. I'd recommend this charger to family and friends",
+        "Excellent car charger for the money. I purchased two of them - one for my husband and one for me. I love the retractable feature!",
+        "This charger has been great so far. It seems to charge fast compared to car chargers I have had in the past.",
+        "Just got the dual usb car charger day before yesterday and i love the quality of the product. It fits perfectly and works great! I'm glad i can finally charge my phone while still being able to use my GPS",
+        "This is another great product and i will always order from here in the future. money spent well!! If you need a great car charger this is the one you need! !",
+        "I bought this thinking it would be the same quality as an \"official\" Samsung car charger, but it most definitely isn't. My charger worked fine for about 2 months. Between regular usage on my Samsung Epic and letting people in the car with the same port plug in their phone, the charger no longer works properly. In the beginning, I could talk on the phone or have it in any position while charging. Over the 2 months the charger started getting more particular about what position it could be charged in.",
+        "Very happy with this purchase. Works as expected and charges quickly. I would recommend this charger to anyone looking for a new car charger.",
+        "This has worked great in my car for over 2 years and is by far my favorite charger. I would buy this again.",
+        "Car charger was exactly what I wanted. Came quickly. Very satisfied as it was actually fancier than I had expected.",
+        "good oem car charger, i originally bought it for my galaxy S2 and later on that week I upgrated to the Galaxy S3 and it works prefectly fine, I would recommend this product",
+        "The USB car charger is great. It allows for a passenger riding with me to also charge their phone without waiting on the other to finish.",
+        "I love this dual car charger. It's small and not bulky. It has a light to show its charging and I like that its a dual charger and it's so small.",
+        "I spend a lot of time in my car so it's nice to have a charger in the car so I don't run out of juice when I'm out on the job. The charger works fine (not a lot of power but it keeps my phone working) and the product was delivered quickly."
+    ],
+    "final_summary": "The SANOXY USB Port Car Charger has 2 USB ports for charging, one (the top) is 2.1 amps. The bottom slot is lower, presumably 1 or 1.5 amps. It works well to charge my iPhone in the top slot and the bottom slot works with most Android phones, except the very high end ones."
+}
+Use pytorch device_name: cpu
+Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+{
+    "timestamp": "2025-06-14 19:06:40",
+    "model_name": "facebook/bart-large-cnn",
+    "user_query": "Please provide a concise, natural language summary based on  SANOXY USB Port Car Charger customer reviews without copying verbatim:",
+    "num_chunks": 15,
+    "chunks": [
+        "I could only give this USB car charger 2 stars because although it worked fine for about 3 months, it subsequently died on me.Pros: - Has 2 USB ports for charging, one (the top) is 2.1 amps. The bottom slot is lower, presumably 1 or 1.5 amps. - Fits well in my charging socket - holds tight. I've had some that were loose in my charging socket. - Works well to charge my iPhone in the top slot and the bottom slot works with most Android phones, except the very high end ones.",
+        "I am \"very happy\" with my car charger. The first one I got didnt fit my phone, they sent me a pre - paid envelope along with a \"new charger\" that fit and it is \"great.\" I am very very happy with Amazon and I love the product!",
+        "I spend a lot of time in my car so it's nice to have a charger in the car so I don't run out of juice when I'm out on the job. The charger works fine (not a lot of power but it keeps my phone working) and the product was delivered quickly.",
+        "This is pretty much like car USB chargers you can find anywhere although the price is excellent. It also seems to be solid and will last.",
+        "The USB car charger is great. It allows for a passenger riding with me to also charge their phone without waiting on the other to finish.",
+        "Car charger was exactly what I wanted. Came quickly. Very satisfied as it was actually fancier than I had expected.",
+        "good oem car charger, i originally bought it for my galaxy S2 and later on that week I upgrated to the Galaxy S3 and it works prefectly fine, I would recommend this product",
+        "I'm so disappointed and not thinking that this car charger could not working . its not suitable. >< not worth it",
+        "I bought this thinking it would be the same quality as an \"official\" Samsung car charger, but it most definitely isn't. My charger worked fine for about 2 months. Between regular usage on my Samsung Epic and letting people in the car with the same port plug in their phone, the charger no longer works properly. In the beginning, I could talk on the phone or have it in any position while charging. Over the 2 months the charger started getting more particular about what position it could be charged in.",
+        "If you need a charger and are tired of everyone \"borrowing\" yours to plug into the usb in the car or thier computer this is it! No usb involved. Regular wall charger. Simple packaging to save everyone money and the environment. Shipped faster than expected. Does exactly what I need it to for a great price!",
+        "This is another great product and i will always order from here in the future. money spent well!! If you need a great car charger this is the one you need! !",
+        "This has worked great in my car for over 2 years and is by far my favorite charger. I would buy this again.",
+        "Excellent product! This is by far the best car charger that I've had for this phone! Love it! Love it!",
+        "Wanted one for each car to charge phone or ipad without needing to buy an expensive car charger works great.",
+        "This charger has been great so far. It seems to charge fast compared to car chargers I have had in the past."
+    ],
+    "final_summary": "The SANOXY USB Port Car Charger has 2 USB ports for charging, one (the top) is 2.1 amps. The bottom slot is lower, presumably 1 or 1.5 amps. Works well to charge my iPhone in the top slot and the bottom slot works with most Android phones, except the very high end ones."
+}
+Use pytorch device_name: cpu
+Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+{
+    "timestamp": "2025-06-14 19:16:26",
+    "model_name": "facebook/bart-large-cnn",
+    "user_query": "Please provide a concise, natural language summary based on  SANOXY  customer reviews without copying verbatim:",
+    "num_chunks": 15,
+    "chunks": [
+        "This is why people dont do your reviews. I dont need to comment to tell U what was good about the item. Just B happy that I spent any time giving any feedback. Thanx",
+        "Good service. The product worked well. Really liked the price!! They want more words for the review but it's a simple item and it works.",
+        "Ordered October 3,2012Well it is hard to write a review on something you have not received.Seems to be taking a long time to arrive.Will update if it arrives.",
+        "works great fits perfectly in the space I have I really don't have anything else to say but they want so many words",
+        "Fast delivery, good price, good condition. Was what I expected. No problems or inconveniences experienced with this purchase. Convenient and satisfactory purchase.",
+        "Even better than the product itself was the customer service ...a fantastic seller to deal with! !",
+        "It's everything and more than as advertised. I've recommended it to my friends and family, and I would not hesitate to purchase it again.",
+        "All these reviews are irrelevant. The people who received this item were probably not so lucky :) This product is amazing, cute, small, and charges 2 phones or whatever you want to charge at the same time. It works great, and it lights up blue. I recommend this product because it works and the price is unbeatable.",
+        "Everything was great as far as fast service, price, etc. The only problem I had was that the color is mire maroon and not pink like in the picture. Wish I'd of known. My daughter loves pink so I hope she still likes this one.",
+        "Bought this a year or two ago. Never got around to reviewing. I'm still using it. Great quality. Only complaint is the folding prongs to plug in, I guess it's good for travel but a pain to plug in in the dark.",
+        "Product is as described. Works well. I appreciate the fast service, I would highly recommend this product to any persons.",
+        "I had a very good experience with this seller. My merchandise arrived early and in excellent condition. I would definitley transact business with this seller again.",
+        "I am satisfied with my purchase.",
+        "Smooth transaction and item functions as advertised although I have not used it heavily yet. So far so good!",
+        "ITEM NOT SENT from Blue Top Company in Hong Kong and it's been over two months! I will report this. DO NOT use this company. Not happy at all!"
+    ],
+    "final_summary": "Paraphrase and summarize the following customer opinions on Please provide a concise, natural language summary based on  SANOXY  customer reviews without copying verbatim:: Customer review: This is why people dont do your reviews. I dont need to comment to tell U what was good about the item. Just B happy that I spent any time giving any feedback."
+}
+Use pytorch device_name: cpu
+Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+{
+    "timestamp": "2025-06-14 19:17:51",
+    "model_name": "facebook/bart-large-cnn",
+    "user_query": "Please provide a concise, natural language summary based on SANOXY brand customer reviews without copying verbatim:",
+    "num_chunks": 15,
+    "chunks": [
+        "This is why people dont do your reviews. I dont need to comment to tell U what was good about the item. Just B happy that I spent any time giving any feedback. Thanx",
+        "Good service. The product worked well. Really liked the price!! They want more words for the review but it's a simple item and it works.",
+        "Ordered October 3,2012Well it is hard to write a review on something you have not received.Seems to be taking a long time to arrive.Will update if it arrives.",
+        "Even better than the product itself was the customer service ...a fantastic seller to deal with! !",
+        "works great fits perfectly in the space I have I really don't have anything else to say but they want so many words",
+        "Fast delivery, good price, good condition. Was what I expected. No problems or inconveniences experienced with this purchase. Convenient and satisfactory purchase.",
+        "It's everything and more than as advertised. I've recommended it to my friends and family, and I would not hesitate to purchase it again.",
+        "I had a very good experience with this seller. My merchandise arrived early and in excellent condition. I would definitley transact business with this seller again.",
+        "I was also shocked to hear all the positive compliments I was hearing from people at my job, fitness center, and throughout the community. Everybody was loving the case, and what they don't know is that it cost me 60 % CHEAPER then all the other brand. This is the best purchase I've made on the internet, and I am going to buy more for my family in time for the Holidays. THANK YOU POWERBEAR!!!!!!!!!!!!! !",
+        "I bought the brand name because they are made much better than the one generic which broke in a month.",
+        "I am satisfied with my purchase.",
+        "Luv it what else can I say. Same as other cases all friends liked it and actually want to order",
+        "If you advertise a product with a photo, you should deliver the product that is shown and not a substitute. The product delivered to me works but I bought the product because the replacement charger I was looking for matched that of the product shown in the advertised photo. This reflects on the seller and to me gives me the impression that they really do not care about the buyer by accurately managing the content of what they are selling online (product and photo/images)and just want to get a sale.",
+        "Bought this a year or two ago. Never got around to reviewing. I'm still using it. Great quality. Only complaint is the folding prongs to plug in, I guess it's good for travel but a pain to plug in in the dark.",
+        "ITEM NOT SENT from Blue Top Company in Hong Kong and it's been over two months! I will report this. DO NOT use this company. Not happy at all!"
+    ],
+    "final_summary": "Paraphrase and summarize the following customer opinions on Please provide a concise, natural language summary based on SANOXY brand customer reviews without copying verbatim:: Customer review: This is why people dont do your reviews. I dont need to comment to tell U what was good about the item. Just B happy that I spent any time giving any feedback. Thanx."
+}
+Use pytorch device_name: cpu
+Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+{
+    "timestamp": "2025-06-14 19:19:32",
+    "model_name": "facebook/bart-large-cnn",
+    "user_query": "Please provide a concise, natural language summary based on Samsung Car chaarger customer reviews without copying verbatim:",
+    "num_chunks": 15,
+    "chunks": [
+        "Excelente producto. Lo compr para cargar en mi carro mi Samsung Galaxy S2 y carga perfectamente el telfono. Vendedor y producto 100% recomendado.",
+        "This is why people dont do your reviews. I dont need to comment to tell U what was good about the item. Just B happy that I spent any time giving any feedback. Thanx",
+        "I am \"very happy\" with my car charger. The first one I got didnt fit my phone, they sent me a pre - paid envelope along with a \"new charger\" that fit and it is \"great.\" I am very very happy with Amazon and I love the product!",
+        "Love my case. Looks great!! Came fast. Thanks a ton. Feels really solid and fits perfect. I do not know what else to say about it but everytime I click submit it tells me to say more. There that shoul be enough words geeze, its a phone case not a car.",
+        "This is highly good quality charger. I am happy I bought this. It is original samsung that matches my phone brand. I recommend this to everyone looking for the best car charger. : - )",
+        "I am a truck driver, so obviously having a car charger is majorly important for me to keep all my electronics charged. I ordered this one a while back, and it doesn't work at all. I don't believe this is reflective of Samsung and the quality of their products....more than likely this was just a bad one out of the bunch.",
+        "I bought this thinking it would be the same quality as an \"official\" Samsung car charger, but it most definitely isn't. My charger worked fine for about 2 months. Between regular usage on my Samsung Epic and letting people in the car with the same port plug in their phone, the charger no longer works properly. In the beginning, I could talk on the phone or have it in any position while charging. Over the 2 months the charger started getting more particular about what position it could be charged in.",
+        "Good service. The product worked well. Really liked the price!! They want more words for the review but it's a simple item and it works.",
+        "This works great for my Sprint Samsung Gallexy S2 phnone and for the price I should have gotten one for each car. I would buy this again for sure.",
+        "The charger works well, and doesn't have a light on if the phone isn't charging so it doesn't drain your car battery. It is Samsung OEM product, so you know it will work fine with your Samsung phone, and saves a ton of money over buying a carrier branded one. Glad I got it!",
+        "Excellent product! This is by far the best car charger that I've had for this phone! Love it! Love it!",
+        "Looks good and gets positive feedback. It's not very hard mental and dents easily however. It's clearly not OEM but it's a fun accessory for your phone and for your Porsche.",
+        "better than the one i got with the cel phone. can keep it in the car and its there when i need it.",
+        "excellent unit and compact to keep phone charged on trips. keep in car for those times when on trips.great little unit very compact",
+        "This review is more for the company and not for the product. It's an OEM Samsung charger so it really has nothing to do with the quality of SF Planet. But to say the least SF Planet came through for me in a very short time and with exactly what I wanted. The charger stopped working so I contacted the company for a replacement. They responded in less than 12 hours and are sending a brand new replacement to my home address. I appreciate their quick response and customer service.James Garner"
+    ],
+    "final_summary": "Paraphrase and summarize the following customer opinions on Please provide a concise, natural language summary based on Samsung Car chaarger customer reviews without copying verbatim. Customer review: Love my case. Looks great!! Came fast. Feels really solid and fits perfect. There that shoul be enough words geeze, its a phone case not a car."
+}
+Use pytorch device_name: cpu
+Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+Use pytorch device_name: cpu
+Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+Use pytorch device_name: cpu
+Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+Use pytorch device_name: cpu
+Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+Use pytorch device_name: cpu
+Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+Use pytorch device_name: cpu
+Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+Use pytorch device_name: cpu
+Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+Use pytorch device_name: cpu
+Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+Use pytorch device_name: cpu
+Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+Use pytorch device_name: cpu
+Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+Use pytorch device_name: cpu
+Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+Use pytorch device_name: cpu
+Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+Use pytorch device_name: cpu
+Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+Use pytorch device_name: cpu
+Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+Use pytorch device_name: cpu
+Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+Use pytorch device_name: cpu
+Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+Use pytorch device_name: cpu
+Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+Use pytorch device_name: cpu
+Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+Use pytorch device_name: cpu
+Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+{
+    "timestamp": "2025-06-14 21:50:58",
+    "model_name": "sshleifer/distilbart-cnn-12-6",
+    "user_query": "Summarize customer opinions on the Pink & White 3d Melt Ice hard case, focusing on quality and design.",
+    "num_chunks_processed": 15,
+    "original_chunks": [
+        "Beautiful case. No complaints at all...other than the day I got it, my husband gave me an Evo 3D! That's okay. This case will be my step - daughters Christmas present.",
+        "While it is very inexpensively made, this appears to be a much better case than my previous \"bling\" case (my review on other product). It is cute and a good value.",
+        "Case was great until I got a minor surface scratch on it. After that the rubberized coating started peeling off!!!!!! !",
+        "I actually love this case. the design and color is very funky. I got 3 so my sisters can have one too. the only problem is that after 2 months the design and color starting pilling and it eventually broke. I had this product for only 2.5 months the most.",
+        "Beautiful case, bright colors, and sturdy.The picture doesn't do the product justice. I would recommend this case to youngTrident Case AG - SINF - PK AEGIS Series for Samsung Infuse - Pink - 1 Pack - Carrying Case - Retail Packagingand old also a great value.",
+        "very cute case but it only lasted a week until it cracked and unusable. you get what you pay for.",
+        "Case was nice ....but can't handle rough punishment .....broke third day I had it ....put it in my pocket the side caught and broke .....could have gone with out it",
+        "I ordered the black and pink leopard case but instead was greeted with the multi - colored case in which had looked like it had been used before (i.e. scratches, worn, faded spots).Nevertheless, it is a very good case and does it's job well.",
+        "It was a cute case, but too flimsy and not what I was looking for in general. I wanted more protection.",
+        "This is a very nice case I braught for my wife on her birthday she loves it very much especially the color.",
+        "When i first got this case i really loved it but in a matter of about a week the pink started to rub off just from it being in my bag! It was a real let down!",
+        "I loved the case when I got it in the mail. It is super cute! I had it for about a week when the covering started to peel off the back where I hold my phone. Now the spot is getting bigger and bigger so in the middle of my cute pink leopard print case is a silver crater. I emailed the sender with no response. I had to order another one in a different style :(",
+        "I got this case about 6 months ago and loved it!! I couldn't stop feeling it because its just so smooth!! it was very protective, It lasted a while then the design started peeling off, which made me sad, but all in all Great case for the price",
+        "I just love this case!! It's too cute. The only issue I have with it is occasionally it will pop open at the bottom.. but it only seems to happen when there is a significant change in temp.. guess that's probly due to the hard plastic material it is made of. But overall a great and inexpensive product! !",
+        "The case in the photo looks great and very cute; however, when it arrives, it comes scratched up, flimsy and not worth $8 at all. Needless to say, I returned the product."
+    ],
+    "extracted_summary": "Case was nice ....but can't handle rough punishment .....broke third day I had it ....put it in my pocket the side caught and broke .....could have gone with out it I ordered the black and pink leopard case but instead was greeted with the multi - colored case in which had looked like it had been used before (i.e. scratches, worn, faded spots).Nevertheless, it is a very good case and does it's job well. It was a cute case, but too flimsy and not what I was looking for in general. This is a very nice case I braught for my wife on her birthday she loves it very much especially the color. When i first got this case i really loved it but in a matter of about a week the pink started to rub off just from it being in my bag! I loved the case when I got it in the mail.",
+    "final_abstractive_summary": " Case was nice ....but can't handle rough punishment .....broke third day I had it ....put it in my pocket the side caught and broke .....could have gone with out it ."
+}
+Use pytorch device_name: cpu
+Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+{
+    "timestamp": "2025-06-14 22:10:34",
+    "model_name": "sshleifer/distilbart-cnn-12-6",
+    "user_query": "Summarize customer opinions on the Pink & White 3d Melt Ice hard case, focusing on quality and design.",
+    "num_chunks_processed": 15,
+    "original_chunks": [
+        "Beautiful case. No complaints at all...other than the day I got it, my husband gave me an Evo 3D! That's okay. This case will be my step - daughters Christmas present.",
+        "While it is very inexpensively made, this appears to be a much better case than my previous \"bling\" case (my review on other product). It is cute and a good value.",
+        "Case was great until I got a minor surface scratch on it. After that the rubberized coating started peeling off!!!!!! !",
+        "I actually love this case. the design and color is very funky. I got 3 so my sisters can have one too. the only problem is that after 2 months the design and color starting pilling and it eventually broke. I had this product for only 2.5 months the most.",
+        "Beautiful case, bright colors, and sturdy.The picture doesn't do the product justice. I would recommend this case to youngTrident Case AG - SINF - PK AEGIS Series for Samsung Infuse - Pink - 1 Pack - Carrying Case - Retail Packagingand old also a great value.",
+        "very cute case but it only lasted a week until it cracked and unusable. you get what you pay for.",
+        "Case was nice ....but can't handle rough punishment .....broke third day I had it ....put it in my pocket the side caught and broke .....could have gone with out it",
+        "I ordered the black and pink leopard case but instead was greeted with the multi - colored case in which had looked like it had been used before (i.e. scratches, worn, faded spots).Nevertheless, it is a very good case and does it's job well.",
+        "It was a cute case, but too flimsy and not what I was looking for in general. I wanted more protection.",
+        "This is a very nice case I braught for my wife on her birthday she loves it very much especially the color.",
+        "When i first got this case i really loved it but in a matter of about a week the pink started to rub off just from it being in my bag! It was a real let down!",
+        "I loved the case when I got it in the mail. It is super cute! I had it for about a week when the covering started to peel off the back where I hold my phone. Now the spot is getting bigger and bigger so in the middle of my cute pink leopard print case is a silver crater. I emailed the sender with no response. I had to order another one in a different style :(",
+        "I got this case about 6 months ago and loved it!! I couldn't stop feeling it because its just so smooth!! it was very protective, It lasted a while then the design started peeling off, which made me sad, but all in all Great case for the price",
+        "I just love this case!! It's too cute. The only issue I have with it is occasionally it will pop open at the bottom.. but it only seems to happen when there is a significant change in temp.. guess that's probly due to the hard plastic material it is made of. But overall a great and inexpensive product! !",
+        "The case in the photo looks great and very cute; however, when it arrives, it comes scratched up, flimsy and not worth $8 at all. Needless to say, I returned the product."
+    ],
+    "extracted_summary": "Case was nice ....but can't handle rough punishment .....broke third day I had it ....put it in my pocket the side caught and broke .....could have gone with out it I ordered the black and pink leopard case but instead was greeted with the multi - colored case in which had looked like it had been used before (i.e. scratches, worn, faded spots).Nevertheless, it is a very good case and does it's job well. It was a cute case, but too flimsy and not what I was looking for in general. This is a very nice case I braught for my wife on her birthday she loves it very much especially the color. When i first got this case i really loved it but in a matter of about a week the pink started to rub off just from it being in my bag! I loved the case when I got it in the mail.",
+    "final_abstractive_summary": " Case was nice ....but can't handle rough punishment .....broke third day I had it ....put it in my pocket the side caught and broke .....could have gone with out it ."
+}
+Use pytorch device_name: cpu
+Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+{
+    "timestamp": "2025-06-14 22:11:50",
+    "model_name": "sshleifer/distilbart-cnn-12-6",
+    "user_query": "Summarize customer opinions on the Pink & White 3d Melt Ice hard case",
+    "num_chunks_processed": 15,
+    "original_chunks": [
+        "Beautiful case. No complaints at all...other than the day I got it, my husband gave me an Evo 3D! That's okay. This case will be my step - daughters Christmas present.",
+        "Case was nice ....but can't handle rough punishment .....broke third day I had it ....put it in my pocket the side caught and broke .....could have gone with out it",
+        "While it is very inexpensively made, this appears to be a much better case than my previous \"bling\" case (my review on other product). It is cute and a good value.",
+        "Case was great until I got a minor surface scratch on it. After that the rubberized coating started peeling off!!!!!! !",
+        "When i first got this case i really loved it but in a matter of about a week the pink started to rub off just from it being in my bag! It was a real let down!",
+        "very cute case but it only lasted a week until it cracked and unusable. you get what you pay for.",
+        "It was a cute case, but too flimsy and not what I was looking for in general. I wanted more protection.",
+        "I just love this case!! It's too cute. The only issue I have with it is occasionally it will pop open at the bottom.. but it only seems to happen when there is a significant change in temp.. guess that's probly due to the hard plastic material it is made of. But overall a great and inexpensive product! !",
+        "I am a case collector, but I'm also a tomboy so this case is just so perfect. I love that the white and black little lego things are removable. Overall this case is my new favorite! ;)",
+        "I actually love this case. the design and color is very funky. I got 3 so my sisters can have one too. the only problem is that after 2 months the design and color starting pilling and it eventually broke. I had this product for only 2.5 months the most.",
+        "This is one of those super - soft silicone cases. Pros: it protects well on the parts that it covers, it's super grippy, it looks cool, it doesn't have an offensive odor. It also fits surprisingly well - even the tiny holes line up. The graphics on the back are sharp, the Gameboy stuff is 3 - D and looks really good. Overall, nice quality.",
+        "Beautiful case, bright colors, and sturdy.The picture doesn't do the product justice. I would recommend this case to youngTrident Case AG - SINF - PK AEGIS Series for Samsung Infuse - Pink - 1 Pack - Carrying Case - Retail Packagingand old also a great value.",
+        "This is a very nice case I braught for my wife on her birthday she loves it very much especially the color.",
+        "I got this case about 6 months ago and loved it!! I couldn't stop feeling it because its just so smooth!! it was very protective, It lasted a while then the design started peeling off, which made me sad, but all in all Great case for the price",
+        "I loved the case when I got it in the mail. It is super cute! I had it for about a week when the covering started to peel off the back where I hold my phone. Now the spot is getting bigger and bigger so in the middle of my cute pink leopard print case is a silver crater. I emailed the sender with no response. I had to order another one in a different style :("
+    ],
+    "extracted_summary": "Case was nice ....but can't handle rough punishment .....broke third day I had it ....put it in my pocket the side caught and broke .....could have gone with out it While it is very inexpensively made, this appears to be a much better case than my previous \"bling\" case (my review on other product). When i first got this case i really loved it but in a matter of about a week the pink started to rub off just from it being in my bag! It was a cute case, but too flimsy and not what I was looking for in general. I am a case collector, but I'm also a tomboy so this case is just so perfect. Pros: it protects well on the parts that it covers, it's super grippy, it looks cool, it doesn't have an offensive odor.",
+    "final_abstractive_summary": " Case was nice ....but can't handle rough punishment .....broke third day I had it ....put it in my pocket the side caught and broke . It was a cute case, but too flimsy and not what I was looking for in general ."
+}
+{
+    "timestamp": "2025-06-15 01:49:42",
+    "model_name": "google/flan-t5-xl",
+    "user_query": "Summarize customer opinions on the Pink & White 3d Melt Ice hard case, focusing on quality and design.",
+    "num_chunks_processed": 15,
+    "original_chunks": [
+        "Beautiful case. No complaints at all...other than the day I got it, my husband gave me an Evo 3D! That's okay. This case will be my step - daughters Christmas present.",
+        "While it is very inexpensively made, this appears to be a much better case than my previous \"bling\" case (my review on other product). It is cute and a good value.",
+        "Case was great until I got a minor surface scratch on it. After that the rubberized coating started peeling off!!!!!! !",
+        "I actually love this case. the design and color is very funky. I got 3 so my sisters can have one too. the only problem is that after 2 months the design and color starting pilling and it eventually broke. I had this product for only 2.5 months the most.",
+        "Beautiful case, bright colors, and sturdy.The picture doesn't do the product justice. I would recommend this case to youngTrident Case AG - SINF - PK AEGIS Series for Samsung Infuse - Pink - 1 Pack - Carrying Case - Retail Packagingand old also a great value.",
+        "very cute case but it only lasted a week until it cracked and unusable. you get what you pay for.",
+        "Case was nice ....but can't handle rough punishment .....broke third day I had it ....put it in my pocket the side caught and broke .....could have gone with out it",
+        "I ordered the black and pink leopard case but instead was greeted with the multi - colored case in which had looked like it had been used before (i.e. scratches, worn, faded spots).Nevertheless, it is a very good case and does it's job well.",
+        "It was a cute case, but too flimsy and not what I was looking for in general. I wanted more protection.",
+        "This is a very nice case I braught for my wife on her birthday she loves it very much especially the color.",
+        "When i first got this case i really loved it but in a matter of about a week the pink started to rub off just from it being in my bag! It was a real let down!",
+        "I loved the case when I got it in the mail. It is super cute! I had it for about a week when the covering started to peel off the back where I hold my phone. Now the spot is getting bigger and bigger so in the middle of my cute pink leopard print case is a silver crater. I emailed the sender with no response. I had to order another one in a different style :(",
+        "I got this case about 6 months ago and loved it!! I couldn't stop feeling it because its just so smooth!! it was very protective, It lasted a while then the design started peeling off, which made me sad, but all in all Great case for the price",
+        "I just love this case!! It's too cute. The only issue I have with it is occasionally it will pop open at the bottom.. but it only seems to happen when there is a significant change in temp.. guess that's probly due to the hard plastic material it is made of. But overall a great and inexpensive product! !",
+        "The case in the photo looks great and very cute; however, when it arrives, it comes scratched up, flimsy and not worth $8 at all. Needless to say, I returned the product."
+    ],
+    "extracted_summary": "Case was nice ....but can't handle rough punishment .....broke third day I had it ....put it in my pocket the side caught and broke .....could have gone with out it I ordered the black and pink leopard case but instead was greeted with the multi - colored case in which had looked like it had been used before (i.e. scratches, worn, faded spots).Nevertheless, it is a very good case and does it's job well. It was a cute case, but too flimsy and not what I was looking for in general. This is a very nice case I braught for my wife on her birthday she loves it very much especially the color. When i first got this case i really loved it but in a matter of about a week the pink started to rub off just from it being in my bag! I loved the case when I got it in the mail.",
+    "final_abstractive_summary": "It's a cute case, but it's not worth the money. I've had it for a few months now and the color has started to rub off."
+}
+Use pytorch device_name: cpu
+Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+{
+    "timestamp": "2025-06-15 02:01:56",
+    "model_name": "google/flan-t5-xl",
+    "user_query": "Summarize customer opinions on the Pink & White 3d Melt Ice hard case, focusing on quality and design.",
+    "num_chunks_processed": 15,
+    "original_chunks": [
+        "Beautiful case. No complaints at all...other than the day I got it, my husband gave me an Evo 3D! That's okay. This case will be my step - daughters Christmas present.",
+        "While it is very inexpensively made, this appears to be a much better case than my previous \"bling\" case (my review on other product). It is cute and a good value.",
+        "Case was great until I got a minor surface scratch on it. After that the rubberized coating started peeling off!!!!!! !",
+        "I actually love this case. the design and color is very funky. I got 3 so my sisters can have one too. the only problem is that after 2 months the design and color starting pilling and it eventually broke. I had this product for only 2.5 months the most.",
+        "Beautiful case, bright colors, and sturdy.The picture doesn't do the product justice. I would recommend this case to youngTrident Case AG - SINF - PK AEGIS Series for Samsung Infuse - Pink - 1 Pack - Carrying Case - Retail Packagingand old also a great value.",
+        "very cute case but it only lasted a week until it cracked and unusable. you get what you pay for.",
+        "Case was nice ....but can't handle rough punishment .....broke third day I had it ....put it in my pocket the side caught and broke .....could have gone with out it",
+        "I ordered the black and pink leopard case but instead was greeted with the multi - colored case in which had looked like it had been used before (i.e. scratches, worn, faded spots).Nevertheless, it is a very good case and does it's job well.",
+        "It was a cute case, but too flimsy and not what I was looking for in general. I wanted more protection.",
+        "This is a very nice case I braught for my wife on her birthday she loves it very much especially the color.",
+        "When i first got this case i really loved it but in a matter of about a week the pink started to rub off just from it being in my bag! It was a real let down!",
+        "I loved the case when I got it in the mail. It is super cute! I had it for about a week when the covering started to peel off the back where I hold my phone. Now the spot is getting bigger and bigger so in the middle of my cute pink leopard print case is a silver crater. I emailed the sender with no response. I had to order another one in a different style :(",
+        "I got this case about 6 months ago and loved it!! I couldn't stop feeling it because its just so smooth!! it was very protective, It lasted a while then the design started peeling off, which made me sad, but all in all Great case for the price",
+        "I just love this case!! It's too cute. The only issue I have with it is occasionally it will pop open at the bottom.. but it only seems to happen when there is a significant change in temp.. guess that's probly due to the hard plastic material it is made of. But overall a great and inexpensive product! !",
+        "The case in the photo looks great and very cute; however, when it arrives, it comes scratched up, flimsy and not worth $8 at all. Needless to say, I returned the product."
+    ],
+    "extracted_summary": "Case was nice ....but can't handle rough punishment .....broke third day I had it ....put it in my pocket the side caught and broke .....could have gone with out it I ordered the black and pink leopard case but instead was greeted with the multi - colored case in which had looked like it had been used before (i.e. scratches, worn, faded spots).Nevertheless, it is a very good case and does it's job well. It was a cute case, but too flimsy and not what I was looking for in general. This is a very nice case I braught for my wife on her birthday she loves it very much especially the color. When i first got this case i really loved it but in a matter of about a week the pink started to rub off just from it being in my bag! I loved the case when I got it in the mail.",
+    "final_abstractive_summary": "It's a cute case, but it doesn't last very long. I've had it for a few months now and it's starting to rub off."
+}
+Use pytorch device_name: cpu
+Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+{
+    "timestamp": "2025-06-15 02:09:28",
+    "model_name": "google/flan-t5-xl",
+    "user_query": "Summarize customer opinions on the SANOXY High Output Dual USB Port, focusing on quality and design.",
+    "num_chunks_processed": 15,
+    "original_chunks": [
+        "I love that it has two ports for my phone and ipod. Who wants to be putting too many things in one socket. Sleek and convenient to store and I just love it.",
+        "I love the fact of 2 USB ports and the lil blue light is a nice touch.",
+        "nice having multiple ports with out more cords, small and compact, considering buying an extra one for my back seat as well",
+        "I would buy this again. The \"crown\" was a little bit \"thicker\" than what I had expected, but still a nice usb port at a great price.",
+        "I was happy about the prospect of this dual port charger, however I have to big issues with it.1) it doesn't seat properly in the power outlet. Wants to spring out just enough to not make contact. I had to use tape to hold it in place, and that is only a temp soln at best.2) it doesn't have adequate output to charge my Galaxy S 3. barely keeps the charge where it's at, let alone increase the batt %",
+        "I bought one for both of my kids and they enthusiastically endorsed! Fits well, all ports accessible, ligtht - weight and they get compliments and \"Where did you get that?\" all the time.",
+        "Can't go wrong with the price and certainly can't argue with the benefits of OEM vs. generic (mA output and reliability at the top of the list! ).",
+        "When I read the I improperly assumed that the dual ports shown as for apple and others, but that both where the \"High output\" ports. Only one is a high output port, and it's the one configured for iPad. So Android users looking for a 2.1 a charger, keep looking. I will say the High Output port is slightly better 800mA vs 700mA.",
+        "It's really good! Works great it was really cheap! The item arrived before shipment date and I was in a big rush to get it! It's has more than one port so you can charge two phones",
+        "Great product. It has dual ports for both charging my cell phone and my GPS. I highly recommend it. Great price too.",
+        "The added benefit of USB is that it allows me to standardize and use the cable in the car or house.",
+        "Everytime I was on my way to the grocery store my phone would go dead now that I have my usb port it is a thing of the past. it is lightweight and works great to. I can charge myphone and bluetooth headset at the sametime I love it!.",
+        "This is a great product, has two USB outputs and can charge two devices at the same time.This item was shipped from overseas and I got it in about 2 weeks, which is much faster than the estimated time.It doesn't get hot (as opposed to similar thing I got elsewhere) and I'm very happy with this.",
+        "work fine the price is right.i recommend to buy. work good on any micro usb port. great for traveling. thanks",
+        "Excellent quality and improved visability (lighted) so I can find it at night. No problem with 2 devices greta power."
+    ],
+    "extracted_summary": "I love that it has two ports for my phone and ipod. Sleek and convenient to store and I just love it. I love the fact of 2 USB ports and the lil blue light is a nice touch. The \"crown\" was a little bit \"thicker\" than what I had expected, but still a nice usb port at a great price. I was happy about the prospect of this dual port charger, however I have to big issues with it.1) it doesn't seat properly in the power outlet. I had to use tape to hold it in place, and that is only a temp soln at best.2) it doesn't have adequate output to charge my Galaxy S 3. barely keeps the charge where it's at, let alone increase the batt % I bought one for both of my kids and they enthusiastically endorsed! Can't go wrong with the price and certainly can't argue with the benefits of OEM vs. generic (mA output and reliability at the top of the list!",
+    "final_abstractive_summary": "Positive aspects: I love that it has two ports for my phone and ipod. Sleek and convenient to store and I just love it. I love the fact of 2 USB ports and the lil blue light is a nice touch."
+}
+Use pytorch device_name: cpu
+Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+{
+    "timestamp": "2025-06-15 02:22:46",
+    "model_name": "google/flan-t5-xl",
+    "user_query": "Summarize customer opinions on the SANOXY High Output Dual USB Port, focusing on quality and design.",
+    "num_chunks_processed": 15,
+    "original_chunks": [
+        "I love that it has two ports for my phone and ipod. Who wants to be putting too many things in one socket. Sleek and convenient to store and I just love it.",
+        "I love the fact of 2 USB ports and the lil blue light is a nice touch.",
+        "nice having multiple ports with out more cords, small and compact, considering buying an extra one for my back seat as well",
+        "I would buy this again. The \"crown\" was a little bit \"thicker\" than what I had expected, but still a nice usb port at a great price.",
+        "I was happy about the prospect of this dual port charger, however I have to big issues with it.1) it doesn't seat properly in the power outlet. Wants to spring out just enough to not make contact. I had to use tape to hold it in place, and that is only a temp soln at best.2) it doesn't have adequate output to charge my Galaxy S 3. barely keeps the charge where it's at, let alone increase the batt %",
+        "I bought one for both of my kids and they enthusiastically endorsed! Fits well, all ports accessible, ligtht - weight and they get compliments and \"Where did you get that?\" all the time.",
+        "Can't go wrong with the price and certainly can't argue with the benefits of OEM vs. generic (mA output and reliability at the top of the list! ).",
+        "When I read the I improperly assumed that the dual ports shown as for apple and others, but that both where the \"High output\" ports. Only one is a high output port, and it's the one configured for iPad. So Android users looking for a 2.1 a charger, keep looking. I will say the High Output port is slightly better 800mA vs 700mA.",
+        "It's really good! Works great it was really cheap! The item arrived before shipment date and I was in a big rush to get it! It's has more than one port so you can charge two phones",
+        "Great product. It has dual ports for both charging my cell phone and my GPS. I highly recommend it. Great price too.",
+        "The added benefit of USB is that it allows me to standardize and use the cable in the car or house.",
+        "Everytime I was on my way to the grocery store my phone would go dead now that I have my usb port it is a thing of the past. it is lightweight and works great to. I can charge myphone and bluetooth headset at the sametime I love it!.",
+        "This is a great product, has two USB outputs and can charge two devices at the same time.This item was shipped from overseas and I got it in about 2 weeks, which is much faster than the estimated time.It doesn't get hot (as opposed to similar thing I got elsewhere) and I'm very happy with this.",
+        "work fine the price is right.i recommend to buy. work good on any micro usb port. great for traveling. thanks",
+        "Excellent quality and improved visability (lighted) so I can find it at night. No problem with 2 devices greta power."
+    ],
+    "extracted_summary": "I love that it has two ports for my phone and ipod. Sleek and convenient to store and I just love it. I love the fact of 2 USB ports and the lil blue light is a nice touch. The \"crown\" was a little bit \"thicker\" than what I had expected, but still a nice usb port at a great price. I was happy about the prospect of this dual port charger, however I have to big issues with it.1) it doesn't seat properly in the power outlet. I had to use tape to hold it in place, and that is only a temp soln at best.2) it doesn't have adequate output to charge my Galaxy S 3. barely keeps the charge where it's at, let alone increase the batt % I bought one for both of my kids and they enthusiastically endorsed! Can't go wrong with the price and certainly can't argue with the benefits of OEM vs. generic (mA output and reliability at the top of the list!",
+    "final_abstractive_summary": "The SANOXY High Output Dual USB Port is a dual port USB charger with a blue light. It's a good buy if you need two ports for your devices."
+}
+Use pytorch device_name: cpu
+Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+Xet Storage is enabled for this repo, but the 'hf_xet' package is not installed. Falling back to regular HTTP download. For better performance, install the package with: `pip install huggingface_hub[hf_xet]` or `pip install hf_xet`
+Xet Storage is enabled for this repo, but the 'hf_xet' package is not installed. Falling back to regular HTTP download. For better performance, install the package with: `pip install huggingface_hub[hf_xet]` or `pip install hf_xet`
+{
+    "timestamp": "2025-06-15 02:44:50",
+    "model_name": "google/flan-t5-large",
+    "user_query": "Summarize customer opinions on the Pink & White 3d Melt Ice hard case, focusing on quality and design.",
+    "num_chunks_processed": 15,
+    "original_chunks": [
+        "Beautiful case. No complaints at all...other than the day I got it, my husband gave me an Evo 3D! That's okay. This case will be my step - daughters Christmas present.",
+        "While it is very inexpensively made, this appears to be a much better case than my previous \"bling\" case (my review on other product). It is cute and a good value.",
+        "Case was great until I got a minor surface scratch on it. After that the rubberized coating started peeling off!!!!!! !",
+        "I actually love this case. the design and color is very funky. I got 3 so my sisters can have one too. the only problem is that after 2 months the design and color starting pilling and it eventually broke. I had this product for only 2.5 months the most.",
+        "Beautiful case, bright colors, and sturdy.The picture doesn't do the product justice. I would recommend this case to youngTrident Case AG - SINF - PK AEGIS Series for Samsung Infuse - Pink - 1 Pack - Carrying Case - Retail Packagingand old also a great value.",
+        "very cute case but it only lasted a week until it cracked and unusable. you get what you pay for.",
+        "Case was nice ....but can't handle rough punishment .....broke third day I had it ....put it in my pocket the side caught and broke .....could have gone with out it",
+        "I ordered the black and pink leopard case but instead was greeted with the multi - colored case in which had looked like it had been used before (i.e. scratches, worn, faded spots).Nevertheless, it is a very good case and does it's job well.",
+        "It was a cute case, but too flimsy and not what I was looking for in general. I wanted more protection.",
+        "This is a very nice case I braught for my wife on her birthday she loves it very much especially the color.",
+        "When i first got this case i really loved it but in a matter of about a week the pink started to rub off just from it being in my bag! It was a real let down!",
+        "I loved the case when I got it in the mail. It is super cute! I had it for about a week when the covering started to peel off the back where I hold my phone. Now the spot is getting bigger and bigger so in the middle of my cute pink leopard print case is a silver crater. I emailed the sender with no response. I had to order another one in a different style :(",
+        "I got this case about 6 months ago and loved it!! I couldn't stop feeling it because its just so smooth!! it was very protective, It lasted a while then the design started peeling off, which made me sad, but all in all Great case for the price",
+        "I just love this case!! It's too cute. The only issue I have with it is occasionally it will pop open at the bottom.. but it only seems to happen when there is a significant change in temp.. guess that's probly due to the hard plastic material it is made of. But overall a great and inexpensive product! !",
+        "The case in the photo looks great and very cute; however, when it arrives, it comes scratched up, flimsy and not worth $8 at all. Needless to say, I returned the product."
+    ],
+    "extracted_summary": "While it is very inexpensively made, this appears to be a much better case than my previous \"bling\" case (my review on other product). very cute case but it only lasted a week until it cracked and unusable. Case was nice ....but can't handle rough punishment .....broke third day I had it ....put it in my pocket the side caught and broke .....could have gone with out it I ordered the black and pink leopard case but instead was greeted with the multi - colored case in which had looked like it had been used before (i.e. scratches, worn, faded spots).Nevertheless, it is a very good case and does it's job well. It was a cute case, but too flimsy and not what I was looking for in general. This is a very nice case I braught for my wife on her birthday she loves it very much especially the color. When i first got this case i really loved it but in a matter of about a week the pink started to rub off just from it being in my bag! I loved the case when I got it in the mail.",
+    "final_abstractive_summary": "It was a very nice case, but in a matter of about a week the pink started to rub off just from it being in my bag!"
+}
+Use pytorch device_name: cpu
+Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+{
+    "timestamp": "2025-06-15 02:46:09",
+    "model_name": "google/flan-t5-large",
+    "user_query": "Summarize customer opinions on the SANOXY High Output Dual USB Port, focusing on quality and design.",
+    "num_chunks_processed": 15,
+    "original_chunks": [
+        "I love that it has two ports for my phone and ipod. Who wants to be putting too many things in one socket. Sleek and convenient to store and I just love it.",
+        "I love the fact of 2 USB ports and the lil blue light is a nice touch.",
+        "nice having multiple ports with out more cords, small and compact, considering buying an extra one for my back seat as well",
+        "I would buy this again. The \"crown\" was a little bit \"thicker\" than what I had expected, but still a nice usb port at a great price.",
+        "I was happy about the prospect of this dual port charger, however I have to big issues with it.1) it doesn't seat properly in the power outlet. Wants to spring out just enough to not make contact. I had to use tape to hold it in place, and that is only a temp soln at best.2) it doesn't have adequate output to charge my Galaxy S 3. barely keeps the charge where it's at, let alone increase the batt %",
+        "I bought one for both of my kids and they enthusiastically endorsed! Fits well, all ports accessible, ligtht - weight and they get compliments and \"Where did you get that?\" all the time.",
+        "Can't go wrong with the price and certainly can't argue with the benefits of OEM vs. generic (mA output and reliability at the top of the list! ).",
+        "When I read the I improperly assumed that the dual ports shown as for apple and others, but that both where the \"High output\" ports. Only one is a high output port, and it's the one configured for iPad. So Android users looking for a 2.1 a charger, keep looking. I will say the High Output port is slightly better 800mA vs 700mA.",
+        "It's really good! Works great it was really cheap! The item arrived before shipment date and I was in a big rush to get it! It's has more than one port so you can charge two phones",
+        "Great product. It has dual ports for both charging my cell phone and my GPS. I highly recommend it. Great price too.",
+        "The added benefit of USB is that it allows me to standardize and use the cable in the car or house.",
+        "Everytime I was on my way to the grocery store my phone would go dead now that I have my usb port it is a thing of the past. it is lightweight and works great to. I can charge myphone and bluetooth headset at the sametime I love it!.",
+        "This is a great product, has two USB outputs and can charge two devices at the same time.This item was shipped from overseas and I got it in about 2 weeks, which is much faster than the estimated time.It doesn't get hot (as opposed to similar thing I got elsewhere) and I'm very happy with this.",
+        "work fine the price is right.i recommend to buy. work good on any micro usb port. great for traveling. thanks",
+        "Excellent quality and improved visability (lighted) so I can find it at night. No problem with 2 devices greta power."
+    ],
+    "extracted_summary": "I love that it has two ports for my phone and ipod. Sleek and convenient to store and I just love it. I love the fact of 2 USB ports and the lil blue light is a nice touch. The \"crown\" was a little bit \"thicker\" than what I had expected, but still a nice usb port at a great price. I was happy about the prospect of this dual port charger, however I have to big issues with it.1) it doesn't seat properly in the power outlet. I had to use tape to hold it in place, and that is only a temp soln at best.2) it doesn't have adequate output to charge my Galaxy S 3. barely keeps the charge where it's at, let alone increase the batt % I bought one for both of my kids and they enthusiastically endorsed! Can't go wrong with the price and certainly can't argue with the benefits of OEM vs. generic (mA output and reliability at the top of the list!",
+    "final_abstractive_summary": "I love that it has two ports for my phone and ipod. Sleek and convenient to store and I just love it. The \"crown\" was a little bit \"thicker\" than what I had expected, but still a nice usb port at a great price"
+}
+Use pytorch device_name: cuda:0
+Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+Use pytorch device_name: cuda:0
+Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+{
+    "timestamp": "2025-06-15 03:12:57",
+    "model_name": "google/flan-t5-large",
+    "user_query": "Summarize customer opinions on the SANOXY High Output Dual USB Port, focusing on quality and design.",
+    "num_chunks_processed": 15,
+    "original_chunks": [
+        "I love that it has two ports for my phone and ipod. Who wants to be putting too many things in one socket. Sleek and convenient to store and I just love it.",
+        "I love the fact of 2 USB ports and the lil blue light is a nice touch.",
+        "nice having multiple ports with out more cords, small and compact, considering buying an extra one for my back seat as well",
+        "I would buy this again. The \"crown\" was a little bit \"thicker\" than what I had expected, but still a nice usb port at a great price.",
+        "I was happy about the prospect of this dual port charger, however I have to big issues with it.1) it doesn't seat properly in the power outlet. Wants to spring out just enough to not make contact. I had to use tape to hold it in place, and that is only a temp soln at best.2) it doesn't have adequate output to charge my Galaxy S 3. barely keeps the charge where it's at, let alone increase the batt %",
+        "I bought one for both of my kids and they enthusiastically endorsed! Fits well, all ports accessible, ligtht - weight and they get compliments and \"Where did you get that?\" all the time.",
+        "Can't go wrong with the price and certainly can't argue with the benefits of OEM vs. generic (mA output and reliability at the top of the list! ).",
+        "When I read the I improperly assumed that the dual ports shown as for apple and others, but that both where the \"High output\" ports. Only one is a high output port, and it's the one configured for iPad. So Android users looking for a 2.1 a charger, keep looking. I will say the High Output port is slightly better 800mA vs 700mA.",
+        "It's really good! Works great it was really cheap! The item arrived before shipment date and I was in a big rush to get it! It's has more than one port so you can charge two phones",
+        "Great product. It has dual ports for both charging my cell phone and my GPS. I highly recommend it. Great price too.",
+        "The added benefit of USB is that it allows me to standardize and use the cable in the car or house.",
+        "Everytime I was on my way to the grocery store my phone would go dead now that I have my usb port it is a thing of the past. it is lightweight and works great to. I can charge myphone and bluetooth headset at the sametime I love it!.",
+        "This is a great product, has two USB outputs and can charge two devices at the same time.This item was shipped from overseas and I got it in about 2 weeks, which is much faster than the estimated time.It doesn't get hot (as opposed to similar thing I got elsewhere) and I'm very happy with this.",
+        "work fine the price is right.i recommend to buy. work good on any micro usb port. great for traveling. thanks",
+        "Excellent quality and improved visability (lighted) so I can find it at night. No problem with 2 devices greta power."
+    ],
+    "extracted_summary": "I love that it has two ports for my phone and ipod. Sleek and convenient to store and I just love it. I love the fact of 2 USB ports and the lil blue light is a nice touch. The \"crown\" was a little bit \"thicker\" than what I had expected, but still a nice usb port at a great price. I was happy about the prospect of this dual port charger, however I have to big issues with it.1) it doesn't seat properly in the power outlet. I had to use tape to hold it in place, and that is only a temp soln at best.2) it doesn't have adequate output to charge my Galaxy S 3. barely keeps the charge where it's at, let alone increase the batt % I bought one for both of my kids and they enthusiastically endorsed! Can't go wrong with the price and certainly can't argue with the benefits of OEM vs. generic (mA output and reliability at the top of the list!",
+    "final_abstractive_summary": "I love that it has two ports for my phone and ipod. Sleek and convenient to store and I just love it. The \"crown\" was a little bit \"thicker\" than what I had expected, but still a nice usb port at a great price"
+}
+Use pytorch device_name: cuda:0
+Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+{
+    "timestamp": "2025-06-15 03:16:03",
+    "model_name": "google/flan-t5-xl",
+    "user_query": "Summarize customer opinions on the Pink & White 3d Melt Ice hard case, focusing on quality and design.",
+    "num_chunks_processed": 15,
+    "original_chunks": [
+        "Beautiful case. No complaints at all...other than the day I got it, my husband gave me an Evo 3D! That's okay. This case will be my step - daughters Christmas present.",
+        "While it is very inexpensively made, this appears to be a much better case than my previous \"bling\" case (my review on other product). It is cute and a good value.",
+        "Case was great until I got a minor surface scratch on it. After that the rubberized coating started peeling off!!!!!! !",
+        "I actually love this case. the design and color is very funky. I got 3 so my sisters can have one too. the only problem is that after 2 months the design and color starting pilling and it eventually broke. I had this product for only 2.5 months the most.",
+        "Beautiful case, bright colors, and sturdy.The picture doesn't do the product justice. I would recommend this case to youngTrident Case AG - SINF - PK AEGIS Series for Samsung Infuse - Pink - 1 Pack - Carrying Case - Retail Packagingand old also a great value.",
+        "very cute case but it only lasted a week until it cracked and unusable. you get what you pay for.",
+        "Case was nice ....but can't handle rough punishment .....broke third day I had it ....put it in my pocket the side caught and broke .....could have gone with out it",
+        "I ordered the black and pink leopard case but instead was greeted with the multi - colored case in which had looked like it had been used before (i.e. scratches, worn, faded spots).Nevertheless, it is a very good case and does it's job well.",
+        "It was a cute case, but too flimsy and not what I was looking for in general. I wanted more protection.",
+        "This is a very nice case I braught for my wife on her birthday she loves it very much especially the color.",
+        "When i first got this case i really loved it but in a matter of about a week the pink started to rub off just from it being in my bag! It was a real let down!",
+        "I loved the case when I got it in the mail. It is super cute! I had it for about a week when the covering started to peel off the back where I hold my phone. Now the spot is getting bigger and bigger so in the middle of my cute pink leopard print case is a silver crater. I emailed the sender with no response. I had to order another one in a different style :(",
+        "I got this case about 6 months ago and loved it!! I couldn't stop feeling it because its just so smooth!! it was very protective, It lasted a while then the design started peeling off, which made me sad, but all in all Great case for the price",
+        "I just love this case!! It's too cute. The only issue I have with it is occasionally it will pop open at the bottom.. but it only seems to happen when there is a significant change in temp.. guess that's probly due to the hard plastic material it is made of. But overall a great and inexpensive product! !",
+        "The case in the photo looks great and very cute; however, when it arrives, it comes scratched up, flimsy and not worth $8 at all. Needless to say, I returned the product."
+    ],
+    "extracted_summary": "While it is very inexpensively made, this appears to be a much better case than my previous \"bling\" case (my review on other product). very cute case but it only lasted a week until it cracked and unusable. Case was nice ....but can't handle rough punishment .....broke third day I had it ....put it in my pocket the side caught and broke .....could have gone with out it I ordered the black and pink leopard case but instead was greeted with the multi - colored case in which had looked like it had been used before (i.e. scratches, worn, faded spots).Nevertheless, it is a very good case and does it's job well. It was a cute case, but too flimsy and not what I was looking for in general. This is a very nice case I braught for my wife on her birthday she loves it very much especially the color. When i first got this case i really loved it but in a matter of about a week the pink started to rub off just from it being in my bag! I loved the case when I got it in the mail.",
+    "final_abstractive_summary": "It was a very nice case I braught for my wife's birthday she loves it very much especially the color. When i first got this case i really loved it but in a matter of about a week the pink started to rub off just from it being in my bag"
+}
+Use pytorch device_name: cuda:0
+Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+HTTP Error 429 thrown while requesting HEAD https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/modules.json
+Retrying in 1s [Retry 1/5].
+HTTP Error 429 thrown while requesting HEAD https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/modules.json
+Retrying in 2s [Retry 2/5].
+HTTP Error 429 thrown while requesting HEAD https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/modules.json
+Retrying in 4s [Retry 3/5].
+HTTP Error 429 thrown while requesting HEAD https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/modules.json
+Retrying in 8s [Retry 4/5].
+Use pytorch device_name: cuda:0
+Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+HTTP Error 429 thrown while requesting HEAD https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/modules.json
+Retrying in 1s [Retry 1/5].
+HTTP Error 429 thrown while requesting HEAD https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/modules.json
+Retrying in 2s [Retry 2/5].
+HTTP Error 429 thrown while requesting HEAD https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/modules.json
+Retrying in 4s [Retry 3/5].
+Use pytorch device_name: cuda:0
+Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+{
+    "timestamp": "2025-06-15 03:25:05",
+    "model_name": "google/flan-t5-xl",
+    "user_query": "Summarize customer opinions on the SANOXY High Output Dual USB Port, focusing on quality and design.",
+    "num_chunks_processed": 15,
+    "original_chunks": [
+        "I love that it has two ports for my phone and ipod. Who wants to be putting too many things in one socket. Sleek and convenient to store and I just love it.",
+        "I love the fact of 2 USB ports and the lil blue light is a nice touch.",
+        "nice having multiple ports with out more cords, small and compact, considering buying an extra one for my back seat as well",
+        "I would buy this again. The \"crown\" was a little bit \"thicker\" than what I had expected, but still a nice usb port at a great price.",
+        "I was happy about the prospect of this dual port charger, however I have to big issues with it.1) it doesn't seat properly in the power outlet. Wants to spring out just enough to not make contact. I had to use tape to hold it in place, and that is only a temp soln at best.2) it doesn't have adequate output to charge my Galaxy S 3. barely keeps the charge where it's at, let alone increase the batt %",
+        "I bought one for both of my kids and they enthusiastically endorsed! Fits well, all ports accessible, ligtht - weight and they get compliments and \"Where did you get that?\" all the time.",
+        "Can't go wrong with the price and certainly can't argue with the benefits of OEM vs. generic (mA output and reliability at the top of the list! ).",
+        "When I read the I improperly assumed that the dual ports shown as for apple and others, but that both where the \"High output\" ports. Only one is a high output port, and it's the one configured for iPad. So Android users looking for a 2.1 a charger, keep looking. I will say the High Output port is slightly better 800mA vs 700mA.",
+        "It's really good! Works great it was really cheap! The item arrived before shipment date and I was in a big rush to get it! It's has more than one port so you can charge two phones",
+        "Great product. It has dual ports for both charging my cell phone and my GPS. I highly recommend it. Great price too.",
+        "The added benefit of USB is that it allows me to standardize and use the cable in the car or house.",
+        "Everytime I was on my way to the grocery store my phone would go dead now that I have my usb port it is a thing of the past. it is lightweight and works great to. I can charge myphone and bluetooth headset at the sametime I love it!.",
+        "This is a great product, has two USB outputs and can charge two devices at the same time.This item was shipped from overseas and I got it in about 2 weeks, which is much faster than the estimated time.It doesn't get hot (as opposed to similar thing I got elsewhere) and I'm very happy with this.",
+        "work fine the price is right.i recommend to buy. work good on any micro usb port. great for traveling. thanks",
+        "Excellent quality and improved visability (lighted) so I can find it at night. No problem with 2 devices greta power."
+    ],
+    "extracted_summary": "I love that it has two ports for my phone and ipod. Sleek and convenient to store and I just love it. I love the fact of 2 USB ports and the lil blue light is a nice touch. The \"crown\" was a little bit \"thicker\" than what I had expected, but still a nice usb port at a great price. I was happy about the prospect of this dual port charger, however I have to big issues with it.1) it doesn't seat properly in the power outlet. I had to use tape to hold it in place, and that is only a temp soln at best.2) it doesn't have adequate output to charge my Galaxy S 3. barely keeps the charge where it's at, let alone increase the batt % I bought one for both of my kids and they enthusiastically endorsed! Can't go wrong with the price and certainly can't argue with the benefits of OEM vs. generic (mA output and reliability at the top of the list!",
+    "final_abstractive_summary": "1. Overall Impression: I love that it has two ports for my phone and ipod. Sleek and convenient to store and I just love it. I love the fact of 2 USB ports and the lil blue light is a nice touch. The \"crown\" was a little bit \"thicker\" than what I had expected, but still a good usb port at a great price."
+}
+Use pytorch device_name: cuda:0
+Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+{
+    "timestamp": "2025-06-15 03:28:30",
+    "model_name": "google/flan-t5-large",
+    "user_query": " Summarize customer opinions on the SANOXY High Output Dual USB Port, focusing on quality and design.",
+    "num_chunks_processed": 15,
+    "original_chunks": [
+        "I love that it has two ports for my phone and ipod. Who wants to be putting too many things in one socket. Sleek and convenient to store and I just love it.",
+        "I love the fact of 2 USB ports and the lil blue light is a nice touch.",
+        "nice having multiple ports with out more cords, small and compact, considering buying an extra one for my back seat as well",
+        "I would buy this again. The \"crown\" was a little bit \"thicker\" than what I had expected, but still a nice usb port at a great price.",
+        "I was happy about the prospect of this dual port charger, however I have to big issues with it.1) it doesn't seat properly in the power outlet. Wants to spring out just enough to not make contact. I had to use tape to hold it in place, and that is only a temp soln at best.2) it doesn't have adequate output to charge my Galaxy S 3. barely keeps the charge where it's at, let alone increase the batt %",
+        "I bought one for both of my kids and they enthusiastically endorsed! Fits well, all ports accessible, ligtht - weight and they get compliments and \"Where did you get that?\" all the time.",
+        "Can't go wrong with the price and certainly can't argue with the benefits of OEM vs. generic (mA output and reliability at the top of the list! ).",
+        "When I read the I improperly assumed that the dual ports shown as for apple and others, but that both where the \"High output\" ports. Only one is a high output port, and it's the one configured for iPad. So Android users looking for a 2.1 a charger, keep looking. I will say the High Output port is slightly better 800mA vs 700mA.",
+        "It's really good! Works great it was really cheap! The item arrived before shipment date and I was in a big rush to get it! It's has more than one port so you can charge two phones",
+        "Great product. It has dual ports for both charging my cell phone and my GPS. I highly recommend it. Great price too.",
+        "The added benefit of USB is that it allows me to standardize and use the cable in the car or house.",
+        "Everytime I was on my way to the grocery store my phone would go dead now that I have my usb port it is a thing of the past. it is lightweight and works great to. I can charge myphone and bluetooth headset at the sametime I love it!.",
+        "This is a great product, has two USB outputs and can charge two devices at the same time.This item was shipped from overseas and I got it in about 2 weeks, which is much faster than the estimated time.It doesn't get hot (as opposed to similar thing I got elsewhere) and I'm very happy with this.",
+        "work fine the price is right.i recommend to buy. work good on any micro usb port. great for traveling. thanks",
+        "Excellent quality and improved visability (lighted) so I can find it at night. No problem with 2 devices greta power."
+    ],
+    "extracted_summary": "I was happy about the prospect of this dual port charger, however I have to big issues with it.1) it doesn't seat properly in the power outlet. I had to use tape to hold it in place, and that is only a temp soln at best.2) it doesn't have adequate output to charge my Galaxy S 3. barely keeps the charge where it's at, let alone increase the batt % I bought one for both of my kids and they enthusiastically endorsed! Can't go wrong with the price and certainly can't argue with the benefits of OEM vs. generic (mA output and reliability at the top of the list!",
+    "final_abstractive_summary": "The SANOXY High Output Dual USB Port is a dual port charger with a mA output and a high quality design."
+}
+Use pytorch device_name: cuda:0
+Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+{
+    "timestamp": "2025-06-15 03:32:53",
+    "model_name": "google/flan-t5-xl",
+    "user_query": "Summarize customer opinions on the SANOXY High Output Dual USB Port, focusing on quality and design.",
+    "num_chunks_processed": 15,
+    "original_chunks": [
+        "I love that it has two ports for my phone and ipod. Who wants to be putting too many things in one socket. Sleek and convenient to store and I just love it.",
+        "I love the fact of 2 USB ports and the lil blue light is a nice touch.",
+        "nice having multiple ports with out more cords, small and compact, considering buying an extra one for my back seat as well",
+        "I would buy this again. The \"crown\" was a little bit \"thicker\" than what I had expected, but still a nice usb port at a great price.",
+        "I was happy about the prospect of this dual port charger, however I have to big issues with it.1) it doesn't seat properly in the power outlet. Wants to spring out just enough to not make contact. I had to use tape to hold it in place, and that is only a temp soln at best.2) it doesn't have adequate output to charge my Galaxy S 3. barely keeps the charge where it's at, let alone increase the batt %",
+        "I bought one for both of my kids and they enthusiastically endorsed! Fits well, all ports accessible, ligtht - weight and they get compliments and \"Where did you get that?\" all the time.",
+        "Can't go wrong with the price and certainly can't argue with the benefits of OEM vs. generic (mA output and reliability at the top of the list! ).",
+        "When I read the I improperly assumed that the dual ports shown as for apple and others, but that both where the \"High output\" ports. Only one is a high output port, and it's the one configured for iPad. So Android users looking for a 2.1 a charger, keep looking. I will say the High Output port is slightly better 800mA vs 700mA.",
+        "It's really good! Works great it was really cheap! The item arrived before shipment date and I was in a big rush to get it! It's has more than one port so you can charge two phones",
+        "Great product. It has dual ports for both charging my cell phone and my GPS. I highly recommend it. Great price too.",
+        "The added benefit of USB is that it allows me to standardize and use the cable in the car or house.",
+        "Everytime I was on my way to the grocery store my phone would go dead now that I have my usb port it is a thing of the past. it is lightweight and works great to. I can charge myphone and bluetooth headset at the sametime I love it!.",
+        "This is a great product, has two USB outputs and can charge two devices at the same time.This item was shipped from overseas and I got it in about 2 weeks, which is much faster than the estimated time.It doesn't get hot (as opposed to similar thing I got elsewhere) and I'm very happy with this.",
+        "work fine the price is right.i recommend to buy. work good on any micro usb port. great for traveling. thanks",
+        "Excellent quality and improved visability (lighted) so I can find it at night. No problem with 2 devices greta power."
+    ],
+    "extracted_summary": "I was happy about the prospect of this dual port charger, however I have to big issues with it.1) it doesn't seat properly in the power outlet. I had to use tape to hold it in place, and that is only a temp soln at best.2) it doesn't have adequate output to charge my Galaxy S 3. barely keeps the charge where it's at, let alone increase the batt % I bought one for both of my kids and they enthusiastically endorsed! Can't go wrong with the price and certainly can't argue with the benefits of OEM vs. generic (mA output and reliability at the top of the list!",
+    "final_abstractive_summary": "1. Overall Impression: I was happy with the prospect of this dual port charger, however I have to big issues with it.2) it doesn't seat properly in the power outlet. I had to use tape to hold it in place, and that is only a temp soln at best. I bought one for both of my kids and they enthusiastically endorsed!"
+}
+Use pytorch device_name: cuda:0
+Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+{
+    "timestamp": "2025-06-15 03:38:20",
+    "model_name": "google/flan-t5-xl",
+    "user_query": " Summarize customer opinions on the SANOXY High Output Dual USB Port, focusing on quality and design.",
+    "num_chunks_processed": 15,
+    "original_chunks": [
+        "I love that it has two ports for my phone and ipod. Who wants to be putting too many things in one socket. Sleek and convenient to store and I just love it.",
+        "I love the fact of 2 USB ports and the lil blue light is a nice touch.",
+        "nice having multiple ports with out more cords, small and compact, considering buying an extra one for my back seat as well",
+        "I would buy this again. The \"crown\" was a little bit \"thicker\" than what I had expected, but still a nice usb port at a great price.",
+        "I was happy about the prospect of this dual port charger, however I have to big issues with it.1) it doesn't seat properly in the power outlet. Wants to spring out just enough to not make contact. I had to use tape to hold it in place, and that is only a temp soln at best.2) it doesn't have adequate output to charge my Galaxy S 3. barely keeps the charge where it's at, let alone increase the batt %",
+        "I bought one for both of my kids and they enthusiastically endorsed! Fits well, all ports accessible, ligtht - weight and they get compliments and \"Where did you get that?\" all the time.",
+        "Can't go wrong with the price and certainly can't argue with the benefits of OEM vs. generic (mA output and reliability at the top of the list! ).",
+        "When I read the I improperly assumed that the dual ports shown as for apple and others, but that both where the \"High output\" ports. Only one is a high output port, and it's the one configured for iPad. So Android users looking for a 2.1 a charger, keep looking. I will say the High Output port is slightly better 800mA vs 700mA.",
+        "It's really good! Works great it was really cheap! The item arrived before shipment date and I was in a big rush to get it! It's has more than one port so you can charge two phones",
+        "Great product. It has dual ports for both charging my cell phone and my GPS. I highly recommend it. Great price too.",
+        "The added benefit of USB is that it allows me to standardize and use the cable in the car or house.",
+        "Everytime I was on my way to the grocery store my phone would go dead now that I have my usb port it is a thing of the past. it is lightweight and works great to. I can charge myphone and bluetooth headset at the sametime I love it!.",
+        "This is a great product, has two USB outputs and can charge two devices at the same time.This item was shipped from overseas and I got it in about 2 weeks, which is much faster than the estimated time.It doesn't get hot (as opposed to similar thing I got elsewhere) and I'm very happy with this.",
+        "work fine the price is right.i recommend to buy. work good on any micro usb port. great for traveling. thanks",
+        "Excellent quality and improved visability (lighted) so I can find it at night. No problem with 2 devices greta power."
+    ],
+    "extracted_summary": "I was happy about the prospect of this dual port charger, however I have to big issues with it.1) it doesn't seat properly in the power outlet. I had to use tape to hold it in place, and that is only a temp soln at best.2) it doesn't have adequate output to charge my Galaxy S 3. barely keeps the charge where it's at, let alone increase the batt % I bought one for both of my kids and they enthusiastically endorsed! Can't go wrong with the price and certainly can't argue with the benefits of OEM vs. generic (mA output and reliability at the top of the list!",
+    "final_abstractive_summary": "1. Overall Impression 2. Key Positive Aspects 3. None 4. Conclusion on whether it's a good buy: Good quality and improved visability (lighted)"
+}
+Use pytorch device_name: cuda:0
+Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+{
+    "timestamp": "2025-06-15 03:41:52",
+    "model_name": "google/flan-t5-large",
+    "user_query": "Summarize customer opinions on the SANOXY High Output Dual USB Port, focusing on quality and design.",
+    "num_chunks_processed": 15,
+    "original_chunks": [
+        "I love that it has two ports for my phone and ipod. Who wants to be putting too many things in one socket. Sleek and convenient to store and I just love it.",
+        "I love the fact of 2 USB ports and the lil blue light is a nice touch.",
+        "nice having multiple ports with out more cords, small and compact, considering buying an extra one for my back seat as well",
+        "I would buy this again. The \"crown\" was a little bit \"thicker\" than what I had expected, but still a nice usb port at a great price.",
+        "I was happy about the prospect of this dual port charger, however I have to big issues with it.1) it doesn't seat properly in the power outlet. Wants to spring out just enough to not make contact. I had to use tape to hold it in place, and that is only a temp soln at best.2) it doesn't have adequate output to charge my Galaxy S 3. barely keeps the charge where it's at, let alone increase the batt %",
+        "I bought one for both of my kids and they enthusiastically endorsed! Fits well, all ports accessible, ligtht - weight and they get compliments and \"Where did you get that?\" all the time.",
+        "Can't go wrong with the price and certainly can't argue with the benefits of OEM vs. generic (mA output and reliability at the top of the list! ).",
+        "When I read the I improperly assumed that the dual ports shown as for apple and others, but that both where the \"High output\" ports. Only one is a high output port, and it's the one configured for iPad. So Android users looking for a 2.1 a charger, keep looking. I will say the High Output port is slightly better 800mA vs 700mA.",
+        "It's really good! Works great it was really cheap! The item arrived before shipment date and I was in a big rush to get it! It's has more than one port so you can charge two phones",
+        "Great product. It has dual ports for both charging my cell phone and my GPS. I highly recommend it. Great price too.",
+        "The added benefit of USB is that it allows me to standardize and use the cable in the car or house.",
+        "Everytime I was on my way to the grocery store my phone would go dead now that I have my usb port it is a thing of the past. it is lightweight and works great to. I can charge myphone and bluetooth headset at the sametime I love it!.",
+        "This is a great product, has two USB outputs and can charge two devices at the same time.This item was shipped from overseas and I got it in about 2 weeks, which is much faster than the estimated time.It doesn't get hot (as opposed to similar thing I got elsewhere) and I'm very happy with this.",
+        "work fine the price is right.i recommend to buy. work good on any micro usb port. great for traveling. thanks",
+        "Excellent quality and improved visability (lighted) so I can find it at night. No problem with 2 devices greta power."
+    ],
+    "extracted_summary": "I was happy about the prospect of this dual port charger, however I have to big issues with it.1) it doesn't seat properly in the power outlet. I had to use tape to hold it in place, and that is only a temp soln at best.2) it doesn't have adequate output to charge my Galaxy S 3. barely keeps the charge where it's at, let alone increase the batt % I bought one for both of my kids and they enthusiastically endorsed! Can't go wrong with the price and certainly can't argue with the benefits of OEM vs. generic (mA output and reliability at the top of the list!",
+    "final_abstractive_summary": "Excellent quality and improved visability (lighted) so I can find it at night. No problem with 2 devices. greta power."
+}
+Use pytorch device_name: cuda:0
+Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+{
+    "timestamp": "2025-06-15 03:46:50",
+    "model_name": "google/flan-t5-large",
+    "user_query": " Summarize customer opinions on the SANOXY High Output Dual USB Port, focusing on quality and design.",
+    "num_chunks_processed": 15,
+    "original_chunks": [
+        "I love that it has two ports for my phone and ipod. Who wants to be putting too many things in one socket. Sleek and convenient to store and I just love it.",
+        "I love the fact of 2 USB ports and the lil blue light is a nice touch.",
+        "nice having multiple ports with out more cords, small and compact, considering buying an extra one for my back seat as well",
+        "I would buy this again. The \"crown\" was a little bit \"thicker\" than what I had expected, but still a nice usb port at a great price.",
+        "I was happy about the prospect of this dual port charger, however I have to big issues with it.1) it doesn't seat properly in the power outlet. Wants to spring out just enough to not make contact. I had to use tape to hold it in place, and that is only a temp soln at best.2) it doesn't have adequate output to charge my Galaxy S 3. barely keeps the charge where it's at, let alone increase the batt %",
+        "I bought one for both of my kids and they enthusiastically endorsed! Fits well, all ports accessible, ligtht - weight and they get compliments and \"Where did you get that?\" all the time.",
+        "Can't go wrong with the price and certainly can't argue with the benefits of OEM vs. generic (mA output and reliability at the top of the list! ).",
+        "When I read the I improperly assumed that the dual ports shown as for apple and others, but that both where the \"High output\" ports. Only one is a high output port, and it's the one configured for iPad. So Android users looking for a 2.1 a charger, keep looking. I will say the High Output port is slightly better 800mA vs 700mA.",
+        "It's really good! Works great it was really cheap! The item arrived before shipment date and I was in a big rush to get it! It's has more than one port so you can charge two phones",
+        "Great product. It has dual ports for both charging my cell phone and my GPS. I highly recommend it. Great price too.",
+        "The added benefit of USB is that it allows me to standardize and use the cable in the car or house.",
+        "Everytime I was on my way to the grocery store my phone would go dead now that I have my usb port it is a thing of the past. it is lightweight and works great to. I can charge myphone and bluetooth headset at the sametime I love it!.",
+        "This is a great product, has two USB outputs and can charge two devices at the same time.This item was shipped from overseas and I got it in about 2 weeks, which is much faster than the estimated time.It doesn't get hot (as opposed to similar thing I got elsewhere) and I'm very happy with this.",
+        "work fine the price is right.i recommend to buy. work good on any micro usb port. great for traveling. thanks",
+        "Excellent quality and improved visability (lighted) so I can find it at night. No problem with 2 devices greta power."
+    ],
+    "extracted_summary": "I was happy about the prospect of this dual port charger, however I have to big issues with it.1) it doesn't seat properly in the power outlet. I had to use tape to hold it in place, and that is only a temp soln at best.2) it doesn't have adequate output to charge my Galaxy S 3. barely keeps the charge where it's at, let alone increase the batt % I bought one for both of my kids and they enthusiastically endorsed! Can't go wrong with the price and certainly can't argue with the benefits of OEM vs. generic (mA output and reliability at the top of the list!",
+    "final_abstractive_summary": "Excellent quality and improved visability (lighted) so I can find it at night. No problem with 2 devices greta power. This item was shipped from overseas and I got it in about 2 weeks, which was much faster than the estimated time.It doesn't get hot (as opposed to similar thing I got elsewhere and I'm very happy with this."
+}
+Use  pytorch device_name: cuda:0
+Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+{
+    "timestamp": "2025-06-15 03:49:30",
+    "model_name": "google/flan-t5-large",
+    "user_query": "Summarize customer opinions on the Pink & White 3d Melt Ice hard case, focusing on quality and design.",
+    "num_chunks_processed": 15,
+    "original_chunks": [
+        "Beautiful case. No complaints at all...other than the day I got it, my husband gave me an Evo 3D! That's okay. This case will be my step - daughters Christmas present.",
+        "While it is very inexpensively made, this appears to be a much better case than my previous \"bling\" case (my review on other product). It is cute and a good value.",
+        "Case was great until I got a minor surface scratch on it. After that the rubberized coating started peeling off!!!!!! !",
+        "I actually love this case. the design and color is very funky. I got 3 so my sisters can have one too. the only problem is that after 2 months the design and color starting pilling and it eventually broke. I had this product for only 2.5 months the most.",
+        "Beautiful case, bright colors, and sturdy.The picture doesn't do the product justice. I would recommend this case to youngTrident Case AG - SINF - PK AEGIS Series for Samsung Infuse - Pink - 1 Pack - Carrying Case - Retail Packagingand old also a great value.",
+        "very cute case but it only lasted a week until it cracked and unusable. you get what you pay for.",
+        "Case was nice ....but can't handle rough punishment .....broke third day I had it ....put it in my pocket the side caught and broke .....could have gone with out it",
+        "I ordered the black and pink leopard case but instead was greeted with the multi - colored case in which had looked like it had been used before (i.e. scratches, worn, faded spots).Nevertheless, it is a very good case and does it's job well.",
+        "It was a cute case, but too flimsy and not what I was looking for in general. I wanted more protection.",
+        "This is a very nice case I braught for my wife on her birthday she loves it very much especially the color.",
+        "When i first got this case i really loved it but in a matter of about a week the pink started to rub off just from it being in my bag! It was a real let down!",
+        "I loved the case when I got it in the mail. It is super cute! I had it for about a week when the covering started to peel off the back where I hold my phone. Now the spot is getting bigger and bigger so in the middle of my cute pink leopard print case is a silver crater. I emailed the sender with no response. I had to order another one in a different style :(",
+        "I got this case about 6 months ago and loved it!! I couldn't stop feeling it because its just so smooth!! it was very protective, It lasted a while then the design started peeling off, which made me sad, but all in all Great case for the price",
+        "I just love this case!! It's too cute. The only issue I have with it is occasionally it will pop open at the bottom.. but it only seems to happen when there is a significant change in temp.. guess that's probly due to the hard plastic material it is made of. But overall a great and inexpensive product! !",
+        "The case in the photo looks great and very cute; however, when it arrives, it comes scratched up, flimsy and not worth $8 at all. Needless to say, I returned the product."
+    ],
+    "extracted_summary": "Case was nice ....but can't handle rough punishment .....broke third day I had it ....put it in my pocket the side caught and broke .....could have gone with out it I ordered the black and pink leopard case but instead was greeted with the multi - colored case in which had looked like it had been used before (i.e. scratches, worn, faded spots).Nevertheless, it is a very good case and does it's job well. When i first got this case i really loved it but in a matter of about a week the pink started to rub off just from it being in my bag! it was very protective, It lasted a while then the design started peeling off, which made me sad, but all in all Great case for the price I just love this case!!",
+    "final_abstractive_summary": "The case in the photo looks great and very cute; however, when it arrives, it comes scratched up, flimsy and not worth $8 at all"
+}
