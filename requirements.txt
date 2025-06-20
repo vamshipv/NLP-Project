@@ -3,3 +3,7 @@ torch
 faiss-cpu
 numpy
 sentence-transformers
+spacy
+nltk
+pandas
+ollama

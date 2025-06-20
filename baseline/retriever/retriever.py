@@ -1,315 +1,175 @@
-import os
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
-import torch
-import faiss
-import numpy as np
-from sentence_transformers import SentenceTransformer
+import nltk
 import json
-import re
-import sys
+import numpy as np
+import faiss
+import pandas as pd
+from sentence_transformers import SentenceTransformer
+import spacy
 import os
+import logging
+from datetime import datetime
+from product_matcher import ProductMatcher
+import re
 
-project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
-sys.path.insert(0, project_root)
+# Paths
+json_file = os.path.join("..", "data", "reviews.json")
+output_dir = os.path.join("..", "data")
+os.makedirs(output_dir, exist_ok=True)
+chunked_path = os.path.join(output_dir, "chunked_reviews.json")
+index_path = os.path.join(output_dir, "reviews.index")
 
-from baseline.generator.generator import Generator
+log_dir = os.path.join("..", "logs")
+os.makedirs(log_dir, exist_ok=True)
+log_path = os.path.join(log_dir, "retriever_log.json")
+logging.basicConfig(filename=log_path, level=logging.INFO, format="%(message)s")
 
 class Retriever:
-    """
-    A class to handle document retrieval using FAISS and SentenceTransformers.
+    def __init__(self):
+        try:
+            nltk.data.find('tokenizers/punkt')
+        except LookupError:
+            nltk.download('punkt')
+        self.reviews_df = pd.read_json(json_file)
+        self.model = SentenceTransformer("intfloat/e5-base-v2")
+        self.nlp = spacy.load("en_core_web_sm")
+        self.index = None
+        self.chunked_reviews = []
 
-    Attributes:
-        model_name (str): Name of the embedding model.
-        split_len (int): Length of text chunks for indexing.
-        document_file (str): Name of the default document.
-        index_file (str): Filename for saving/loading FAISS index.
-        subtext_file (str): Filename for saving/loading text chunks.
-    """
-    def __init__(self, model_name="all-MiniLM-L6-v2"):
-        self.model = SentenceTransformer("all-MiniLM-L6-v2")
-        """
-        Here the Split length is default set to 200
-        with default document cats.txt, faiss.index and subtexts.json all loaded by default for the user query
-        """
-        self.split_len = 200
-        self.document_file = "../data/winnie_the_pooh"
-        self.index_file = f"{self.document_file}_faiss.index"
-        self.subtext_file = f"{self.document_file}_subtexts.json"
+    def chunk_reviews(self):
+        chunked_reviews = []
+        seen_chunks = set()
 
-    def split_text(self,text):
-        """
-        Splits a given text into fixed-length chunks.
+        for _, row in self.reviews_df.iterrows():
+            review_text = str(row.get("comment", "")).strip()
+            brand = str(row.get("Brand", "")).strip()
+            model = str(row.get("Model", "")).strip()
+            stars = str(row.get("stars", "")).strip()
 
-        Args:
-            text (str): The input text.
+            if not review_text:
+                continue
 
-        Returns:
-            list: A list of text chunks.
-        """
-        chunks = [text[i:i+self.split_len] for i in range(0, len(text), self.split_len)]
-        return chunks
-    
-    def defaultDocument(self):
-        """
-        Checks whether default document, index, and chunk file exist.
-        Returns:
-        bool: True if all default files exist, False otherwise.
-        """
-        if os.path.exists(self.document_file + ".txt") and os.path.exists(self.index_file) and os.path.exists(self.subtext_file):
-            return True
-        else:
-            print("No default document found")
-            return False
-        
-    def addDocuments(self,path):
-        """
-        Adds a new document, splits it into chunks, generates embeddings, and creates a FAISS index.
-
-        Args:
-            path (str): File path to the text document.
-        """
-        base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data'))
-        full_path = os.path.join(base_dir, path if path.endswith('.txt') else path + '.txt')
-
-    
-        # Join it with the filename passed in
-        # full_path = os.path.join(data_dir, path)
-        with open(full_path, 'r') as file:
-            text = file.read()
-        self.splitted_text=self.split_text(text)
-        embeddings = self.model.encode(self.splitted_text)
-        self.index = faiss.IndexFlatL2(embeddings[0].shape[0])
-        self.index.add(np.array(embeddings))
-    
-    def addExistingDocument(self, path):
-        """
-        Appends a new document to an existing default document.
-        Loads the existing index and chunks, combines them with new ones, and re-saves.
-
-        Args:
-            path (str): Path to the additional text document.
-        """
-
-        base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data'))
-        full_path = os.path.join(base_dir, path if path.endswith('.txt') else path + '.txt')
-        base = os.path.basename(full_path)
-        Combinedname, _ = os.path.splitext(base)
-        combined_prefix = f"{self.document_file}_{Combinedname}"
-        combined_index_path = f"{combined_prefix}.index"
-        combined_chunk_path = f"{combined_prefix}.json"
-        if self.defaultDocument():
-            self.load(self.index_file, self.subtext_file)
-            with open(full_path, 'r', encoding='utf-8') as file:
-                new_text = file.read()
-            new_chunks = self.split_text(new_text)
-            new_embeddings = self.model.encode(new_chunks)
-
-            self.index.add(np.array(new_embeddings))
-            self.splitted_text.extend(new_chunks)
-
-            self.save(combined_index_path, combined_chunk_path)
-            print("Default document is avaliable, Appending it to the default document")
-        else:
-            print("Could not add document to existing one. Please add a default first")
-
-    
-    def query(self,query_text):
-        """
-        Retrieves top-k most similar chunks for a given query.
-
-        Args:
-            query_text (str): The user query string.
-
-        Returns:
-            list: A list of top-k similar text chunks.
-        """
-        nullInput = "Please enter something"
-        if(query_text == "" or query_text is None):
-            return nullInput
-        k = 2
-        # query_embedding = self.model.encode([query_text])
-        # D, I = self.index.search(np.array(query_embedding), k)
-        # self.retrieved_chunks = [self.splitted_text[i] for i in I[0]]
-        # return self.retrieved_chunks
-        query_embedding = self.model.encode([query_text])
-        query_embedding = np.array(query_embedding, dtype=np.float32)
-
-        D, I = self.index.search(query_embedding, k)
-
-        self.retrieved_chunks = [self.splitted_text[i] for i in I[0]]
-        return self.retrieved_chunks
-    
-    def save(self, index_filename,splittext_filename):
-        """
-            Saves the FAISS index and chunked text to disk.
-
-        Args:
-            index_filename (str): Filename for FAISS index.
-            splittext_filename (str): Filename for text chunks.
-        """
-        data_path = os.path.join(os.path.dirname(__file__), '..', 'data')
-        os.makedirs(data_path, exist_ok=True)
-
-        faiss.write_index(self.index, os.path.join(data_path, index_filename))
-        with open(os.path.join(data_path, splittext_filename), 'w') as f:
-            json.dump(self.splitted_text, f)
-
-    
-    def load(self, index_filename,splittext_filename):
-        """
-        Loads the FAISS index and chunked text from disk.
-
-        Args:
-            index_filename (str): Filename for FAISS index.
-            splittext_filename (str): Filename for text chunks.
-        """
-        p = os.path.join(os.path.dirname(__file__), '..', 'data')
-        self.index = faiss.read_index(os.path.join(p, index_filename))
-        with open(os.path.join(p, splittext_filename), 'r') as f:
-            self.splitted_text = json.load(f)
-
-def main():
-    """
-    Main function that provides a CLI to interact with the RAG system.
-    
-    Functionality:
-        - Choose from loading an existing document, overwriting it, or appending new content.
-        - Load and save FAISS index and chunked text data.
-        - Accepts user queries and retrieves relevant document content.
-        - Generates responses using a generator module.
-    """
-    retriever = Retriever()
-
-    def LoadNewDocument(newDocument):
-        neighbour_size = 2
-        split_len = 100
-        base_name = os.path.splitext(os.path.basename(newDocument))[0]
-        index_file = f"{base_name}_faiss.index"
-        subtext_file = f"{base_name}_subtexts.json"
-    """
-    Below code has user choice to choice from and perform based on the choice
-    Choice 1: loads the default document and procced to the user search query
-    Choice 2: user has a option to overwrite the default document
-    Choice 3: User had a option to add a new document to the default document
-    """
-
-    docChoices = {
-        '1': "Local query with existing document",
-        '2': "Overwrite with New document",
-        '3': "Add to existing document",
-        '4': "Exit"
-    }
-
-    def localQuery(group_id):
-        """
-            Prompts the user to enter queries and prints the retrieved answers using the generator.
-
-            Args:
-            group_id (str): Identifier for the team or group (used in generator).
-        """
-        gen = Generator()
-        while True:
-            appendlist = []
-            user_query = input("Your query: ").strip()
-            if user_query == ("exit1"):
-                print("Have a nice one")
-                sys.exit()
-            try:
-                results = retriever.query(user_query)
-                if(user_query == ""):
-                    print("Answer:", results)
+            sentences = nltk.sent_tokenize(review_text)
+            chunk = ""
+            for sentence in sentences:
+                if len(chunk) + len(sentence) < 512:
+                    chunk += " " + sentence
                 else:
-                    # print("`````````````````````````````````````````````````````````````")
-                    # print("Results")
-                    # print("`````````````````````````````````````````````````````````````")
-                    for res in results:
-                        cleaned_res = res.replace("\n", " ").strip()
-                        appendlist.append(cleaned_res)
-                    # print(appendlist)
-                    # print("`````````````````````````````````````````````````````````````")
-                    # print("Context")
-                    context = "\n\n".join(results)
-                    # print(context)
-                    # print("```````````````````end context```````````````````````````````")
-                    # Generate answer from your generator
-                    answer = gen.generate_answer(appendlist, context, user_query, group_id)
-                    # print("Here")
-                    print("Answer:", answer)
-            except Exception as e:
-                print("Yo, somethings wrong with code. Try again:")
-            
+                    clean_chunk = chunk.strip()
+                    if clean_chunk and clean_chunk not in seen_chunks:
+                        chunked_reviews.append({
+                            "text": clean_chunk,
+                            "brand": brand,
+                            "model": model,
+                            "stars": stars
+                        })
+                        seen_chunks.add(clean_chunk)
+                    chunk = sentence
+            clean_chunk = chunk.strip()
+            if clean_chunk and clean_chunk not in seen_chunks:
+                chunked_reviews.append({
+                    "text": clean_chunk,
+                    "brand": brand,
+                    "model": model,
+                    "stars": stars
+                })
+                seen_chunks.add(clean_chunk)
 
-    """
-    Below code promts user with a welcome message and choices about the document
-    User get promots based on the choice
-    
-    """
-    while True:
-        print("Hello user, check for all the information on World of cats")
-        print("Please choose options to Continue or type exit to exit")
-        document_file = "../data/winnie_the_pooh.txt"
-        group_id = "Team Dave"
-        base_name = os.path.splitext(os.path.basename(document_file))[0]
+        with open(chunked_path, "w", encoding="utf-8") as f:
+            json.dump(chunked_reviews, f, indent=4)
 
-        data_dir = os.path.join(os.path.dirname(__file__), '..', 'data')
-        index_file = os.path.join(data_dir, f"{base_name}_faiss.index")
-        subtext_file = os.path.join(data_dir, f"{base_name}_subtexts.json")
-        print(docChoices)
-        ChoiceUser = input()
-        if ChoiceUser == "1":
-            if os.path.exists(index_file) and os.path.exists(subtext_file):
-                print("Making sure query works. Hold on")
-                retriever.load(index_file,subtext_file)
-                localQuery(group_id)
-            else:
-                print("File are loading for the first time, Plese wait")
-                retriever.addDocuments(document_file)
-                retriever.save(index_file,subtext_file)
-                localQuery(group_id)
+        self.chunked_reviews = chunked_reviews
 
-        elif ChoiceUser == "2":
-            print("Enter document name, inculding document extenstion")
-            pattern = r'^[\w,\s-]+\.(txt|pdf)$'
-            newDocument = input()
-            if re.match(pattern, newDocument):
-                # full_path = os.path.join("data", newDocument)
-                base_name = os.path.splitext(os.path.basename(newDocument))[0]
-                # base_name = os.path.splitext(os.path.basename(full_path))[0]
+        logging.info(json.dumps({
+            "timestamp": datetime.now().isoformat(),
+            "event": "chunk_reviews",
+            "num_chunks": len(chunked_reviews),
+            "output_file": chunked_path
+        }))
 
-                # Construct dynamic filenames
-                index_file = f"{base_name}_faiss.index"
-                subtext_file = f"{base_name}_subtexts.json"
-                if not (os.path.exists(index_file) and os.path.exists(subtext_file)):
-                    print("Please wait loading your new document")
-                    retriever.addDocuments(base_name)
-                    retriever.save(index_file,subtext_file)
-                    print("Your document was loaded you can start with your query")
-                else:
-                    retriever.load(index_file,subtext_file)
-                    print("This document already exists, Using the existing document")
-                localQuery(group_id)
-            else:
-                print("Oops, you have to check again the document name")
+        return chunked_reviews
 
+    def index_chunks(self):
+        if not self.chunked_reviews:
+            raise ValueError("No chunked reviews to index. Run chunk_reviews first.")
 
-        elif ChoiceUser == "3":
-            print("Enter document name, inculding document extenstion")
-            pattern = r'^[\w,\s-]+\.(txt|pdf)$'
-            additionalDocument = input()
-            if re.match(pattern, additionalDocument):
-                print("Please wait loading your document")
-                retriever.addExistingDocument(additionalDocument)
-                print("Choice 3")
-                localQuery(group_id)
-            else:
-                print("Document name is wrong or Document already exists")
-        elif ChoiceUser == '4':
-            print("Good Day")
-            break
-        else:
-            print("Please try again")
+        embeddings = np.array([self.model.encode(entry["text"]) for entry in self.chunked_reviews], show_progress_bar=False)
+        dimension = embeddings.shape[1]
+        self.index = faiss.IndexFlatL2(dimension)
+        self.index.add(embeddings)
+
+        faiss.write_index(self.index, index_path)
+
+        logging.info(json.dumps({
+            "timestamp": datetime.now().isoformat(),
+            "event": "index_chunks",
+            "num_chunks": len(self.chunked_reviews),
+            "index_file": index_path
+        }))
+
+        print(f"Indexed {len(self.chunked_reviews)} chunks in FAISS")
+
+    def get_embedding(self, text):
+        return self.model.encode([text])[0].reshape(1, -1).astype("float32")
+
+    def retrieve(self, query, top_k=20):
+        with open(chunked_path, "r", encoding="utf-8") as f:
+            chunks = json.load(f)
 
         
+        
+        matcher = ProductMatcher(chunks)
+        print(matcher.titles)
+        query_for_matching = matcher.clean_query_for_product_match(query)
+        print(f"Query for matching: {query_for_matching}")
+        matched_title = matcher.match(query_for_matching)
+        print(f"Matched title: {matched_title}")
+
+        if not matched_title:
+            logging.info(json.dumps({
+                "timestamp": datetime.now().isoformat(),
+                "event": "retrieve",
+                "query": query,
+                "matched_title": None,
+                "returned_chunks": 0
+            }))
+            return []
+        if not matched_title:
+            return []
+        matched_core = re.sub(r"\(.*?\)", "", matched_title).strip().lower()
+        filtered_chunks = matcher.filter_chunks_by_title(matched_core)
+
+        if not filtered_chunks:
+            logging.info(json.dumps({
+                "timestamp": datetime.now().isoformat(),
+                "event": "retrieve",
+                "query": query,
+                "matched_title": matched_title,
+                "returned_chunks": 0
+            }))
+            return []
+
+        embedding_dim = self.get_embedding("sample").shape[1]
+        temp_index = faiss.IndexFlatL2(embedding_dim)
+        review_embeddings = np.vstack([self.get_embedding(f"passage: {c['text']}") for c in filtered_chunks])
+        temp_index.add(review_embeddings)
+
+        query_vec = self.get_embedding(f"query: {query_for_matching}")
+        _, I = temp_index.search(query_vec, min(top_k, len(filtered_chunks)))
+        results = [filtered_chunks[i] for i in I[0]]
+
+        logging.info(json.dumps({
+            "timestamp": datetime.now().isoformat(),
+            "event": "ui_retrieve",
+            "query": query,
+            "matched_product": matched_title or "None",
+            "returned_chunks": len(results)
+        }))
+
+        return results
+
 
 if __name__ == "__main__":
-    main()
+    indexer = Retriever()
+    indexer.chunk_reviews()
+    indexer.index_chunks()
+    print("Chunking and FAISS index are complete.")
