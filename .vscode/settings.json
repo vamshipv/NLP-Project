@@ -1,0 +1,6 @@
+{
+    "python.analysis.extraPaths": [
+        "./baseline/generator",
+        "./baseline/retriever"
+    ]
+}
