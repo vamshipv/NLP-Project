@@ -8,6 +8,7 @@ import gradio as gr
 from transformers import AutoTokenizer, AutoModel
 import sys
 
+# Ensure the parent directories are in the path for imports
 sys.path.append(os.path.abspath(os.path.join("..", "generator")))
 sys.path.append(os.path.abspath(os.path.join("..", "retriever")))
 
@@ -18,6 +19,13 @@ from retriever import Retriever
 CHUNK_FILE = os.path.join('..', 'data', "chunked_reviews.json")
 INDEX_FILE = os.path.join('..', 'data', "reviews.index")
 
+""" User Interface Class
+This class provides a simple user interface for interacting with the product review summarization system.
+It allows users to input queries, retrieve relevant chunks, and generate summaries using a pre-trained model.
+It uses the Hugging Face Transformers library for model inference and FAISS for efficient similarity search.
+It initializes the model and tokenizer, loads the chunked reviews and FAISS index,
+and provides methods to get embeddings, retrieve relevant chunks, and generate summaries.
+It is designed to be used in a Gradio web interface, allowing users to interact with the system easily."""
 class user_interface:
     def __init__(self, chunk_file=CHUNK_FILE, faiss_index_file=INDEX_FILE):
         self.generator = Generator()
@@ -28,6 +36,7 @@ class user_interface:
 
         self.index = faiss.read_index(faiss_index_file)
 
+    # Below code is not used in the current implementation
     def get_embedding(self, text):
         inputs = self.tokenizer(f"query: {text}", return_tensors="pt", padding=True, truncation=True).to(self.device)
         with torch.no_grad():
@@ -46,6 +55,17 @@ retriever = Retriever()
 generator = Generator()
 retrieved = []
 
+""" Stream function to generate summaries based on user queries
+This function retrieves relevant chunks based on the user query,
+matches the product title, and generates a summary using the generator.
+
+It yields the summary character by character to create a streaming effect.
+It uses the retriever to find relevant chunks and the generator to create a summary.
+It also handles cases where no reviews are found for the given query.
+
+#TOOD
+Need to improve the summary generation process to include sentiment analysis and key points and handling the case where no reviews are found.
+"""
 def generate_summary_stream(user_query):
     global retrieved
     retrieved = retriever.retrieve(user_query)
@@ -64,6 +84,10 @@ def generate_summary_stream(user_query):
         yield output
         time.sleep(0.02)
 
+""" 
+Function to display retrieved chunks in a formatted JSON style
+This function formats the retrieved chunks into a JSON-like structure for display.
+"""
 def display_chunks():
     if not retrieved:
         return "No chunks to display.", gr.update(visible=True)
@@ -81,7 +105,13 @@ def display_chunks():
     json_output = json.dumps(retrieved, indent=2, ensure_ascii=False)
     return json_output, gr.update(visible=True)
 
-# Clean minimalist design with compact buttons
+
+""" Create the Gradio interface
+This section sets up the Gradio interface with a clean and minimalist design.
+It includes a title, input textbox for queries, buttons for generating summaries and displaying chunks,
+and output textboxes for the summary and chunks.
+"""
+
 with gr.Blocks(css="""
 body {
     background-color: white !important;

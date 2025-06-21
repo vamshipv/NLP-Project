@@ -11,17 +11,31 @@ from datetime import datetime
 from product_matcher import ProductMatcher
 import re
 
-# Paths
+"""
+This script is a retriever module that processes product reviews, chunks them into manageable pieces, 
+indexes them using FAISS, and retrieves relevant chunks based on user queries.
+"""
+
+# File paths
 json_file = os.path.join("..", "data", "reviews.json")
 output_dir = os.path.join("..", "data")
 os.makedirs(output_dir, exist_ok=True)
 chunked_path = os.path.join(output_dir, "chunked_reviews.json")
 index_path = os.path.join(output_dir, "reviews.index")
 
+# Logging configuration not workng
 log_dir = os.path.join("..", "logs")
 os.makedirs(log_dir, exist_ok=True)
 log_path = os.path.join(log_dir, "retriever_log.json")
 logging.basicConfig(filename=log_path, level=logging.INFO, format="%(message)s")
+
+""""
+This retriever module is designed to:
+1. Load product reviews from a JSON file.
+2. Chunk the reviews into smaller pieces to fit within a specified token limit.
+3. Index these chunks using FAISS for efficient retrieval.
+4. Retrieve relevant chunks based on user queries, matching them to product titles.
+"""
 
 class Retriever:
     def __init__(self):
@@ -35,6 +49,12 @@ class Retriever:
         self.index = None
         self.chunked_reviews = []
 
+    """
+    This method processes the reviews DataFrame, chunks the text into manageable pieces, and saves them to a JSON file.
+    It ensures that each chunk is unique and does not exceed a specified length (512 characters).
+    Returns:
+        list: A list of dictionaries containing the chunked review text, brand, model, and stars.
+    """
     def chunk_reviews(self):
         chunked_reviews = []
         seen_chunks = set()
@@ -88,6 +108,10 @@ class Retriever:
 
         return chunked_reviews
 
+    """
+    This method indexes the chunked reviews using FAISS.
+    It encodes the text of each chunk into embeddings and adds them to a FAISS index for efficient similarity search.
+    """
     def index_chunks(self):
         if not self.chunked_reviews:
             raise ValueError("No chunked reviews to index. Run chunk_reviews first.")
@@ -108,15 +132,27 @@ class Retriever:
 
         print(f"Indexed {len(self.chunked_reviews)} chunks in FAISS")
 
+    """
+    This method retrieves the embedding for a given text using the SentenceTransformer model.
+    """
     def get_embedding(self, text):
         return self.model.encode([text])[0].reshape(1, -1).astype("float32")
 
-    def retrieve(self, query, top_k=20):
+    """
+    This method retrieves relevant chunks based on a user query.
+    It matches the query to product titles, filters the chunks by the matched title, and retrieves the top_k relevant chunks.
+
+    #TODO
+    Working in progess:
+    - It uses the ProductMatcher to find the best matching product title based on the query.
+    - It filters the chunks based on the matched title.
+    - It uses FAISS to search for the top_k most relevant chunks based on the query embedding.
+    - Currently, exact matching is not implemented, but it retrieves chunks based on the closest match to the query.
+    """
+    def retrieve(self, query, top_k=15):
         with open(chunked_path, "r", encoding="utf-8") as f:
             chunks = json.load(f)
 
-        
-        
         matcher = ProductMatcher(chunks)
         print(matcher.titles)
         query_for_matching = matcher.clean_query_for_product_match(query)
