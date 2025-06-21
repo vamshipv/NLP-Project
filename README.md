@@ -1,40 +1,107 @@
-# Project Overview
+# Product Review Summarizer
 
-This project implements a Retriever-Generator architecture that allows users to query a document corpus and receive relevant, generated answers based on context. It combines the power of FAISS-based similarity search and a Transformer-based text generation model (FLAN-T5).
+A pipeline for summarizing customer reviews on specific products using dense semantic search, fuzzy product title matching, and generative summarization.
 
-The system:
-1.  Indexes text documents using vector embeddings (via SentenceTransformers).<br/>
-2.  Retrieves the most relevant chunks of a document for a given query using FAISS.<br/>
-3.  Generates human-readable answers to the user's question using the FLAN-T5 model.<br/>
-4.  Logs responses with metadata like timestamp, similarity score, and document context.<br/>
+---
 
-## Requirements
-Make sure you have Python installed and run the requirements file before running the main file<br/>
-**pip install -r requirements.txt**
+## Overview
 
-## Usage Instruction
-1.  Navigate to the approriate directory to run the program, use python3 FileName.py to run the program <br/>
-2.  Retriever Program is already loaded with default document on Cats <br/>
-3.  User has the option to choose to load new document, overwrite and add to the existing document.<br/>
-4.  Enter the User Query to find the results based on input <br/>
+This project implements a Retriever-Generator architecture designed to provide concise, review-based summaries. It leverages:
 
-## Example Flow
-1.  Launch the program.<br/>
-2.  Choose to load cats.txt.<br/>
-3.  Ask a question like : "Who is pooh?"<br/>
-4.  The system retrieves relevant chunks.<br/>
-5.  Sends them to the generator.<br/>
-6.  Returns an answer like : "a bear"<br/>
-7.  All logs are saved in generation_log.jsonl.<br/>
+* **FAISS** for fast vector similarity search
+* **SentenceTransformers** for embedding customer reviews
+* **Gemma 2:2B** for generative text summarization
+* **RapidFuzz** for robust fuzzy product title matching
+* **Gradio** for an intuitive and interactive user interface
 
-## How it works
-**Retriever (retriever.py)**<br/>
-1.  Splits documents into chunks.<br/>
-2.  Encodes with SentenceTransformer.<br/>
-3.  Stores embeddings using FAISS index.<br/>
-4.  Retrieves top-k similar chunks for a user query.<br/>
+With this system, users can query real product feedback—for example, by asking for a summary on "Samsung Galaxy M01"—and receive a concise, review-based summary powered by **semantic search** and **Gemma 2:2B** text generation.
 
-**Generator (generator.py)**<br/>
-1.  Builds prompts with retrieved chunks.<br/>
-2.  Uses google/flan-t5-base to generate answers.<br/>
-3.  Logs session details with timestamp and relevance label.<br/>
+---
+
+## Features
+
+* **Intelligent Title Matching**: Utilizes `RapidFuzz` to accurately match product titles, ignoring variations in color, RAM, or storage.
+* **Efficient Retrieval**: Employs a FAISS index for high-performance dense retrieval of relevant review snippets.
+* **Natural Language Summarization**: Generates fluent summaries using the Gemma 2:2B model.
+* **Interactive UI**: Provides a user-friendly Gradio interface for seamless querying and exploration.
+* **Transparent Logging**: Logs every retrieval and summarization step, including the original query, generated summary, and source chunks for full context.
+
+---
+
+## Setup
+
+### Installation
+
+Install the required dependencies:
+
+```bash
+pip install -r requirements.txt
+python -m nltk.downloader punkt
+python -m spacy download en_core_web_sm
+```
+
+### Additional Requirement: Ollama for Gemma
+
+Before running the generator, you'll need to install [Ollama](https://ollama.com/) to handle Gemma-based summarization locally.
+
+1.  **Download and Install Ollama**: Visit [https://ollama.com/download](https://ollama.com/download) and follow the installation instructions for your operating system.
+2.  **Pull the Gemma Model**: Once Ollama is installed, open your terminal and pull the Gemma 2B model:
+
+    ```bash
+    ollama pull gemma2:2b
+    ```
+
+---
+
+## How It Works
+
+The system operates as a modular Retriever-Generator pipeline, processing customer reviews through several key stages:
+
+---
+
+### 1. Chunking & Embedding
+
+Customer reviews (structured with `Brand`, `Model`, `Stars`, `Comment`) are loaded from a JSON file. These reviews are then:
+
+* Split into approximately 512-token chunks using NLTK.
+* Embedded into vector representations using the `intfloat/e5-base-v2` SentenceTransformer model.
+* Stored in a FAISS index to enable efficient similarity-based search.
+
+---
+
+### 2. Fuzzy Product Matching
+
+When a user submits a query, the system:
+
+* Cleans and simplifies the query (e.g., removes phrases like "summary on" or "feedback for").
+* Performs a fuzzy match against a list of known product titles using RapidFuzz.
+* Canonicalizes matched titles by removing specific technical details (like RAM, color, or storage variants).
+* Filters the review chunks to include only those related to any matching product variant.
+
+---
+
+### 3. Semantic Retrieval
+
+With the product-specific chunks identified, the system then:
+
+* Embeds the cleaned user query using the same `e5-base-v2` model.
+* Constructs a temporary FAISS index containing only the matched product chunks.
+* Executes a top-k similarity search on this temporary index to retrieve the most semantically relevant review snippets.
+
+---
+
+### 4. Summarization with Gemma
+
+The retrieved review chunks are then used to:
+
+* Construct a detailed prompt.
+* Send this prompt to the `gemma2:2b` language model, which runs locally via Ollama.
+* Generate and return a concise, fluent summary based on the provided review content.
+
+---
+
+### 5. Logging
+
+All operations are thoroughly logged for transparency and debugging:
+
+* `summary_log.json`: This file records the original query, the generated summary, and all source chunks used to create the summary.
