@@ -105,3 +105,26 @@ The retrieved review chunks are then used to:
 All operations are thoroughly logged for transparency and debugging:
 
 * `summary_log.json`: This file records the original query, the generated summary, and all source chunks used to create the summary.
+
+---
+
+## Usage
+
+To run the application, navigate to the `Project/baseline/user_interface` directory and execute the `user_interface.py` script:
+
+```bash
+cd Project/baseline/user_interface
+python user_interface.py
+```
+
+Upon successful execution, the application will launch a Gradio interface, typically accessible via a `localhost` URL (e.g., `http://127.0.0.1:7860`). Open this link in your web browser.
+
+### Example Interaction
+
+1.  **Input a Query**: In the Gradio interface, type your product summarization query, for instance:
+    ```
+    Summary on Samsung Galaxy M01
+    ```
+2.  **Get Summary**: The system will process your request and display a concise summary of the relevant customer reviews.
+3.  **Review Chunks**: Below the summary, you will find "Chunks". Clicking on "Show Chunks" button will reveal the specific review chunks that were used by the Gemma model to generate the summary, allowing you to review the source content.
+
