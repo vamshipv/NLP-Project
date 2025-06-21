@@ -1,0 +1,110 @@
+import csv
+import re
+import numpy as np
+import faiss
+from sentence_transformers import SentenceTransformer
+from sklearn.preprocessing import normalize
+from transformers import pipeline
+
+
+def build_prompt(model_name: str, comment: str) -> str:
+    return f"Review for model '{model_name}': {comment}"
+
+
+def extract_keywords(text):
+    return re.findall(r'\b\w+\b', text.lower())
+
+
+def load_and_embed_data(filename, query=None, k=5, limit_reviews=50, truncate_words=50):
+    selected_data = []
+
+    # Load CSV
+    with open(filename, encoding='utf-8') as reviewset:
+        reviewset_data = csv.DictReader(reviewset)
+        for row in reviewset_data:
+            if len(selected_data) >= limit_reviews:
+                break
+            model_name = row.get("Model", "").strip()
+            comment_text = row.get("comment", "").strip()
+            if not model_name or not comment_text:
+                continue
+            words = comment_text.split()
+            truncated_comment = " ".join(words[:truncate_words])
+            selected_data.append((model_name, truncated_comment))
+
+    print(f"\n✅ Selected {len(selected_data)} valid rows.")
+
+    model = SentenceTransformer('all-MiniLM-L6-v2')
+    prompts = [build_prompt(model_name, comment) for model_name, comment in selected_data]
+    embeddings = model.encode(prompts, convert_to_numpy=True)
+
+    if query:
+        query_keywords = extract_keywords(query)
+        filtered_data = [(m, c) for (m, c) in selected_data if any(kw in m.lower() for kw in query_keywords)]
+
+        if not filtered_data:
+            print(f"\n❌ No reviews found matching model name '{query}'.")
+            return
+
+        prompts = [build_prompt(model_name, comment) for model_name, comment in filtered_data]
+        embeddings = model.encode(prompts, convert_to_numpy=True)
+        selected_data = filtered_data  # update
+
+    # FAISS index creation
+    dimension = embeddings.shape[1]
+    index = faiss.IndexFlatIP(dimension)
+    embeddings = normalize(embeddings, axis=1)
+    index.add(embeddings)
+    print(f"🔗 FAISS index built with {index.ntotal} vectors.")
+
+    metadata = [(model_name, comment) for model_name, comment in selected_data]
+
+    if query:
+        query_prompt = build_prompt(query, "")
+        print(f"\n🔍 Embedding query: '{query_prompt}'")
+        query_embedding = model.encode([query_prompt], convert_to_numpy=True)
+        query_embedding = normalize(query_embedding, axis=1)
+
+        D, I = index.search(query_embedding, k)
+        print(f"\n🔎 Top {k} most similar results:")
+        top_k_results = []
+        combined_comments = []
+        for rank, (idx, score) in enumerate(zip(I[0], D[0]), 1):
+            model_name, comment = metadata[idx]
+            print(f"\n#{rank}:")
+            print(f" - Similarity Score: {score:.4f}")
+            print(f" - Model: {model_name}")
+            print(f" - Comment: {comment}")
+            top_k_results.append((score, model_name, comment))
+            combined_comments.append(comment)
+
+        # Summarize with Gemma 2B (text-generation)
+        print("\n📝 Generating summary of top reviews using Gemma 2B...")
+
+        generator = pipeline("text-generation", model="google/gemma-2b-it", device_map="cpu")
+
+        combined_text = " ".join(combined_comments)
+        max_words = 512
+        if len(combined_text.split()) > max_words:
+            combined_text = " ".join(combined_text.split()[:max_words])
+
+        prompt = f"Summarize the following user reviews about an AI model:\n\n{combined_text}\n\nSummary:"
+        result = generator(prompt, max_new_tokens=150, do_sample=False)[0]["generated_text"]
+        summary = result.split("Summary:")[-1].strip()
+
+        print("\n📄 Summary:")
+        print(summary)
+
+        return top_k_results, summary
+
+    else:
+        print("\n⚠️ No query provided. Skipping similarity search.")
+        return list(zip(prompts, embeddings))
+
+
+if __name__ == "__main__":
+    user_query = input("🔸 Enter your query (model name): ").strip()
+    if user_query == "":
+        user_query = None
+
+    load_and_embed_data("reviewset.csv", query=user_query, k=5)
