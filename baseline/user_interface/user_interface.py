@@ -7,8 +7,10 @@ import numpy as np
 import gradio as gr
 from transformers import AutoTokenizer, AutoModel
 import sys
+
 sys.path.append(os.path.abspath(os.path.join("..", "generator")))
 sys.path.append(os.path.abspath(os.path.join("..", "retriever")))
+
 from generator import Generator
 from retriever import Retriever
 
@@ -38,7 +40,7 @@ class user_interface:
         _, indices = self.index.search(query_vec, top_k)
         return [self.chunks[i] for i in indices[0]]
 
-# Initialize retriever and generator
+# Initialize
 user_interface = user_interface()
 retriever = Retriever()
 generator = Generator()
@@ -72,22 +74,90 @@ def display_chunks():
             f"Model: {c.get('model', 'N/A')}\n"
             f"Brand: {c.get('brand', 'N/A')}\n"
             f"Stars: {c.get('stars', 'N/A')}\n"
-            f"Review: {c.get('text', '')}"
+            f"{c.get('text', '')}"
         )
         formatted_chunks.append(chunk)
 
-    return "\n\n---\n\n".join(formatted_chunks), gr.update(visible=True)
+    json_output = json.dumps(retrieved, indent=2, ensure_ascii=False)
+    return json_output, gr.update(visible=True)
 
-# Build UI
-with gr.Blocks() as demo:
-    gr.Markdown("## 💬 Product Review Summarizer (Powered by Gemma + E5)")
-    query_input = gr.Textbox(label="Your Product Query", placeholder="e.g. Battery life of Realme Narzo 20", lines=2)
+# Clean minimalist design with compact buttons
+with gr.Blocks(css="""
+body {
+    background-color: white !important;
+    margin: 0;
+}
+.gradio-container {
+    background-color: white !important;
+    font-family: 'Arial', sans-serif;
+}
 
-    generate_button = gr.Button("Generate Summary")
-    summary_output = gr.Textbox(label="Generated Summary", lines=6, visible=True)
+textarea, input {
+    background-color: white !important;
+    color: black !important;
+    border: 1.5px solid black !important;
+    border-radius: 8px !important;
+    padding: 8px !important;
+}
 
-    show_chunks_button = gr.Button("Show Retrieved Review Chunks")
-    chunks_output = gr.Textbox(label="Top Review Chunks", lines=10, visible=False)
+textarea:focus, input:focus {
+    outline: none !important;
+    box-shadow: none !important;
+    border: 1.5px solid black !important;
+}
+
+button {
+    background-color: white !important;
+    color: black !important;
+    border: 1.5px solid black !important;
+    border-radius: 16px !important;
+    padding: 4px 10px !important;
+    font-size: 12px !important;
+    font-weight: 500;
+    cursor: pointer;
+    width: auto !important;
+    min-width: 60px !important;
+}
+
+button:hover {
+    background-color: #f5f5f5 !important;
+}
+               
+.centered-buttons {
+    justify-content: center !important;
+    gap: 8px;
+}
+
+.centered-buttons button {
+    font-size: 15px !important;
+    padding: 2px 6px !important;
+    width: 300px !important; 
+    max-width: 300px !important;
+    min-width: 0 !important;  /* prevent Gradio min-width overriding you */
+    border-radius: 12px !important;
+    text-align: center !important;
+}
+""") as demo:
+    gr.Markdown(
+        """
+        <h1 style='text-align:left; font-weight:100; font-size:2.0em; color:black; margin-top: 10px; margin-bottom: 30px;'>
+        Product Review Summarizer
+        </h1>
+        """
+    )
+
+    query_input = gr.Textbox(
+        placeholder="Ask about a product",
+        show_label=False,
+        lines=2
+    )
+
+    with gr.Row(elem_classes="centered-buttons"):
+        generate_button = gr.Button("Summarize")
+        show_chunks_button = gr.Button("Show Reviews")
+
+    summary_output = gr.Textbox(show_label=False, lines=6, interactive=False)
+    chunks_output = gr.Code(language="json", visible=False, interactive=False)
 
     generate_button.click(generate_summary_stream, inputs=query_input, outputs=summary_output)
     show_chunks_button.click(display_chunks, inputs=[], outputs=[chunks_output, chunks_output])
