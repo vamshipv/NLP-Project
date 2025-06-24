@@ -1,51 +1,72 @@
 import os
 import sys
-project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-if project_root not in sys.path:
-    sys.path.insert(0, project_root)
-from baseline.retriever.retriever_ollama import Retriever
-from baseline.retriever.gen_ollama_gemma import summarize_with_gemma
+import json
+from bert_score import score as bert_score
 from rouge_score import rouge_scorer
 
+# Ensure the project root is in the path
+# sys.path.append(os.path.abspath(os.path.join("..", "generator")))
+sys.path.append(os.path.abspath(os.path.join('..', 'baseline', 'generator')))
+from generator import Generator
 
-def evaluate_summary(retrieved_chunks, reference_summary):
+"""
+This evaluation module is designed to:
+1. Evaluate the generated summary against a reference summary using ROUGE-L and BERTScore.
+2. Generate a summary based on user queries and retrieved chunks of reviews.
+It uses the `Generator` class to create summaries and the `rouge_scorer` and `bert_score` libraries for evaluation."""
+def evaluate_summary(user_query, retrieved_chunks, reference_summary):
     """
-    Generate a summary from retrieved text chunks and evaluate it against a reference summary using ROUGE-L.
-
-    Args:
-        retrieved_chunks (list of str): List of text chunks (e.g., user reviews) to be summarized.
-        reference_summary (str): The reference summary to be compared with the generated summary.
-
-    Returns:
-        float: The ROUGE-L F1 score indicating the similarity between the generated and reference summaries.
-
+    Generate a summary and evaluate it using both ROUGE-L and BERTScore.
     """
-    context = " ".join(retrieved_chunks)
-    generated_summary = summarize_with_gemma(context, device_name)
-    print("\nGenerated Summary:\n")
+    review_list = [{"text": chunk} for chunk in retrieved_chunks]
+    generator = Generator()
+    generated_summary = generator.generate_summary(user_query, review_list)
+    print("\n--- Generated Summary ---\n")
     print(generated_summary)
 
-    scorer = rouge_scorer.RougeScorer(['rougeL'], use_stemmer=True)
-    scores = scorer.score(reference_summary, generated_summary)
+    # ROUGE-L Score
+    rouge = rouge_scorer.RougeScorer(["rougeL"], use_stemmer=True)
+    rouge_scores = rouge.score(reference_summary, generated_summary)
+    rouge_l = rouge_scores["rougeL"]
 
-    rouge_l = scores['rougeL']
-    print("\nROUGE-L Score:")
+    print("\n--- ROUGE-L Score ---")
     print(f"Precision: {rouge_l.precision:.4f}")
     print(f"Recall:    {rouge_l.recall:.4f}")
     print(f"F1-Score:  {rouge_l.fmeasure:.4f}")
 
-    return rouge_l.fmeasure
+    # BERTScore (uses default model - multilingual or 'roberta-large' if available)
+    P, R, F1 = bert_score([generated_summary], [reference_summary], lang='en', verbose=False)
+    print("\n--- BERTScore ---")
+    print(f"Precision: {P[0]:.4f}")
+    print(f"Recall:    {R[0]:.4f}")
+    print(f"F1-Score:  {F1[0]:.4f}")
+
+    return F1[0].item()
 
 
+"""
+This script evaluates the generated summary against a reference summary using ROUGE-L and BERTScore.
+It initializes the `Generator` class, retrieves relevant chunks based on a user query, and generates a summary.
+It then prints the generated summary and the evaluation scores.
+"""
 if __name__ == "__main__":
+    user_query = "Summarize customer opinions on the Vivo Y91, focusing on battery life, camera performance, and build quality."
+
     retrieved_chunks = [
-            "The phone has a long-lasting battery life.",
-            "Camera is underwhelming in low light.",
-            "Disappointed with the build quality.",
-            "Front camera is worst, not up to the mark. Waste of money.",
-            "Amazing screen length and audio. Camera works good for me. Brilliant auto sensors. Within the price range."
-        ]
-    device_name = "Vivo y91"   
-    reference_summary = " The Vivo Y91 features impressive all-day battery life that satisfies most users. The camera is generally well-regarded, especially for its performance in low light. Some users find the build quality disappointing considering the price. The front camera falls short of expectations in quality. The phone’s screen and audio are considered strong points."
-    print("\nReference Summary:\n",reference_summary)
-    evaluate_summary(retrieved_chunks, reference_summary)
+        "The phone has a long-lasting battery life.",
+        "Camera is underwhelming in low light.",
+        "Disappointed with the build quality.",
+        "Front camera is worst, not up to the mark. Waste of money.",
+        "Amazing screen length and audio. Camera works good for me. Brilliant auto sensors. Within the price range."
+    ]
+
+    reference_summary = (
+        "The Vivo Y91 features impressive all-day battery life that satisfies most users. "
+        "The camera is generally well-regarded, especially for its performance in low light. "
+        "Some users find the build quality disappointing considering the price. "
+        "The front camera falls short of expectations in quality. "
+        "The phone’s screen and audio are considered strong points."
+    )
+
+    print("\n--- Reference Summary ---\n", reference_summary)
+    evaluate_summary(user_query, retrieved_chunks, reference_summary)

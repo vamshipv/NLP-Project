@@ -154,11 +154,10 @@ class Retriever:
             chunks = json.load(f)
 
         matcher = ProductMatcher(chunks)
-        print(matcher.titles)
         query_for_matching = matcher.clean_query_for_product_match(query)
-        print(f"Query for matching: {query_for_matching}")
+
         matched_title = matcher.match(query_for_matching)
-        print(f"Matched title: {matched_title}")
+
 
         if not matched_title:
             logging.info(json.dumps({
