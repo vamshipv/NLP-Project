@@ -7,6 +7,7 @@ import numpy as np
 import gradio as gr
 from transformers import AutoTokenizer, AutoModel
 import sys
+from sentence_transformers import SentenceTransformer, util
 
 # Ensure the parent directories are in the path for imports
 sys.path.append(os.path.abspath(os.path.join("..", "generator")))
@@ -18,6 +19,14 @@ from retriever import Retriever
 # Constants
 CHUNK_FILE = os.path.join('..', 'data', "chunked_reviews.json")
 INDEX_FILE = os.path.join('..', 'data', "reviews.index")
+title_path = os.path.join('..', 'data', 'brands.json')
+with open(title_path, 'r', encoding='utf-8') as f:
+    brands_data = json.load(f)
+
+product_titles = [item.strip() for item in brands_data]
+
+# Load transformer model once
+model_query = SentenceTransformer('all-MiniLM-L6-v2')
 
 """ User Interface Class
 This class provides a simple user interface for interacting with the product review summarization system.
@@ -66,9 +75,23 @@ It also handles cases where no reviews are found for the given query.
 #TOOD
 Need to improve the summary generation process to include sentiment analysis and key points and handling the case where no reviews are found.
 """
+
+def is_title_like_query(query, titles, threshold=0.90):
+    query_emb = model_query.encode(query, convert_to_tensor=True)
+    title_embs = model_query.encode(titles, convert_to_tensor=True)
+    sim_scores = util.cos_sim(query_emb, title_embs)[0]
+    return np.max(sim_scores.numpy()) >= threshold
+
 def generate_summary_stream(user_query):
     global retrieved
 
+    if user_query.strip() == "":
+        yield "Please enter a valid query, your query is empty."
+        return
+
+    if is_title_like_query(user_query, product_titles):
+        yield "Your query looks like it is with just product title. Could you be more specific? For example, 'summarize performance reviews of Product/Device Model'."
+        return
     if contains_cuss_words(user_query):
         yield "Please avoid using offensive language in your query."
         return
