@@ -116,7 +116,7 @@ class Retriever:
         if not self.chunked_reviews:
             raise ValueError("No chunked reviews to index. Run chunk_reviews first.")
 
-        embeddings = np.array([self.model.encode(entry["text"]) for entry in self.chunked_reviews], show_progress_bar=False)
+        embeddings = np.array([self.model.encode(entry["text"]) for entry in self.chunked_reviews])
         dimension = embeddings.shape[1]
         self.index = faiss.IndexFlatL2(dimension)
         self.index.add(embeddings)

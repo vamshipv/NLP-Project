@@ -42,12 +42,17 @@ class Generator:
     Needs better summarization techniques to ensure the summary to inculde sentiment analysis and key points.
     """
     def create_gemma_prompt(self, user_query, review_list):
+        # print(review_list)
         all_reviews_text = "\n".join(f"- {chunk['text']}" for chunk in review_list)
+        # print(all_reviews_text)
         return (
-            f"Summarize customer feedback for '{user_query}' in a neutral tone using the reviews below. "
-            f"Keep the summary concise and focus only on common opinions.\n\n"
+            f"Write a concise paragraph (6–7 sentences) summarizing customer reviews for '{user_query}'. "
+            f"Use a neutral tone. Do not use bullet points or list pros and cons.\n\n"
+            f"Also Focus on common opinions with battery quality, build quality, performance and avoid mentioning specific reviews.\n\n"
+            f"Do not hallucinate or make up information. Just used the provided reviews.\n\n"
+            f"Here are the reviews:\n\n"
             f"{all_reviews_text}\n\n"
-            "**Summary:**"
+            f"Summary:"
         )
 
     """
