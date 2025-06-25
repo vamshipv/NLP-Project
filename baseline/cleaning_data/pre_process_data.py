@@ -8,19 +8,38 @@ json_file = os.path.join('..', 'data', 'reviews.json')
 
 cleaned_data = []
 
+def should_keep_parentheses(content):
+    # Keep if it contains RAM, Storage, ROM or has multiple items (like commas)
+    keywords = ['RAM', 'ROM', 'Storage']
+    return any(kw in content for kw in keywords) or ',' in content
+
+def clean_model_name(model):
+    # Remove parentheses if they don't match keep-worthy criteria
+    return re.sub(
+        r'\(([^)]+)\)', 
+        lambda m: f"({m.group(1)})" if should_keep_parentheses(m.group(1)) else '', 
+        model
+    ).strip()
+
 with open(csv_file, 'r', encoding='utf-8') as f:
     reader = csv.DictReader(f, skipinitialspace=True)
     for row in reader:
-        # Remove unnamed keys like """, and clean newlines/spaces from each field
+        # Clean 'stars' field
         stars_raw = row.get('stars', '').strip()
         stars_match = re.match(r'(\d+(\.\d+)?)', stars_raw)
         stars_clean = stars_match.group(1) if stars_match else ''
+        
+        # Clean 'Model' field
+        model_raw = row.get('Model', '').strip()
+        cleaned_model = clean_model_name(model_raw)
+        
         cleaned_row = {
             key.strip(): value.strip().replace('\n', ' ') 
             for key, value in row.items() 
             if key.strip() in ['Brand', 'Model', 'stars', 'comment']
         }
         cleaned_row['stars'] = stars_clean
+        cleaned_row['Model'] = cleaned_model
         cleaned_data.append(cleaned_row)
 
 with open(json_file, 'w', encoding='utf-8') as f:

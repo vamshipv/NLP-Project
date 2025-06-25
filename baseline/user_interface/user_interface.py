@@ -68,21 +68,30 @@ Need to improve the summary generation process to include sentiment analysis and
 """
 def generate_summary_stream(user_query):
     global retrieved
-    retrieved = retriever.retrieve(user_query)
 
-    if not retrieved:
-        yield f"No reviews found for anything resembling: '{user_query}'"
+    if contains_cuss_words(user_query):
+        yield "Please avoid using offensive language in your query."
         return
+    try:
 
-    matched_product = f"{retrieved[0].get('brand', '')} {retrieved[0].get('model', '')}"
-    yield f"Matched Product: {matched_product}\n\nGenerating summary..."
+        retrieved = retriever.retrieve(user_query)
+        user_query.strip()
+        if not retrieved:
+            yield f"No reviews found for your user query. Please try a different query."
+            return
 
-    summary = generator.generate_summary(user_query, retrieved)
-    output = ""
-    for char in summary:
-        output += char
-        yield output
-        time.sleep(0.02)
+        matched_product = f"{retrieved[0].get('brand', '')} {retrieved[0].get('model', '')}"
+        yield f"Generating summary"
+
+        summary = generator.generate_summary(user_query, retrieved)
+        output = ""
+        for char in summary:
+            output += char
+            yield output
+            time.sleep(0.02)
+    except Exception as e:
+        yield f"An error occurred while generating the summary. Please contact the developers."
+        return
 
 """ 
 Function to display retrieved chunks in a formatted JSON style
@@ -104,6 +113,15 @@ def display_chunks():
 
     json_output = json.dumps(retrieved, indent=2, ensure_ascii=False)
     return json_output, gr.update(visible=True)
+
+
+def contains_cuss_words(user_query):
+    cuss_words = {
+        "fuck", "shit", "bitch", "asshole", "bastard", "damn", "crap",
+        "dick", "piss", "prick", "slut", "whore", "cunt"
+    }
+    words = user_query.lower().split()
+    return any(word.strip('.,!?') in cuss_words for word in words)
 
 
 """ Create the Gradio interface
