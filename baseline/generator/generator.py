@@ -10,8 +10,9 @@ os.makedirs(log_dir, exist_ok=True)
 log_path = os.path.join(log_dir, "summary_log.json")
 logging.basicConfig(filename=log_path, level=logging.INFO, format="%(message)s")
 
-# Path to the chunked reviews file
-chunked_file = os.path.join('..', 'data', 'reviews.json')
+# Path to the chunked reviews file  os.path.join('..', 'data', 'reviews.json')
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+chunked_file = os.path.join(project_root,"baseline", "data", "reviews.json")
 
 """
 This generator module is designed to:

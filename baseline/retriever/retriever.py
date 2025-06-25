@@ -153,13 +153,9 @@ class Retriever:
         with open(chunked_path, "r", encoding="utf-8") as f:
             chunks = json.load(f)
 
-        matcher = ProductMatcher(chunks)
-        print(matcher.titles)
-        query_for_matching = matcher.clean_query_for_product_match(query)
-        print(f"Query for matching: {query_for_matching}")
-        matched_title = matcher.match(query_for_matching)
+        matcher = ProductMatcher()
+        matched_title = matcher.match_brand(query)
         print(f"Matched title: {matched_title}")
-
         if not matched_title:
             logging.info(json.dumps({
                 "timestamp": datetime.now().isoformat(),
@@ -171,9 +167,13 @@ class Retriever:
             return []
         if not matched_title:
             return []
-        matched_core = re.sub(r"\(.*?\)", "", matched_title).strip().lower()
-        filtered_chunks = matcher.filter_chunks_by_title(matched_core)
+        pattern = re.compile(rf"\b{re.escape(matched_title.lower())}\b")
 
+        filtered_chunks = [
+            c for c in chunks
+            if pattern.search(f"{c.get('brand', '')} {c.get('model', '')}".lower())
+        ]
+        print(f"Filtered chunks: {len(filtered_chunks)}")
         if not filtered_chunks:
             logging.info(json.dumps({
                 "timestamp": datetime.now().isoformat(),
@@ -189,7 +189,7 @@ class Retriever:
         review_embeddings = np.vstack([self.get_embedding(f"passage: {c['text']}") for c in filtered_chunks])
         temp_index.add(review_embeddings)
 
-        query_vec = self.get_embedding(f"query: {query_for_matching}")
+        query_vec = self.get_embedding(f"query: {matched_title}")
         _, I = temp_index.search(query_vec, min(top_k, len(filtered_chunks)))
         results = [filtered_chunks[i] for i in I[0]]
 
