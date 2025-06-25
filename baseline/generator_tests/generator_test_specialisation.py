@@ -1,11 +1,18 @@
 import os
 import sys
 import unittest
-project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-sys.path.insert(0, project_root)
-from retriever.gen_ollama_gemma import summarize_with_gemma
+
+sys.path.append(os.path.abspath(os.path.join("..", "generator")))
+from generator import Generator
+
 
 class Test_Generator(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        cls.generator = Generator()
+        cls.user_query='Summary about Samsung galaxy m51'
+
 
     def test_01_keywords_in_summary_pass(self):
         """
@@ -20,17 +27,13 @@ class Test_Generator(unittest.TestCase):
             from the summary.
         """
         retrieved_chunks = [
-            "The phone has a long-lasting battery life.",
-            "Camera is underwhelming in low light.",
-            "Disappointed with the build quality.",
-            "Front camera is worst, not up to the mark. Waste of money.",
-            "Amazing screen length and audio. Camera works good for me. Brilliant auto sensors. Within the price range."
+            {'text': 'The phone has a long-lasting battery life.', 'brand': 'Samsung', 'model': 'Samsung Galaxy M51 (Electric Blue, 6GB RAM, 128GB Storage)', 'stars': '4'}, 
+            {'text': 'Camera is underwhelming in low light.', 'brand': 'Samsung', 'model': 'Samsung Galaxy M51 (Electric Blue, 6GB RAM, 128GB Storage)', 'stars': '3'}, 
+            {'text': 'Disappointed with the build quality.', 'brand': 'Samsung', 'model': 'Samsung Galaxy M51 (Electric Blue, 6GB RAM, 128GB Storage)', 'stars': '2'}, 
+            {'text': 'Amazing screen length and audio.', 'brand': 'Samsung', 'model': 'Samsung Galaxy M51 (Electric Blue, 6GB RAM, 128GB Storage)', 'stars': '5'}
         ]
-        device_name= 'Samsung Galaxy M51'
-        context = " ".join(retrieved_chunks)
-        summary_pass = summarize_with_gemma(context, device_name)
-        print('---------summary-------------\n',summary_pass)
-        # print(summary_pass)
+
+        summary_pass = self.generator.generate_summary(self.user_query, retrieved_chunks)
         keywords = ["battery", "camera", "screen", "build"]
         all_keywords = all(kw in summary_pass.lower() for kw in keywords)
         self.assertTrue(all_keywords, "Not all keywords were found in the summary")
@@ -48,13 +51,10 @@ class Test_Generator(unittest.TestCase):
         unrelated keywords.
         """
         retrieved_chunks = [
-            "Camera is underwhelming in low light.",
-            "Disappointed with the build quality.",
+            {'text': 'Camera is underwhelming in low light.', 'brand': 'Samsung', 'model': 'Samsung Galaxy M51 (Electric Blue, 6GB RAM, 128GB Storage)', 'stars': '3'}, 
+            {'text': 'Disappointed with the build quality.', 'brand': 'Samsung', 'model': 'Samsung Galaxy M51 (Electric Blue, 6GB RAM, 128GB Storage)', 'stars': '2'}, 
         ]
-        device_name= 'Samsung Galaxy M51'
-        context = " ".join(retrieved_chunks)
-        summary_fail = summarize_with_gemma(context, device_name)
-        print('---------summary-------------\n',summary_fail)
+        summary_fail = self.generator.generate_summary(self.user_query, retrieved_chunks)
         keywords = ["battery", "screen"]
         all_keywords = all(kw in summary_fail.lower() for kw in keywords)
         self.assertFalse(all_keywords, "Provided keywords should not be in the summary")
@@ -69,13 +69,10 @@ class Test_Generator(unittest.TestCase):
             AssertionError: If the generated summary is empty or contains only whitespace.
         """
         retrieved_chunks = [
-            "Camera is underwhelming in low light.",
-            "Disappointed with the build quality.",
+            {'text': 'Camera is underwhelming in low light.', 'brand': 'Samsung', 'model': 'Samsung Galaxy M51 (Electric Blue, 6GB RAM, 128GB Storage)', 'stars': '3'}, 
+            {'text': 'Disappointed with the build quality.', 'brand': 'Samsung', 'model': 'Samsung Galaxy M51 (Electric Blue, 6GB RAM, 128GB Storage)', 'stars': '2'}, 
         ]
-        device_name= 'Samsung Galaxy M51'
-        context = " ".join(retrieved_chunks)
-        summary_not_empty = summarize_with_gemma(context, device_name)
-        print('---------summary-------------\n',summary_not_empty)
+        summary_not_empty = self.generator.generate_summary(self.user_query, retrieved_chunks)
         self.assertTrue(bool(summary_not_empty.strip()), "Summary should not be empty for valid input chunks")
 
     def test_04_empty_summary(self):
@@ -88,11 +85,8 @@ class Test_Generator(unittest.TestCase):
             AssertionError: If the generated summary is empty or contains only whitespace.
         """
         retrieved_chunks = []
-        device_name= 'Samsung Galaxy M51'
-        context = " ".join(retrieved_chunks)
-        summary_empty = summarize_with_gemma(context, device_name)
-        print('---------summary-------------\n',summary_empty)
-        self.assertEqual(summary_empty.strip(), "", "Summary should be empty when no input chunks are provided")
+        summary_empty = self.generator.generate_summary(self.user_query, retrieved_chunks)
+        self.assertEqual(summary_empty.strip(), "No relevant reviews found.", "Summary should be empty when no input chunks are provided")
 
     def assertTrue(self,expression, message):
         """
@@ -102,6 +96,7 @@ class Test_Generator(unittest.TestCase):
             expression (bool): The boolean expression to evaluate.
             message (str): The message to print if the assertion fails.
         """
+        print('\n------------------------------------------------------\n')
         if not expression:
             print("Test case failed, Error message: ", message)
         else:
@@ -115,6 +110,7 @@ class Test_Generator(unittest.TestCase):
             expression (bool): The boolean expression to evaluate.
             message (str): The message to print if the assertion fails.
         """
+        print('\n------------------------------------------------------\n')
         if expression:
             print("Test case failed, Error message: ", message)
         else:
@@ -129,6 +125,7 @@ class Test_Generator(unittest.TestCase):
             expected: The expected result.
             message (str): The message to print if the assertion fails.
         """
+        print('\n------------------------------------------------------\n')
         if actual != expected:
             print("Test case failed, Error message:", message)
             print(f"Expected: {expected}, but got: {actual}")

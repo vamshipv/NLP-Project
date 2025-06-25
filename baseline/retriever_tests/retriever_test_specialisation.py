@@ -1,24 +1,23 @@
 import os
 import sys
 import unittest
-project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-sys.path.insert(0, project_root)
-from retriever.retriever_ollama import Retriever
+import re
+
+# Ensure the parent directories are in the path for imports
+sys.path.append(os.path.abspath(os.path.join("..", "retriever")))
+
+from retriever import Retriever
 
 
 class Test_Retriever(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.retriever = Retriever()
-        cls.retriever.read_and_chunk_csv("/Users/dechammacg/Documents/NLPPro/specialisation/NLP-Project/baseline/data/final_dataset.csv")
-        cls.retriever.build_index()
+        cls.retriever.chunk_reviews()
+        cls.retriever.index_chunks()
 
     def retriever_search(self, user_query, top_k=5):
-        results = self.retriever.search(user_query, top_k)
-        print('\n Top Matching Results:')
-        for res in results:
-            print("-", res)
-        return results
+        return self.retriever.retrieve(user_query, top_k)
 
     def test_01_results_not_empty(self):
         """
@@ -30,7 +29,7 @@ class Test_Retriever(unittest.TestCase):
         Raises:
             AssertionError: If no results are retrieved.
         """
-        user_query = "Summarise the reviews about Vivo y91"
+        user_query = "Summary about Samsung galaxy m51"
         retrieved_results = self.retriever_search(user_query, 3)
         self.assertTrue(len(retrieved_results) > 0, "Retrieved chunks list is empty")  
 
@@ -44,9 +43,9 @@ class Test_Retriever(unittest.TestCase):
         Raises:
             AssertionError: If none of the retrieved chunks contain the expected keyword.
         """
-        user_query = "Summarise the reviews about the battery in Vivo y91"
+        user_query = "Summarise the reviews about battery in Samsung galaxy m51"
         retrieved_results = self.retriever_search(user_query,4)
-        found = any("battery" in chunk.lower() for chunk in retrieved_results)
+        found = any("battery" in chunk["text"].lower() for chunk in retrieved_results)
         self.assertTrue(found, "No reviews contains the keyword 'battery'")
 
     def test_03_product_name_match(self):
@@ -54,15 +53,15 @@ class Test_Retriever(unittest.TestCase):
         Test that all retrieved chunks are related to the expected product.
 
         This test confirms that the retriever is returning reviews specifically 
-        about the queried product (e.g., "Vivo y91").
+        about the queried product (e.g., "Samsung galaxy m51").
 
         Raises:
             AssertionError: If any chunk does not mention the expected product name.
         """
-        user_query = "Summarise the reviews about Vivo y91"
+        user_query = "Summary about Samsung galaxy m51"
         retrieved_results = self.retriever_search(user_query, 3)
-        expected_product = "Vivo y91"
-        found = all(expected_product.lower() in chunk.lower() for chunk in retrieved_results)
+        expected_product = "Samsung galaxy m51"
+        found = all(expected_product.lower() == re.sub(r"\(.*?\)", "", chunk["model"].lower()).strip() for chunk in retrieved_results)
         self.assertTrue(found, "Some reviews are not about the expected product")
 
     def test_04_product_name_no_match(self):
@@ -70,16 +69,16 @@ class Test_Retriever(unittest.TestCase):
         Test that irrelevant product reviews are not included in retrieval.
 
         This test checks that the retriever does not return reviews for a different 
-        product (e.g., "Samsung Galaxy M31") when asked about another (e.g., "Vivo y91").
+        product (e.g., "Vivo y91") when asked about another (e.g., "Samsung galaxy m51").
 
         Raises:
             AssertionError: If any unrelated product review is found in the results.
         """
-        user_query = "Summarise the reviews about Vivo y91"
+        user_query = "Summary about Samsung galaxy m51"
         retrieved_results = self.retriever_search(user_query, 3)
-        expected_product = "Samsung Galaxy M31"
-        found = any(expected_product.lower() in chunk.lower() for chunk in retrieved_results)
-        self.assertFalse(found, "Some reviews are about expected product..")
+        unrelated_product = "vivo y91i"
+        found = any(unrelated_product.lower() == re.sub(r"\(.*?\)", "", chunk["model"].lower()).strip() for chunk in retrieved_results)
+        self.assertFalse(found, "Some reviews are about an unrelated product")
 
     def assertTrue(self,expression, message):
         """
@@ -89,6 +88,7 @@ class Test_Retriever(unittest.TestCase):
             expression (bool): The boolean expression to evaluate.
             message (str): The message to print if the assertion fails.
         """
+        print('\n------------------------------------------------------\n')
         if not expression:
             print("Test case failed, Error message: ", message)
         else:
@@ -102,6 +102,7 @@ class Test_Retriever(unittest.TestCase):
             expression (bool): The boolean expression to evaluate.
             message (str): The message to print if the assertion fails.
         """
+        print('\n------------------------------------------------------\n')
         if expression:
             print("Test case failed, Error message: ", message)
         else:
