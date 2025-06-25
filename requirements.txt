@@ -7,3 +7,4 @@ spacy
 nltk
 pandas
 ollama
+flashtext

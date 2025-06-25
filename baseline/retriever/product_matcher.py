@@ -1,74 +1,34 @@
-from rapidfuzz import fuzz, process
+from flashtext import KeywordProcessor
+import json
 import re
+import os
 
-"""
-ProductMatcher is a class that matches product titles from chunked reviews based on a query.
-It extracts unique product titles from the reviews, matches a query against these titles,
-and filters the reviews based on the matched title.
-It also provides a method to clean the query for better matching.
-It is designed to work with chunked reviews, where each review contains a brand and model.
-Currently, it uses fuzzy matching to find the best match for a given query and also work in progress
-to clean the query by removing unnecessary phrases.
-"""
+output_dir = os.path.join("..", "data")
+os.makedirs(output_dir, exist_ok=True)
+brands_path = os.path.join(output_dir, "brands.json")
 
 class ProductMatcher:
-    def __init__(self, chunked_reviews):
-        self.chunked_reviews = chunked_reviews
-        self.titles = self.extract_titles()
+    def __init__(self, brand_file_path=brands_path):
+        self.keyword_processor = KeywordProcessor(case_sensitive=False)
 
-    """
-    This method extracts unique product titles from the chunked reviews.
-    It combines the brand and model, cleans the model by removing brackets and extra spec info,
-    and ensures that the titles are unique.
-    """
-    def extract_titles(self):
-        seen = set()
-        product_titles = []
-        for entry in self.chunked_reviews:
-            brand = entry.get("brand", "").strip().lower()
-            model = entry.get("model", "").strip().lower()
+        if os.path.exists(brand_file_path):
+            with open(brand_file_path, "r", encoding="utf-8") as f:
+                brand_keywords = json.load(f)
+            self.keyword_processor.add_keywords_from_list(brand_keywords)
+        else:
+            raise FileNotFoundError(f"Brand file not found: {brand_file_path}")
 
-            model_cleaned = re.sub(r"\(.*?\)", "", model).strip()
+    def clean_query_for_brand_match(self, query):
+        """Strip filler words and punctuation from user query to isolate brand."""
+        query = query.lower()
+        query = re.sub(r"(summar(y|ize|ise)|reviews|feedback|opinions)\s+(on|about|for)?", "", query)
+        query = re.sub(r"(please|kindly|can you|what do you think about|tell me about|i want|should i buy)", "", query)
+        query = re.sub(r"[^\w\s\-]", "", query)  # remove punctuation
+        query = re.sub(r"\s+", " ", query).strip()
+        return query
 
-            if model_cleaned.startswith(brand):
-                title = model_cleaned
-            else:
-                title = f"{brand} {model_cleaned}".strip()
-
-            if title and title not in seen:
-                seen.add(title)
-                product_titles.append(title)
-        return product_titles
-
-    """
-    This method matches a query against the extracted product titles using fuzzy matching.
-    It returns the matched title if the score is above a specified threshold.
-    """
-    def match(self, query, threshold=90):
-        result = process.extractOne(query.lower(), self.titles, scorer=fuzz.token_sort_ratio)
-        if result:
-            matched_title, score, _ = result
-            return matched_title if score >= threshold else None
-        return None
-
-    """
-    This method filters the chunked reviews based on the matched core title.
-    It searches for the matched title in the brand and model fields of each review.
-    """
-    def filter_chunks_by_title(self, matched_core_title):
-        pattern = re.compile(re.escape(matched_core_title.lower()))
-        return [
-            c for c in self.chunked_reviews
-            if pattern.search(f"{c.get('brand', '')} {c.get('model', '')}".lower())
-        ]
-
-    """
-    This method cleans the query by removing phrases like "summary on", "reviews about", etc.
-    It returns the cleaned query for better matching.
-    #TODO
-    Currently, working in progress.
-    """   
-    @staticmethod
-    def clean_query_for_product_match(query):
-        cleaned = re.sub(r"(summary|reviews|feedback)\s+(on|about|for)\s+", "", query.lower()).strip()
-        return cleaned
+    def match_brand(self, query):
+        """Extract brand name from query using FlashText."""
+        cleaned = self.clean_query_for_brand_match(query)
+        matches = self.keyword_processor.extract_keywords(cleaned)
+        return matches[0] if matches else None
