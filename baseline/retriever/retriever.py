@@ -105,7 +105,7 @@ class Retriever:
             "num_chunks": len(chunked_reviews),
             "output_file": chunked_path
         }))
-
+        # print(f"Chunked {len(chunked_reviews)} reviews into manageable pieces.")
         return chunked_reviews
 
     """
@@ -130,7 +130,7 @@ class Retriever:
             "index_file": index_path
         }))
 
-        print(f"Indexed {len(self.chunked_reviews)} chunks in FAISS")
+        # print(f"Indexed {len(self.chunked_reviews)} chunks in FAISS")
 
     """
     This method retrieves the embedding for a given text using the SentenceTransformer model.
@@ -149,7 +149,7 @@ class Retriever:
     - It uses FAISS to search for the top_k most relevant chunks based on the query embedding.
     - Currently, exact matching is not implemented, but it retrieves chunks based on the closest match to the query.
     """
-    def retrieve(self, query, top_k=15):
+    def retrieve(self, query, top_k=20):
         with open(chunked_path, "r", encoding="utf-8") as f:
             chunks = json.load(f)
 
@@ -200,7 +200,7 @@ class Retriever:
             "matched_product": matched_title or "None",
             "returned_chunks": len(results)
         }))
-
+        # print(f"Retrieved {len(results)} relevant chunks for query: {query}")
         return results
 
 

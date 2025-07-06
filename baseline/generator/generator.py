@@ -41,29 +41,44 @@ class Generator:
     # Work in progress to refine the prompt for better summarization and also to handle different tones or styles.
     Needs better summarization techniques to ensure the summary to inculde sentiment analysis and key points.
     """
-    def create_gemma_prompt(self, user_query, review_list):
+    def create_gemma_prompt(self, user_query, review_list, aspect=None):
         # print(review_list)
         all_reviews_text = "\n".join(f"- {chunk['text']}" for chunk in review_list)
-        # print(all_reviews_text)
-        return (
-            f"Write a concise paragraph (6–7 sentences) summarizing customer reviews for '{user_query}'. "
-            f"Use a neutral tone. Do not use bullet points or list pros and cons.\n\n"
-            f"Also Focus on common opinions with battery quality, build quality, performance and avoid mentioning specific reviews.\n\n"
-            f"Do not hallucinate or make up information. Just used the provided reviews.\n\n"
-            f"Here are the reviews:\n\n"
-            f"{all_reviews_text}\n\n"
-            f"Summary:"
-        )
+
+        if not aspect:
+            print("not aspect")
+            return (
+                f"Write a concise paragraph (6–7 sentences) summarizing customer reviews for '{user_query}'. "
+                f"Use a neutral tone. Do not use bullet points or list pros and cons.\n\n"
+                f"Also Focus on common opinions with battery quality, build quality, performance and avoid mentioning specific reviews.\n\n"
+                f"Do not hallucinate or make up information. Just used the provided reviews.\n\n"
+                f"Here are the reviews:\n\n"
+                f"{all_reviews_text}\n\n"
+                f"Summary:"
+            )
+        else:
+            print("aspect")
+            print(f"Aspect: {aspect}")
+            return (
+                f"Summarize the customer reviews for '{user_query}' by focusing only on the aspect of '{aspect}'.\n"
+                f"Write a concise paragraph (5–7 sentences) in a neutral tone.\n"
+                f"Do not mention the word '{aspect}' explicitly in the summary.\n"
+                f"Do not include information about any other aspects such as camera, display, performance, or sound.\n"
+                f"Only use the information provided in the reviews. Do not make up or infer anything.\n\n"
+                f"Here are the reviews:\n\n"
+                f"{all_reviews_text}\n\n"
+                f"Summary:"
+            )
 
     """
     This method generates a summary of customer feedback based on the user query and the list of reviews.
     It uses the Gemma model via the Ollama API to create the summary and logs the process.
     """
-    def generate_summary(self, user_query, review_list):
+    def generate_summary(self, user_query, review_list, aspect=None):
         if not review_list:
             return "No relevant reviews found."
 
-        prompt = self.create_gemma_prompt(user_query, review_list)
+        prompt = self.create_gemma_prompt(user_query, review_list, aspect)
         response = ollama.chat(
             model=self.model_name,
             messages=[{"role": "user", "content": prompt}],
@@ -85,7 +100,7 @@ class Generator:
         with open(log_path, "a", encoding="utf-8") as f:
             json.dump(log_data, f, indent=4)
             f.write("\n")
-
+        # print(f'Generated summary for query: "{user_query}" with {len(review_list)} chunks.')
         return final_summary
 
 

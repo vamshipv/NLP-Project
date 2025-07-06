@@ -12,9 +12,11 @@ from sentence_transformers import SentenceTransformer, util
 # Ensure the parent directories are in the path for imports
 sys.path.append(os.path.abspath(os.path.join("..", "generator")))
 sys.path.append(os.path.abspath(os.path.join("..", "retriever")))
+sys.path.append(os.path.abspath(os.path.join("..", "user_query_process")))
 
 from generator import Generator
 from retriever import Retriever
+from user_query_process import User_query_process
 
 # Constants
 CHUNK_FILE = os.path.join('..', 'data', "chunked_reviews.json")
@@ -25,8 +27,6 @@ with open(title_path, 'r', encoding='utf-8') as f:
 
 product_titles = [item.strip() for item in brands_data]
 
-# Load transformer model once
-model_query = SentenceTransformer('all-MiniLM-L6-v2')
 
 """ User Interface Class
 This class provides a simple user interface for interacting with the product review summarization system.
@@ -63,8 +63,10 @@ user_interface = user_interface()
 retriever = Retriever()
 generator = Generator()
 retrieved = []
+query_processor = User_query_process()
 
-""" Stream function to generate summaries based on user queries
+""" 
+Stream function to generate summaries based on user queries
 This function retrieves relevant chunks based on the user query,
 matches the product title, and generates a summary using the generator.
 
@@ -76,45 +78,30 @@ It also handles cases where no reviews are found for the given query.
 Need to improve the summary generation process to include sentiment analysis and key points and handling the case where no reviews are found.
 """
 
-def is_title_like_query(query, titles, threshold=0.90):
-    query_emb = model_query.encode(query, convert_to_tensor=True)
-    title_embs = model_query.encode(titles, convert_to_tensor=True)
-    sim_scores = util.cos_sim(query_emb, title_embs)[0]
-    return np.max(sim_scores.numpy()) >= threshold
-
 def generate_summary_stream(user_query):
     global retrieved
-
-    if user_query.strip() == "":
-        yield "Please enter a valid query, your query is empty."
+    if not user_query.strip():
+        yield "Please enter a valid query."
         return
 
-    if is_title_like_query(user_query, product_titles):
-        yield "Your query looks like it is with just product title. Could you be more specific? For example, 'summarize performance reviews of Product/Device Model'."
-        return
-    if contains_cuss_words(user_query):
-        yield "Please avoid using offensive language in your query."
-        return
     try:
-
         retrieved = retriever.retrieve(user_query)
-        user_query.strip()
-        if not retrieved:
-            yield f"No reviews found for your user query. Please try a different query."
+        result = query_processor.process(user_query)
+        # print(f"Processed query: {user_query} -> Result: {result}")
+        if isinstance(result, str):
+            # It's a message, not a summary
+            yield result
             return
 
-        matched_product = f"{retrieved[0].get('brand', '')} {retrieved[0].get('model', '')}"
-        yield f"Generating summary"
-
-        summary = generator.generate_summary(user_query, retrieved)
         output = ""
-        for char in summary:
+        for char in result:
             output += char
             yield output
             time.sleep(0.02)
+
     except Exception as e:
-        yield f"An error occurred while generating the summary. Please contact the developers."
-        return
+        print(f"Error generating summary: {e}")
+        yield "An error occurred while generating the summary. Please contact the developers."
 
 """ 
 Function to display retrieved chunks in a formatted JSON style
