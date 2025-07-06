@@ -3,7 +3,6 @@ import logging
 from datetime import datetime
 import ollama
 import os
-import re
 
 # Logging configuration
 log_dir = os.path.join("..", "logs")
@@ -18,28 +17,64 @@ class Generator:
     def __init__(self, chunk_file=chunked_file):
         """Initialize the Generator with the path to the chunked reviews file."""
         self.chunk_file = chunk_file
-        self.max_tokens = 300
+        self.max_tokens = 400
         self.model_name = "gemma2:2b"
 
         with open(self.chunk_file, "r", encoding="utf-8") as f:
             self.chunked_data = json.load(f)
 
     def create_gemma_prompt(self, user_query, review_list, aspects):
-        aspect_list_str = ", ".join(aspects)
-        # <<< CHANGE HERE: Use the correct key 'text' and use .get() for safety >>>
-        all_reviews_text = "\n".join(f"- {chunk.get('text', '')}" for chunk in review_list)
-        return (
-            f"Summarize customer feedback for '{user_query}' focusing on these aspects: {aspect_list_str}. "
-            f"Provide a concise summary of what customers are saying about each aspect, including both positive and negative feedback.\n\n"
-            f"Reviews:\n{all_reviews_text}\n\n"
-            "**Summary:**"
-        )
+        """
+        Creates a prompt for the Gemma model.
+        - If 'aspects' are provided, it creates a targeted prompt.
+        - Otherwise, it creates a general summary prompt.
+        """
+        all_reviews_text = "\n".join(f"- {chunk.get('text', '')}" for chunk in review_list if chunk.get('text'))
+        print(aspects)
+        if aspects:
+            aspect_list_str = ", ".join(aspects)
+            prompt = (
+                f"You are a product review analyst. Based on the reviews for '{user_query}', "
+                f"provide a detailed summary focusing ONLY on the following aspects: **{aspect_list_str}**. "
+                f"For each aspect, clearly state the positive and negative points mentioned by customers. "
+                f"If there is no information on an aspect, say so.\n\n"
+                f"### Customer Reviews:\n{all_reviews_text}\n\n"
+                f"### Aspect-Based Summary:"
+            )
+        else:
+            prompt = (
+                f"You are a product review analyst. Based on the reviews for '{user_query}', "
+                f"provide a balanced and concise overall summary. "
+                f"Highlight the main pros and cons mentioned by customers.\n\n"
+                f"### Customer Reviews:\n{all_reviews_text}\n\n"
+                f"### Overall Summary:"
+            )
+        
+        return prompt
 
     def generate_summary(self, user_query, review_list, aspects):
+        """
+        Generates a summary. The 'aspects' parameter is a list of strings, or None/empty.
+        """
         if not review_list:
             return "No relevant reviews found."
+        aspects_to_summarize = ["battery", "camera"]
 
-        prompt = self.create_gemma_prompt(user_query, review_list, aspects)
+        # Query -> 
+        # Get the aspect words from the query -> 
+        # Match the main aspect word from the matched words -> 
+        # Use a prompt accordingly
+        for asp in user_query:
+            if asp in aspects_to_summarize:
+                prompt = self.create_gemma_prompt(user_query, review_list, aspects)
+            else:
+                prompt = self.create_gemma_prompt(user_query, review_list)
+
+        if aspects is None:
+            aspects = []
+
+        # prompt = self.create_gemma_prompt(user_query, review_list, aspects)
+        
         response = ollama.chat(
             model=self.model_name,
             messages=[{"role": "user", "content": prompt}],
@@ -52,38 +87,42 @@ class Generator:
             "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             "model_name": self.model_name,
             "user_query": user_query,
+            "aspects_queried": aspects,
             "num_chunks": len(review_list),
-            # <<< CHANGE HERE: Use the correct key 'text' for logging >>>
             "reviews": [c.get("text", "") for c in review_list],
             "prompt": prompt,
             "summary": final_summary
         }
 
         with open(log_path, "a", encoding="utf-8") as f:
+            # THIS IS THE CORRECTED LINE
             json.dump(log_data, f, indent=4)
             f.write("\n")
 
         return final_summary
 
-    def filter_reviews(self, user_query, reviews):
-        """Filters reviews based on keywords in the user query."""
-        keywords = ["battery", "display", "ui", "performance", "sound quality", "camera", "processor", "speed", "price"]
-        relevant_reviews = []
-        user_query_lower = user_query.lower()
-
-        for review in reviews:
-            # <<< CHANGE HERE: Use the correct key 'text' and .get() for safety >>>
-            review_text_lower = review.get('text', '').lower() 
-            
-            if any(keyword in user_query_lower for keyword in keywords) or any(keyword in review_text_lower for keyword in keywords):
-                relevant_reviews.append(review)
-        return relevant_reviews
 
 if __name__ == "__main__":
+    # This block is for direct testing of the generator.py file
+    print("--- Initializing Generator for Testing ---")
     generator = Generator()
-    user_query = "Samsung Galaxy M51 battery and camera"
-    aspects_to_summarize = ["battery", "camera"]
 
-    relevant_reviews = generator.filter_reviews(user_query, generator.chunked_data)
-    summary = generator.generate_summary(user_query, relevant_reviews, aspects_to_summarize)
-    print(summary)
+    sample_reviews = [
+        {'text': 'The battery life is amazing, lasts two full days! But the camera is a bit disappointing in low light.'},
+        {'text': 'Great phone for the price. The display is vibrant and sharp.'},
+        {'text': 'I hate the battery, it dies by lunchtime. Camera photos are surprisingly good though.'},
+        {'text': 'Performance is smooth, no lag at all. Display is just okay, not very bright outdoors.'}
+    ]
+
+    # --- Test Case 1: Aspect-Based Summary ---
+    user_query_1 = "Samsung Phone"
+    aspects_to_summarize = ["battery", "camera"]
+    print(f"\n--- Testing Aspect-Based Summary for '{user_query_1}' on {aspects_to_summarize} ---\n")
+    summary1 = generator.generate_summary(user_query_1, sample_reviews, aspects=aspects_to_summarize)
+    print("Generated Summary:\n", summary1)
+
+    # --- Test Case 2: General Summary (no aspects) ---
+    user_query_2 = "Samsung Phone"
+    print(f"\n--- Testing General Summary for '{user_query_2}' (no aspects) ---\n")
+    
+         
