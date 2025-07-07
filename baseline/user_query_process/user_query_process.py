@@ -35,8 +35,13 @@ class User_query_process:
         # This is used to detect title-like queries
         self.model_query = SentenceTransformer('all-MiniLM-L6-v2')
         self.aspect_keywords = {
-            "battery", "camera", "performance", "display",
-            "charging", "build", "sound", "screen", "design", "durability"
+            "battery": ["battery", "charge", "charging", "mah", "power", "drain"],
+            "camera": ["camera", "photo", "picture", "lens", "image", "zoom", "video"],
+            "performance": ["lag", "smooth", "fast", "slow", "processor", "snapdragon", "performance"],
+            "display": ["screen", "display", "brightness", "resolution", "refresh rate", "touch"],
+            "build": ["build", "design", "material", "durability", "weight", "feel"],
+            "software": ["ui", "os", "update", "bloatware", "interface", "android", "software"],
+            "heating": ["heat", "heating", "warm", "temperature", "overheat"]
         }
 
     """
@@ -111,17 +116,31 @@ class User_query_process:
         if self.intent == "decision_query":
             return "This system is designed to summarize product reviews, not to make purchase decisions. Please rephrase your query to focus on product feedback."
 
-        retrieved_chunks = self.retriever.retrieve(cleaned_query)
-        if not retrieved_chunks:
-            return "No reviews found for your query."
-        
         if self.intent == "aspect":
             for aspect in self.aspect_keywords:
-                # print(f"Checking aspect: {aspect}")
+                print(f"Checking aspect: {aspect}")
                 if aspect in cleaned_query.lower():
-                    # print(f"Aspect found in query: {aspect}")
-                    summary = self.generator.generate_summary(user_query, retrieved_chunks, aspect=aspect)
+                    print(f"Aspect found in query: {aspect}")
+                    retrieved_chunks_aspect = self.chunks_by_aspect(user_query, aspect=aspect)
+                    print(f"Retrieved chunks for aspect '{aspect}': {retrieved_chunks_aspect}")
+                    summary = self.generator.generate_summary(user_query, retrieved_chunks_aspect, aspect=aspect)
                     return summary 
-
+                
+        retrieved_chunks = self.chunks_by_general(user_query)
+        if not retrieved_chunks:
+            return "No reviews found for your query."
         summary = self.generator.generate_summary(user_query, retrieved_chunks)
         return summary
+    
+    def chunks_by_aspect(self, query, aspect=None):
+        retrieved_chunks_aspect = self.retriever.retrieve_by_aspect(query, aspect)
+        if not retrieved_chunks_aspect:
+            return "No reviews found for your query."   
+        return retrieved_chunks_aspect
+    
+    def chunks_by_general(self, query):
+        retrieved_chunks_general = self.retriever.retrieve(query)
+        if not retrieved_chunks_general:
+            return "No reviews found for your query."
+        return retrieved_chunks_general
+        
