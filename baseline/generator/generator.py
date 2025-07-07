@@ -4,6 +4,10 @@ from datetime import datetime
 import ollama
 import os
 
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
+import torch
+import torch.nn.functional as F
+
 # Logging configuration
 log_dir = os.path.join("..", "logs")
 os.makedirs(log_dir, exist_ok=True)
@@ -13,6 +17,11 @@ logging.basicConfig(filename=log_path, level=logging.INFO, format="%(message)s")
 # Path to the chunked reviews file  os.path.join('..', 'data', 'reviews.json')
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 chunked_file = os.path.join(project_root,"baseline", "data", "reviews.json")
+
+# # Load sentiment model
+# sentiment_tokenizer = AutoTokenizer.from_pretrained("cardiffnlp/twitter-roberta-base-sentiment")
+# sentiment_model = AutoModelForSequenceClassification.from_pretrained("cardiffnlp/twitter-roberta-base-sentiment")
+# sentiment_labels = ["negative", "neutral", "positive"]
 
 """
 This generator module is designed to:
@@ -28,6 +37,14 @@ class Generator:
         self.chunk_file = chunk_file
         self.max_tokens = 300
         self.model_name = "gemma2:2b"
+
+        # Sentiment classifier model (Hugging Face Transformers)
+        self.classifier_model_name = "cardiffnlp/twitter-roberta-base-sentiment"
+        self.sentiment_labels = ["negative", "neutral", "positive"]
+
+        self.sentiment_tokenizer = AutoTokenizer.from_pretrained(self.classifier_model_name)
+        self.sentiment_model = AutoModelForSequenceClassification.from_pretrained(self.classifier_model_name)
+
 
         with open(self.chunk_file, "r", encoding="utf-8") as f:
             self.chunked_data = json.load(f)
@@ -54,6 +71,15 @@ class Generator:
             f"{all_reviews_text}\n\n"
             f"Summary:"
         )
+    
+    def classify_sentiment(self, text):
+        inputs = self.sentiment_tokenizer(text, return_tensors="pt", truncation=True)
+        with torch.no_grad():
+            logits = self.sentiment_model(**inputs).logits
+        probs = F.softmax(logits, dim=-1)
+        label_id = torch.argmax(probs, dim=-1).item()
+        return self.sentiment_labels[label_id]
+
 
     """
     This method generates a summary of customer feedback based on the user query and the list of reviews.
@@ -71,6 +97,9 @@ class Generator:
         )
 
         final_summary = response["message"]["content"]
+        sentiment = self.classify_sentiment(final_summary)
+        print('-------sentiment-----',sentiment)
+
 
         log_data = {
             "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
@@ -79,14 +108,15 @@ class Generator:
             "num_chunks": len(review_list),
             "reviews": [c["text"] for c in review_list],
             "prompt": prompt,
-            "summary": final_summary
+            "summary": final_summary,
+            "sentiment": sentiment
         }
 
         with open(log_path, "a", encoding="utf-8") as f:
             json.dump(log_data, f, indent=4)
             f.write("\n")
 
-        return final_summary
+        return final_summary, sentiment
 
 
 if __name__ == "__main__":

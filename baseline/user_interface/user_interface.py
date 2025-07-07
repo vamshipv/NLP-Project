@@ -80,7 +80,7 @@ def is_title_like_query(query, titles, threshold=0.90):
     query_emb = model_query.encode(query, convert_to_tensor=True)
     title_embs = model_query.encode(titles, convert_to_tensor=True)
     sim_scores = util.cos_sim(query_emb, title_embs)[0]
-    return np.max(sim_scores.numpy()) >= threshold
+    return np.max(sim_scores.cpu().numpy()) >= threshold
 
 def generate_summary_stream(user_query):
     global retrieved
@@ -106,8 +106,9 @@ def generate_summary_stream(user_query):
         matched_product = f"{retrieved[0].get('brand', '')} {retrieved[0].get('model', '')}"
         yield f"Generating summary"
 
-        summary = generator.generate_summary(user_query, retrieved)
-        output = ""
+        summary, sentiment = generator.generate_summary(user_query, retrieved)
+        # output = ""
+        output = f"Sentiment: {sentiment.upper()}\n\n"
         for char in summary:
             output += char
             yield output
@@ -169,6 +170,7 @@ textarea, input {
     border: 1.5px solid black !important;
     border-radius: 8px !important;
     padding: 8px !important;
+    font-weight: bold !important;
 }
 
 textarea:focus, input:focus {
