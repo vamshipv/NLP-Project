@@ -118,17 +118,18 @@ class User_query_process:
 
         if self.intent == "aspect":
             for aspect in self.aspect_keywords:
-                print(f"Checking aspect: {aspect}")
                 if aspect in cleaned_query.lower():
-                    print(f"Aspect found in query: {aspect}")
                     retrieved_chunks_aspect = self.chunks_by_aspect(user_query, aspect=aspect)
+                    if len(retrieved_chunks_aspect) <= 4:
+                        return "Not enough reviews found for the specified aspect. Please try a different query."
                     print(f"Retrieved chunks for aspect '{aspect}': {retrieved_chunks_aspect}")
                     summary = self.generator.generate_summary(user_query, retrieved_chunks_aspect, aspect=aspect)
                     return summary 
                 
         retrieved_chunks = self.chunks_by_general(user_query)
-        if not retrieved_chunks:
-            return "No reviews found for your query."
+        if len(retrieved_chunks) <= 4:
+            return "Not enough reviews found for the specified aspect. Please try a different query."
+        print(f"Retrieved chunks general : {retrieved_chunks}")
         summary = self.generator.generate_summary(user_query, retrieved_chunks)
         return summary
     
@@ -143,4 +144,3 @@ class User_query_process:
         if not retrieved_chunks_general:
             return "No reviews found for your query."
         return retrieved_chunks_general
-        

@@ -158,17 +158,30 @@ class Retriever:
                     cluster_embedding = np.mean([s[1] for s in cluster_sentences], axis=0).reshape(1, -1)
                     similarity = cosine_similarity(cluster_embedding, aspect_embedding.reshape(1, -1))[0][0]
 
-                    if similarity >= 0.3 or any(any(k in s.lower() for k in keywords) for s in cluster_texts):
+                    # Filter sentences within the cluster
+                    relevant_sentences = [
+                        s for s in cluster_texts
+                        if any(k in s.lower() for k in keywords)
+                    ]
+
+                    # Use filtered sentences if they exist and similarity is high
+                    if similarity >= 0.5 and relevant_sentences:
+                        chunk_text = " ".join(relevant_sentences).strip()
+                    # Otherwise, fallback to full cluster if similarity is strong or keyword match is weak but present
+                    elif similarity >= 0.5 or any(any(k in s.lower() for k in keywords) for s in cluster_texts):
                         chunk_text = " ".join(cluster_texts).strip()
-                        if chunk_text and chunk_text not in seen_chunks:
-                            chunked_reviews.append({
-                                "text": chunk_text,
-                                "brand": brand,
-                                "model": model,
-                                "stars": stars,
-                                "aspect": aspect
-                            })
-                            seen_chunks.add(chunk_text)
+                    else:
+                        continue  # Skip this cluster if it's not relevant
+
+                    if chunk_text and chunk_text not in seen_chunks:
+                        chunked_reviews.append({
+                            "text": chunk_text,
+                            "brand": brand,
+                            "model": model,
+                            "stars": stars,
+                            "aspect": aspect
+                        })
+                        seen_chunks.add(chunk_text)
 
         # Save to file
         with open(chunked_path, "w", encoding="utf-8") as f:
@@ -338,6 +351,9 @@ class Retriever:
         _, I = temp_index.search(query_vec, min(top_k, len(filtered_chunks)))
         results = [filtered_chunks[i] for i in I[0]]
         results = self.remove_duplicate_chunks(results)
+        # print(f"retrieved after duplicate {results}")
+        results = self.filter_sentences_by_aspect(results, aspect)
+        # print(f"Filtered sentences by aspect '{aspect}': {results}")
         return results
     
     """
@@ -354,6 +370,14 @@ class Retriever:
                 unique.append(c)
         return unique
 
+    def filter_sentences_by_aspect(self, chunks, aspect_keywords):
+        aspect_sentences = []
+        for chunk in chunks:
+            sentences = nltk.sent_tokenize(chunk["text"])
+            for sentence in sentences:
+                if any(keyword in sentence.lower() for keyword in aspect_keywords):
+                    aspect_sentences.append(sentence.strip())
+        return aspect_sentences
 
 if __name__ == "__main__":
     retriever = Retriever()

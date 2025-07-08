@@ -42,11 +42,8 @@ class Generator:
     Needs better summarization techniques to ensure the summary to inculde sentiment analysis and key points.
     """
     def create_gemma_prompt(self, user_query, review_list, aspect=None):
-        # print(review_list)
-        all_reviews_text = "\n".join(f"- {chunk['text']}" for chunk in review_list)
-
+        all_reviews_text = "\n".join(f"- {sentence}" for sentence in review_list)
         if not aspect:
-            print("not aspect")
             return (
                 f"Write a concise paragraph (6–7 sentences) summarizing customer reviews for '{user_query}'. "
                 f"Use a neutral tone. Do not use bullet points or list pros and cons.\n\n"
@@ -57,17 +54,13 @@ class Generator:
                 f"Summary:"
             )
         else:
-            print("aspect")
-            print(f"Aspect: {aspect}")
             return (
                 f"Summarize the customer reviews for '{user_query}' by focusing only on the aspect of '{aspect}'.\n"
-                f"Write a concise paragraph (5–7 sentences) in a neutral tone.\n"
-                f"Do not mention the word '{aspect}' explicitly in the summary.\n"
-                f"Do not include information about any other aspects such as camera, display, performance, or sound.\n"
+                f"Write a detailed paragraph (5–7 sentences).\n"
+                f"Do not include information about other aspects.\n"
                 f"Only use the information provided in the reviews. Do not make up or infer anything.\n\n"
                 f"Here are the reviews:\n\n"
                 f"{all_reviews_text}\n\n"
-                f"Summary:"
             )
 
     """
@@ -92,7 +85,7 @@ class Generator:
             "model_name": self.model_name,
             "user_query": user_query,
             "num_chunks": len(review_list),
-            "reviews": [c["text"] for c in review_list],
+            "reviews": [c["text"] if isinstance(c, dict) and "text" in c else c for c in review_list],
             "prompt": prompt,
             "summary": final_summary
         }
@@ -100,7 +93,6 @@ class Generator:
         with open(log_path, "a", encoding="utf-8") as f:
             json.dump(log_data, f, indent=4)
             f.write("\n")
-        # print(f'Generated summary for query: "{user_query}" with {len(review_list)} chunks.')
         return final_summary
 
 
