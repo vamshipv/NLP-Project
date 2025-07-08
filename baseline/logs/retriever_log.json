@@ -27,3 +27,24 @@ Load pretrained SentenceTransformer: intfloat/e5-base-v2
 {"timestamp": "2025-07-07T22:43:03.907776", "event": "index_build", "num_chunks": 293, "index_file": "build.index"}
 {"timestamp": "2025-07-07T22:43:21.432707", "event": "index_software", "num_chunks": 850, "index_file": "software.index"}
 {"timestamp": "2025-07-07T22:43:26.491209", "event": "index_heating", "num_chunks": 190, "index_file": "heating.index"}
+Use pytorch device_name: cpu
+Load pretrained SentenceTransformer: intfloat/e5-base-v2
+Use pytorch device_name: cpu
+Load pretrained SentenceTransformer: intfloat/e5-base-v2
+Use pytorch device_name: cpu
+Load pretrained SentenceTransformer: intfloat/e5-base-v2
+Use pytorch device_name: cpu
+Load pretrained SentenceTransformer: intfloat/e5-base-v2
+Use pytorch device_name: cpu
+Load pretrained SentenceTransformer: intfloat/e5-base-v2
+Use pytorch device_name: cpu
+Load pretrained SentenceTransformer: intfloat/e5-base-v2
+{"timestamp": "2025-07-08T11:26:35.354321", "event": "chunk_reviews", "num_chunks": 2811, "output_file": "../data/general_chunks.json"}
+{"timestamp": "2025-07-08T11:28:14.246246", "event": "index_chunks", "num_chunks": 924, "index_file": "../data/general_chunks.index"}
+{"timestamp": "2025-07-08T11:30:00.967488", "event": "index_battery", "num_chunks": 1626, "index_file": "battery.index"}
+{"timestamp": "2025-07-08T11:30:09.096733", "event": "index_camera", "num_chunks": 81, "index_file": "camera.index"}
+{"timestamp": "2025-07-08T11:30:16.135230", "event": "index_performance", "num_chunks": 61, "index_file": "performance.index"}
+{"timestamp": "2025-07-08T11:30:21.386147", "event": "index_display", "num_chunks": 37, "index_file": "display.index"}
+{"timestamp": "2025-07-08T11:30:24.977588", "event": "index_build", "num_chunks": 22, "index_file": "build.index"}
+{"timestamp": "2025-07-08T11:30:31.263936", "event": "index_software", "num_chunks": 37, "index_file": "software.index"}
+{"timestamp": "2025-07-08T11:30:34.990058", "event": "index_heating", "num_chunks": 23, "index_file": "heating.index"}

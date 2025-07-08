@@ -10,6 +10,9 @@ import logging
 from datetime import datetime
 from product_matcher import ProductMatcher
 import re
+from sklearn.cluster import AgglomerativeClustering
+from sklearn.metrics.pairwise import cosine_similarity
+
 
 """
 This script is a retriever module that processes product reviews, chunks them into manageable pieces, 
@@ -76,6 +79,7 @@ class Retriever:
     def chunk_reviews(self):
         chunked_reviews = []
         seen_chunks = set()
+        nlp = spacy.load("en_core_web_sm")
 
         for _, row in self.reviews_df.iterrows():
             review_text = str(row.get("comment", "")).strip()
@@ -86,7 +90,15 @@ class Retriever:
             if not review_text:
                 continue
 
-            sentences = nltk.sent_tokenize(review_text)
+            # Sentence segmentation
+            doc = nlp(review_text)
+            sentences = [sent.text.strip() for sent in doc.sents if sent.text.strip()]
+            if not sentences:
+                continue
+
+            
+
+            # General chunking (512 char limit)
             chunk = ""
             for sentence in sentences:
                 if len(chunk) + len(sentence) < 512:
@@ -112,28 +124,53 @@ class Retriever:
                 })
                 seen_chunks.add(clean_chunk)
 
-        # Append aspect-based chunks
-        for _, row in self.reviews_df.iterrows():
-            review_text = str(row.get("comment", "")).strip()
-            brand = str(row.get("Brand", "")).strip()
-            model = str(row.get("Model", "")).strip()
-            stars = str(row.get("stars", "")).strip()
-
-            if not review_text:
-                continue
-
-            sentences = nltk.sent_tokenize(review_text)
-            for sentence in sentences:
+            if len(sentences) < 2:
+                # Treat the single sentence as a standalone chunk
+                chunk_text = sentences[0]
                 for aspect, keywords in self.aspect_keywords.items():
-                    if any(k in sentence.lower() for k in keywords):
+                    if any(k in chunk_text.lower() for k in keywords):
                         chunked_reviews.append({
-                            "text": sentence.strip(),
+                            "text": chunk_text,
                             "brand": brand,
                             "model": model,
                             "stars": stars,
                             "aspect": aspect
                         })
+                        seen_chunks.add(chunk_text)
+                continue
 
+            # Aspect-based clustering
+            sentence_embeddings = self.model.encode(sentences, normalize_embeddings=True)
+            num_clusters = min(len(sentences), 5)
+            clustering = AgglomerativeClustering(n_clusters=num_clusters, metric='cosine', linkage='average')
+            labels = clustering.fit_predict(sentence_embeddings)
+
+            clusters = {}
+            for idx, label in enumerate(labels):
+                clusters.setdefault(label, []).append((sentences[idx], sentence_embeddings[idx]))
+
+            for aspect, keywords in self.aspect_keywords.items():
+                aspect_desc = f"passage: {aspect} related features in mobile devices"
+                aspect_embedding = self.model.encode([aspect_desc], normalize_embeddings=True)[0]
+
+                for cluster_sentences in clusters.values():
+                    cluster_texts = [s[0] for s in cluster_sentences]
+                    cluster_embedding = np.mean([s[1] for s in cluster_sentences], axis=0).reshape(1, -1)
+                    similarity = cosine_similarity(cluster_embedding, aspect_embedding.reshape(1, -1))[0][0]
+
+                    if similarity >= 0.3 or any(any(k in s.lower() for k in keywords) for s in cluster_texts):
+                        chunk_text = " ".join(cluster_texts).strip()
+                        if chunk_text and chunk_text not in seen_chunks:
+                            chunked_reviews.append({
+                                "text": chunk_text,
+                                "brand": brand,
+                                "model": model,
+                                "stars": stars,
+                                "aspect": aspect
+                            })
+                            seen_chunks.add(chunk_text)
+
+        # Save to file
         with open(chunked_path, "w", encoding="utf-8") as f:
             json.dump(chunked_reviews, f, indent=4)
 
@@ -146,6 +183,7 @@ class Retriever:
             "output_file": chunked_path
         }))
         return chunked_reviews
+
 
     """    
     This method indexes the chunked reviews using FAISS.
