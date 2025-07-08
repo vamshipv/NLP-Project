@@ -301,6 +301,7 @@ class Retriever:
         _, I = temp_index.search(query_vec, min(top_k, len(filtered_chunks)))
         results = [filtered_chunks[i] for i in I[0]]
         results = self.remove_duplicate_chunks(results)
+        # print(f"Retrieved after duplicate removal: {results}")
         return results
 
     """
@@ -326,7 +327,7 @@ class Retriever:
 
         matcher = ProductMatcher()
         matched_title = matcher.match_brand(query)
-        print(f"Matched title: {matched_title}")
+        # print(f"Matched title: {matched_title}")
         if not matched_title:
             return []
 
@@ -352,7 +353,7 @@ class Retriever:
         results = [filtered_chunks[i] for i in I[0]]
         results = self.remove_duplicate_chunks(results)
         # print(f"retrieved after duplicate {results}")
-        results = self.filter_sentences_by_aspect(results, aspect)
+        # results = self.filter_sentences_by_aspect(results, aspect)
         # print(f"Filtered sentences by aspect '{aspect}': {results}")
         return results
     
@@ -369,13 +370,17 @@ class Retriever:
                 seen.add(text)
                 unique.append(c)
         return unique
-
-    def filter_sentences_by_aspect(self, chunks, aspect_keywords):
+    
+    """
+    This method filters sentences in the chunks based on the aspect keyword.
+    Moved to User_query_process module - Work in progress
+    """
+    def filter_sentences_by_aspect(self, chunks, aspect_keyword):
         aspect_sentences = []
         for chunk in chunks:
             sentences = nltk.sent_tokenize(chunk["text"])
             for sentence in sentences:
-                if any(keyword in sentence.lower() for keyword in aspect_keywords):
+                if any(keyword in sentence.lower() for keyword in aspect_keyword):
                     aspect_sentences.append(sentence.strip())
         return aspect_sentences
 

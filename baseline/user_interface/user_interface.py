@@ -83,9 +83,8 @@ def generate_summary_stream(user_query):
     if not user_query.strip():
         yield "Please enter a valid query."
         return
-
+    retrieved = query_processor.check_chunks(user_query)
     try:
-        retrieved = retriever.retrieve(user_query)
         result = query_processor.process(user_query)
         # print(f"Processed query: {user_query} -> Result: {result}")
         if isinstance(result, str):
@@ -117,6 +116,7 @@ def display_chunks():
             f"Model: {c.get('model', 'N/A')}\n"
             f"Brand: {c.get('brand', 'N/A')}\n"
             f"Stars: {c.get('stars', 'N/A')}\n"
+            f"Aspect: {c.get('aspect', 'N/A')}\n"
             f"{c.get('text', '')}"
         )
         formatted_chunks.append(chunk)
@@ -125,13 +125,6 @@ def display_chunks():
     return json_output, gr.update(visible=True)
 
 
-def contains_cuss_words(user_query):
-    cuss_words = {
-        "fuck", "shit", "bitch", "asshole", "bastard", "damn", "crap",
-        "dick", "piss", "prick", "slut", "whore", "cunt"
-    }
-    words = user_query.lower().split()
-    return any(word.strip('.,!?') in cuss_words for word in words)
 
 
 """ Create the Gradio interface
@@ -212,7 +205,7 @@ button:hover {
 
     with gr.Row(elem_classes="centered-buttons"):
         generate_button = gr.Button("Summarize")
-        show_chunks_button = gr.Button("Show Reviews")
+        show_chunks_button = gr.Button("Show Chunks")
 
     summary_output = gr.Textbox(show_label=False, lines=6, interactive=False)
     chunks_output = gr.Code(language="json", visible=False, interactive=False)

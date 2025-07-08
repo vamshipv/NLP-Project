@@ -31,6 +31,15 @@ class Generator:
 
         with open(self.chunk_file, "r", encoding="utf-8") as f:
             self.chunked_data = json.load(f)
+        self.aspect_keywords = {
+            "battery": ["battery", "charge", "charging", "mah", "power", "drain"],
+            "camera": ["camera", "photo", "picture", "lens", "image", "zoom", "video"],
+            "performance": ["lag", "smooth", "fast", "slow", "processor", "snapdragon", "performance"],
+            "display": ["screen", "display", "brightness", "resolution", "refresh rate", "touch"],
+            "build": ["build", "design", "material", "durability", "weight", "feel"],
+            "software": ["ui", "os", "update", "bloatware", "interface", "android", "software"],
+            "heating": ["heat", "heating", "warm", "temperature", "overheat"]
+        }
 
     """
     This method creates a prompt for the Gemma model to summarize customer feedback.
@@ -45,7 +54,7 @@ class Generator:
         all_reviews_text = "\n".join(f"- {sentence}" for sentence in review_list)
         if not aspect:
             return (
-                f"Write a concise paragraph (6–7 sentences) summarizing customer reviews for '{user_query}'. "
+                f"Write a concise paragraph (6–7 sentences) summarizing customer reviews for the user query'{user_query}'. "
                 f"Use a neutral tone. Do not use bullet points or list pros and cons.\n\n"
                 f"Also Focus on common opinions with battery quality, build quality, performance and avoid mentioning specific reviews.\n\n"
                 f"Do not hallucinate or make up information. Just used the provided reviews.\n\n"
@@ -55,10 +64,11 @@ class Generator:
             )
         else:
             return (
-                f"Summarize the customer reviews for '{user_query}' by focusing only on the aspect of '{aspect}'.\n"
-                f"Write a detailed paragraph (5–7 sentences).\n"
-                f"Do not include information about other aspects.\n"
-                f"Only use the information provided in the reviews. Do not make up or infer anything.\n\n"
+                f"Summarize the customer reviews for the user query: '{user_query}', focusing strictly on the aspect of '{aspect}'.\n"
+                f"Do not include any information about other aspects such as "
+                f"{', '.join(a for a in self.aspect_keywords if a != aspect)}.\n"
+                f"Write a detailed paragraph (5–7 sentences) that reflects only the feedback related to '{aspect}'.\n"
+                f"Only use the information provided in the reviews below. Do not make up or infer anything.\n\n"
                 f"Here are the reviews:\n\n"
                 f"{all_reviews_text}\n\n"
             )

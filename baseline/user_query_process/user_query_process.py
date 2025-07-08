@@ -4,6 +4,8 @@ import os
 import numpy as np
 import json
 from sentence_transformers import SentenceTransformer, util
+import nltk
+from nltk.tokenize import sent_tokenize
 
 sys.path.append(os.path.abspath(os.path.join("..", "generator")))
 sys.path.append(os.path.abspath(os.path.join("..", "retriever")))
@@ -30,7 +32,12 @@ class User_query_process:
         self.intent = None
         self.sentiment = None
         self.product_titles = [item.strip() for item in brands_data]
-        self.bad_words = []
+        self.bad_words = {
+        "fuck", "shit", "bitch", "asshole", "bastard", "damn", "crap",
+        "dick", "piss", "prick", "slut", "whore", "cunt"
+    }
+        self.retrieved_chunks_aspect = []
+        self.retrieved_chunks_general = []
 
         # This is used to detect title-like queries
         self.model_query = SentenceTransformer('all-MiniLM-L6-v2')
@@ -102,7 +109,7 @@ class User_query_process:
     If the query is empty or contains inappropriate language, it returns appropriate messages."""
     def process(self, user_query):
         if self.intent == "title_query":
-            return "Please rephrase your query to focus on product feedback."
+            return "Please rephrase your query to focus on a product feedback by providing the correct product name."
         
         if not user_query.strip():
             return "Please enter a valid query."
@@ -123,16 +130,17 @@ class User_query_process:
                     if len(retrieved_chunks_aspect) <= 4:
                         return "Not enough reviews found for the specified aspect. Please try a different query."
                     print(f"Retrieved chunks for aspect '{aspect}': {retrieved_chunks_aspect}")
+                    retrieved_chunks_aspect = self.filter_sentences_by_aspect(retrieved_chunks_aspect, aspect)
                     summary = self.generator.generate_summary(user_query, retrieved_chunks_aspect, aspect=aspect)
                     return summary 
                 
-        retrieved_chunks = self.chunks_by_general(user_query)
-        if len(retrieved_chunks) <= 4:
+        retrieved_chunks_general = self.chunks_by_general(user_query)
+        if len(retrieved_chunks_general) <= 4:
             return "Not enough reviews found for the specified aspect. Please try a different query."
-        print(f"Retrieved chunks general : {retrieved_chunks}")
-        summary = self.generator.generate_summary(user_query, retrieved_chunks)
+        print(f"Retrieved chunks general : {retrieved_chunks_general}")
+        summary = self.generator.generate_summary(user_query, retrieved_chunks_general)
         return summary
-    
+
     def chunks_by_aspect(self, query, aspect=None):
         retrieved_chunks_aspect = self.retriever.retrieve_by_aspect(query, aspect)
         if not retrieved_chunks_aspect:
@@ -144,3 +152,21 @@ class User_query_process:
         if not retrieved_chunks_general:
             return "No reviews found for your query."
         return retrieved_chunks_general
+    
+    def check_chunks(self, query):
+        if self.detect_intent(query) == "aspect":
+            for aspect in self.aspect_keywords:
+                if aspect in self.clean_query(query):
+                    retrieved_chunks_aspect = self.chunks_by_aspect(query, aspect=aspect)
+                    return retrieved_chunks_aspect
+        retrieved_chunks_general = self.chunks_by_general(query)
+        return retrieved_chunks_general
+    
+    def filter_sentences_by_aspect(self, chunks, aspect_keywords):
+        aspect_sentences = []
+        for chunk in chunks:
+            sentences = nltk.sent_tokenize(chunk["text"])
+            for sentence in sentences:
+                if any(keyword in sentence.lower() for keyword in aspect_keywords):
+                    aspect_sentences.append(sentence.strip())
+        return aspect_sentences
