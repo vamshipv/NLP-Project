@@ -135,6 +135,9 @@ class User_query_process:
         if self.contains_bad_words(user_query):
             return "Query contains inappropriate language. Please rephrase."
 
+        self.intent = self.detect_intent(user_query)
+        cleaned_query = self.clean_query(user_query)
+
         if self.intent == "decision_query":
             return "This system is designed to summarize product reviews, not to make purchase decisions. Please rephrase your query to focus on product feedback."
 
@@ -146,16 +149,16 @@ class User_query_process:
                         return "Not enough reviews found for the specified aspect. Please try a different query."
                     print(f"Retrieved chunks for aspect '{aspect}': {retrieved_chunks_aspect}")
                     retrieved_chunks_aspect = self.filter_sentences_by_aspect(retrieved_chunks_aspect, aspect)
-                    summary = self.generator.generate_summary(user_query, retrieved_chunks_aspect, aspect=aspect)
-                    return summary 
+                    summary, aspect_scores = self.generator.generate_summary(user_query, retrieved_chunks_aspect, aspect=aspect)
+                    return summary, aspect_scores
                 
         retrieved_chunks_general = self.chunks_by_general(user_query)
         if len(retrieved_chunks_general) <= 4:
             return "Not enough reviews found for the specified aspect. Please try a different query."
-        print(f"Retrieved chunks general : {retrieved_chunks_general}")
-        summary = self.generator.generate_summary(user_query, retrieved_chunks_general)
-        return summary
-
+        # print(f"Retrieved chunks general : {retrieved_chunks_general}")
+        summary, aspect_scores = self.generator.generate_summary(user_query, retrieved_chunks)
+        return summary, aspect_scores
+    
     def chunks_by_aspect(self, query, aspect=None):
         retrieved_chunks_aspect = self.retriever.retrieve_by_aspect(query, aspect)
         if not retrieved_chunks_aspect:

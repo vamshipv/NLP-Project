@@ -1,3 +1,4 @@
+from collections import defaultdict
 import os
 import json
 import torch
@@ -80,27 +81,65 @@ Need to improve the summary generation process to include sentiment analysis and
 
 def generate_summary_stream(user_query):
     global retrieved
-    if not user_query.strip():
-        yield "Please enter a valid query."
-        return
-    retrieved = query_processor.check_chunks(user_query)
-    try:
-        result = query_processor.process(user_query)
-        # print(f"Processed query: {user_query} -> Result: {result}")
-        if isinstance(result, str):
-            # It's a message, not a summary
-            yield result
-            return
 
+    if not user_query.strip():
+        yield "", "<p>Please enter a valid query.</p>"
+        return
+
+    try:
+        # Retrieve and process query
+        retrieved = retriever.retrieve(user_query)
+        summary_text, aspect_score = query_processor.process(user_query)
+        if isinstance(aspect_score, str):
+            try:
+                aspect_score = json.loads(aspect_score)
+            except json.JSONDecodeError:
+                aspect_score = {}
+
+        # Render sentiment HTML once
+        sentiment_html = render_all_bars(aspect_score) if isinstance(aspect_score, dict) else "<p>Invalid sentiment data.</p>"
+
+        # First yield: empty summary with full sentiment
+        yield "", sentiment_html
+
+        # Stream summary one character at a time
         output = ""
-        for char in result:
+        for char in summary_text:
             output += char
-            yield output
+            yield output, sentiment_html
             time.sleep(0.02)
 
     except Exception as e:
         print(f"Error generating summary: {e}")
-        yield "An error occurred while generating the summary. Please contact the developers."
+        yield "An error occurred while generating the summary. Please contact the developers.", ""
+
+
+def render_sentiment_bar(aspect, scores):
+    pos = scores.get("positive", 0)
+    neu = scores.get("neutral", 0)
+    neg = scores.get("negative", 0)
+
+    return f"""
+    <div style="padding: 12px; margin-bottom: 12px; font-size: 13px; font-family: 'Helvetica Neue', sans-serif; color: #111;
+                border: 1px solid #ddd; border-radius: 8px; background-color: #fff; width: 260px;">
+        <div style="margin-bottom: 8px; font-weight: 600; text-align: center;">{aspect.capitalize()}</div>
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+            <div style="height: 10px; border-radius: 5px; overflow: hidden; display: flex; background-color: #e0e0e0;
+                        box-shadow: inset 0 1px 2px rgba(0,0,0,0.08);">
+                <div style="width: {pos}%; background-color: #222;"></div>
+                <div style="width: {neu}%; background-color: #999;"></div>
+                <div style="width: {neg}%; background-color: #666;"></div>
+            </div>
+            <div style="font-size: 12px; color: #333; text-align: center;">
+                {pos}% / {neu}% / {neg}%
+            </div>
+        </div>
+    </div>
+    """
+
+
+def render_all_bars(sentiment_dict):
+    return "\n".join(render_sentiment_bar(a, s) for a, s in sentiment_dict.items())
 
 """ 
 Function to display retrieved chunks in a formatted JSON style
@@ -125,6 +164,13 @@ def display_chunks():
     return json_output, gr.update(visible=True)
 
 
+def contains_cuss_words(user_query):
+    cuss_words = {
+        "fuck", "shit", "bitch", "asshole", "bastard", "damn", "crap",
+        "dick", "piss", "prick", "slut", "whore", "cunt"
+    }
+    words = user_query.lower().split()
+    return any(word.strip('.,!?') in cuss_words for word in words)
 
 
 """ Create the Gradio interface
@@ -207,10 +253,12 @@ button:hover {
         generate_button = gr.Button("Summarize")
         show_chunks_button = gr.Button("Show Chunks")
 
-    summary_output = gr.Textbox(show_label=False, lines=6, interactive=False)
-    chunks_output = gr.Code(language="json", visible=False, interactive=False)
-
-    generate_button.click(generate_summary_stream, inputs=query_input, outputs=summary_output)
+    with gr.Column(scale=3):
+        summary_output = gr.Textbox(show_label=False, lines=6, interactive=False)
+    with gr.Column(scale=1):
+        sentiment_display = gr.HTML(label="Sentiment Breakdown")
+    chunks_output = gr.Code(language="json", visible=False, interactive=False)    
+    generate_button.click(generate_summary_stream, inputs=query_input, outputs=[summary_output, sentiment_display])
     show_chunks_button.click(display_chunks, inputs=[], outputs=[chunks_output, chunks_output])
 
 demo.launch()
