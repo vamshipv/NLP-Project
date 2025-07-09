@@ -88,38 +88,36 @@ def generate_summary_stream(user_query):
         return
 
     try:
-        # Retrieve and process query
         retrieved = retriever.retrieve(user_query)
         summary_text, aspect_score = query_processor.process(user_query)
+        if isinstance(summary_text, str):
+            # It's a message, not a summary
+            yield summary_text, ""
+            return
+
         if isinstance(aspect_score, str):
             try:
                 aspect_score = json.loads(aspect_score)
             except json.JSONDecodeError:
                 aspect_score = {}
 
-        # Render sentiment HTML once
         sentiment_html = render_all_bars(aspect_score) if isinstance(aspect_score, dict) else "<p>Invalid sentiment data.</p>"
 
-        # First yield: empty summary with full sentiment
         yield "", sentiment_html
 
-        # Stream summary one character at a time
         tokens = re.split(r'(\n+|\s+)', summary_text)
 
-        # Filter out empty strings that might result from the split if there are multiple delimiters
         tokens = [token for token in tokens if token]
 
         output = ""
         for i, token in enumerate(tokens):
             output += token
             yield output, sentiment_html
-            # Adjust sleep time: longer for newlines, shorter for words
             if '\n' in token:
-                time.sleep(0.2) # Longer pause for blank lines
+                time.sleep(0.2) 
             else:
-                time.sleep(0.05) # Normal word delay
+                time.sleep(0.05) 
 
-        # Ensure the final output is yielded to cover any edge cases
         yield summary_text, sentiment_html 
 
     except Exception as e:

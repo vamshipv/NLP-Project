@@ -124,29 +124,30 @@ class User_query_process:
         cleaned_query = self.clean_query(user_query)
 
         if self.intent == "title_query":
-            return "Please rephrase your query to focus on a product feedback by providing the correct product name."
+            return "Please rephrase your query to focus on a product feedback by providing the correct product name.",  ""
         
         if self.intent == "multiple_titles":
-            return "Your query seems to mention multiple products. Please focus on one product at a time."
+            return "Your query seems to mention multiple products. Please focus on one product at a time.", ""
 
         if not user_query.strip():
-            return "Please enter a valid query."
+            return "Please enter a valid query.",  ""
 
         if self.contains_bad_words(user_query):
-            return "Query contains inappropriate language. Please rephrase."
+            return "Query contains inappropriate language. Please rephrase.", ""
 
         self.intent = self.detect_intent(user_query)
         cleaned_query = self.clean_query(user_query)
 
         if self.intent == "decision_query":
-            return "This system is designed to summarize product reviews, not to make purchase decisions. Please rephrase your query to focus on product feedback."
+            return "This system is designed to summarize product reviews, not to make purchase decisions. Please rephrase your query to focus on product feedback.", ""
 
         if self.intent == "aspect":
             for aspect in self.aspect_keywords:
                 if aspect in cleaned_query.lower():
                     retrieved_chunks_aspect = self.chunks_by_aspect(user_query, aspect=aspect)
+                    print(f"Retrieved chunks for aspect '{aspect}': {retrieved_chunks_aspect} len: {len(retrieved_chunks_aspect)}")
                     if len(retrieved_chunks_aspect) <= 4:
-                        return "Not enough reviews found for the specified aspect. Please try a different query."
+                        return "Not enough reviews found for the specified aspect. Please try a different query.", ""
                     print(f"Retrieved chunks for aspect '{aspect}': {retrieved_chunks_aspect}")
                     retrieved_chunks_aspect = self.filter_sentences_by_aspect(retrieved_chunks_aspect, aspect)
                     summary, aspect_scores = self.generator.generate_summary(user_query, retrieved_chunks_aspect, aspect=aspect)
@@ -154,7 +155,7 @@ class User_query_process:
                 
         retrieved_chunks_general = self.chunks_by_general(user_query)
         if len(retrieved_chunks_general) <= 4:
-            return "Not enough reviews found for the specified device for the summary. Please try a different device."
+            return "Not enough reviews found for the specified device for the summary. Please try a different device.", ""
         # print(f"Retrieved chunks general : {retrieved_chunks_general}")
         summary, aspect_scores = self.generator.generate_summary(user_query, retrieved_chunks_general)
         return summary, aspect_scores
