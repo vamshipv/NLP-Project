@@ -6,6 +6,7 @@ import json
 from sentence_transformers import SentenceTransformer, util
 import nltk
 from nltk.tokenize import sent_tokenize
+from product_matcher import ProductMatcher
 
 sys.path.append(os.path.abspath(os.path.join("..", "generator")))
 sys.path.append(os.path.abspath(os.path.join("..", "retriever")))
@@ -38,7 +39,7 @@ class User_query_process:
     }
         self.retrieved_chunks_aspect = []
         self.retrieved_chunks_general = []
-
+        self.product_matcher = ProductMatcher()
         # This is used to detect title-like queries
         self.model_query = SentenceTransformer('all-MiniLM-L6-v2')
         self.aspect_keywords = {
@@ -71,6 +72,13 @@ class User_query_process:
         sim_scores = util.cos_sim(query_emb, title_embs)[0]
         return np.max(sim_scores.numpy()) >= threshold
 
+    def detect_multiple_titles(self, query):
+        cleaned_query = self.product_matcher.clean_query_for_brand_match(query)
+        matches = self.product_matcher.keyword_processor.extract_keywords(cleaned_query)
+        print(matches)
+        return len(set(matches)) >= 2
+
+
     """
     This method detects the intent of the user query.
     It checks if the query is similar to product titles, contains aspect keywords, or is a decision-making query.
@@ -80,6 +88,10 @@ class User_query_process:
         q = query.lower()
         if (self.is_title_like_query(q, self.product_titles)):
             return "title_query"
+        
+        if self.detect_multiple_titles(query):
+            print("here inside")
+            return "multiple_titles"
 
         if any(word in q for word in self.aspect_keywords):
             print(f"Detected aspect in query: {q}")
@@ -108,17 +120,20 @@ class User_query_process:
     It retrieves relevant chunks of reviews based on the cleaned query and generates a summary using the generator.
     If the query is empty or contains inappropriate language, it returns appropriate messages."""
     def process(self, user_query):
+        self.intent = self.detect_intent(user_query)
+        cleaned_query = self.clean_query(user_query)
+
         if self.intent == "title_query":
             return "Please rephrase your query to focus on a product feedback by providing the correct product name."
         
+        if self.intent == "multiple_titles":
+            return "Your query seems to mention multiple products. Please focus on one product at a time."
+
         if not user_query.strip():
             return "Please enter a valid query."
 
         if self.contains_bad_words(user_query):
             return "Query contains inappropriate language. Please rephrase."
-
-        self.intent = self.detect_intent(user_query)
-        cleaned_query = self.clean_query(user_query)
 
         if self.intent == "decision_query":
             return "This system is designed to summarize product reviews, not to make purchase decisions. Please rephrase your query to focus on product feedback."
