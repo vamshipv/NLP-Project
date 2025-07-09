@@ -1,0 +1,72 @@
+Use pytorch device_name: cpu
+Load pretrained SentenceTransformer: intfloat/e5-base-v2
+{"timestamp": "2025-07-07T20:50:49.622378", "event": "chunk_reviews", "num_chunks": 4935, "output_file": "..\\data\\chunked_reviews.json"}
+{"timestamp": "2025-07-07T20:51:37.192749", "event": "index_chunks", "num_chunks": 906, "index_file": "..\\data\\reviews.index"}
+Use pytorch device_name: cpu
+Load pretrained SentenceTransformer: intfloat/e5-base-v2
+{"timestamp": "2025-07-07T22:27:55.972677", "event": "chunk_reviews", "num_chunks": 4935, "output_file": "..\\data\\chunked_reviews.json"}
+Use pytorch device_name: cpu
+Load pretrained SentenceTransformer: intfloat/e5-base-v2
+{"timestamp": "2025-07-07T22:29:44.718379", "event": "chunk_reviews", "num_chunks": 4935, "output_file": "..\\data\\chunked_reviews.json"}
+{"timestamp": "2025-07-07T22:30:10.318379", "event": "index_chunks", "num_chunks": 906, "index_file": "..\\data\\chunked_reviews.index"}
+{"timestamp": "2025-07-07T22:30:24.960579", "event": "index_battery", "num_chunks": 673, "index_file": "battery.index"}
+{"timestamp": "2025-07-07T22:30:41.282589", "event": "index_camera", "num_chunks": 838, "index_file": "camera.index"}
+{"timestamp": "2025-07-07T22:30:55.705016", "event": "index_performance", "num_chunks": 646, "index_file": "performance.index"}
+{"timestamp": "2025-07-07T22:31:08.829384", "event": "index_display", "num_chunks": 539, "index_file": "display.index"}
+{"timestamp": "2025-07-07T22:31:15.835822", "event": "index_build", "num_chunks": 293, "index_file": "build.index"}
+{"timestamp": "2025-07-07T22:31:33.527374", "event": "index_software", "num_chunks": 850, "index_file": "software.index"}
+{"timestamp": "2025-07-07T22:31:38.649211", "event": "index_heating", "num_chunks": 190, "index_file": "heating.index"}
+Use pytorch device_name: cpu
+Load pretrained SentenceTransformer: intfloat/e5-base-v2
+{"timestamp": "2025-07-07T22:41:33.802722", "event": "chunk_reviews", "num_chunks": 4935, "output_file": "..\\data\\general_chunks.json"}
+{"timestamp": "2025-07-07T22:41:59.556177", "event": "index_chunks", "num_chunks": 906, "index_file": "..\\data\\general_chunks.index"}
+{"timestamp": "2025-07-07T22:42:13.960872", "event": "index_battery", "num_chunks": 673, "index_file": "battery.index"}
+{"timestamp": "2025-07-07T22:42:30.179833", "event": "index_camera", "num_chunks": 838, "index_file": "camera.index"}
+{"timestamp": "2025-07-07T22:42:44.162394", "event": "index_performance", "num_chunks": 646, "index_file": "performance.index"}
+{"timestamp": "2025-07-07T22:42:57.018231", "event": "index_display", "num_chunks": 539, "index_file": "display.index"}
+{"timestamp": "2025-07-07T22:43:03.907776", "event": "index_build", "num_chunks": 293, "index_file": "build.index"}
+{"timestamp": "2025-07-07T22:43:21.432707", "event": "index_software", "num_chunks": 850, "index_file": "software.index"}
+{"timestamp": "2025-07-07T22:43:26.491209", "event": "index_heating", "num_chunks": 190, "index_file": "heating.index"}
+Use pytorch device_name: cpu
+Load pretrained SentenceTransformer: intfloat/e5-base-v2
+Use pytorch device_name: cpu
+Load pretrained SentenceTransformer: intfloat/e5-base-v2
+Use pytorch device_name: cpu
+Load pretrained SentenceTransformer: intfloat/e5-base-v2
+Use pytorch device_name: cpu
+Load pretrained SentenceTransformer: intfloat/e5-base-v2
+Use pytorch device_name: cpu
+Load pretrained SentenceTransformer: intfloat/e5-base-v2
+Use pytorch device_name: cpu
+Load pretrained SentenceTransformer: intfloat/e5-base-v2
+{"timestamp": "2025-07-08T11:26:35.354321", "event": "chunk_reviews", "num_chunks": 2811, "output_file": "../data/general_chunks.json"}
+{"timestamp": "2025-07-08T11:28:14.246246", "event": "index_chunks", "num_chunks": 924, "index_file": "../data/general_chunks.index"}
+{"timestamp": "2025-07-08T11:30:00.967488", "event": "index_battery", "num_chunks": 1626, "index_file": "battery.index"}
+{"timestamp": "2025-07-08T11:30:09.096733", "event": "index_camera", "num_chunks": 81, "index_file": "camera.index"}
+{"timestamp": "2025-07-08T11:30:16.135230", "event": "index_performance", "num_chunks": 61, "index_file": "performance.index"}
+{"timestamp": "2025-07-08T11:30:21.386147", "event": "index_display", "num_chunks": 37, "index_file": "display.index"}
+{"timestamp": "2025-07-08T11:30:24.977588", "event": "index_build", "num_chunks": 22, "index_file": "build.index"}
+{"timestamp": "2025-07-08T11:30:31.263936", "event": "index_software", "num_chunks": 37, "index_file": "software.index"}
+{"timestamp": "2025-07-08T11:30:34.990058", "event": "index_heating", "num_chunks": 23, "index_file": "heating.index"}
+Use pytorch device_name: cpu
+Load pretrained SentenceTransformer: intfloat/e5-base-v2
+{"timestamp": "2025-07-08T17:42:43.747933", "event": "chunk_reviews", "num_chunks": 3499, "output_file": "..\\data\\general_chunks.json"}
+{"timestamp": "2025-07-08T17:43:07.057675", "event": "index_chunks", "num_chunks": 924, "index_file": "..\\data\\general_chunks.index"}
+{"timestamp": "2025-07-08T17:43:29.861421", "event": "index_battery", "num_chunks": 1619, "index_file": "battery.index"}
+{"timestamp": "2025-07-08T17:43:36.927597", "event": "index_camera", "num_chunks": 261, "index_file": "camera.index"}
+{"timestamp": "2025-07-08T17:43:44.868108", "event": "index_performance", "num_chunks": 197, "index_file": "performance.index"}
+{"timestamp": "2025-07-08T17:43:51.441985", "event": "index_display", "num_chunks": 150, "index_file": "display.index"}
+{"timestamp": "2025-07-08T17:43:56.153297", "event": "index_build", "num_chunks": 104, "index_file": "build.index"}
+{"timestamp": "2025-07-08T17:44:03.208605", "event": "index_software", "num_chunks": 185, "index_file": "software.index"}
+{"timestamp": "2025-07-08T17:44:08.783834", "event": "index_heating", "num_chunks": 59, "index_file": "heating.index"}
+Use pytorch device_name: cpu
+Load pretrained SentenceTransformer: intfloat/e5-base-v2
+{"timestamp": "2025-07-09T22:22:34.386476", "event": "chunk_reviews", "num_chunks": 3499, "output_file": "..\\data\\general_chunks.json"}
+{"timestamp": "2025-07-09T22:23:04.450298", "event": "index_chunks", "num_chunks": 924, "index_file": "..\\data\\general_chunks.index"}
+{"timestamp": "2025-07-09T22:23:42.774162", "event": "index_battery", "num_chunks": 1619, "index_file": "battery.index"}
+{"timestamp": "2025-07-09T22:23:55.839664", "event": "index_camera", "num_chunks": 261, "index_file": "camera.index"}
+{"timestamp": "2025-07-09T22:24:10.478688", "event": "index_performance", "num_chunks": 197, "index_file": "performance.index"}
+{"timestamp": "2025-07-09T22:24:22.952750", "event": "index_display", "num_chunks": 150, "index_file": "display.index"}
+{"timestamp": "2025-07-09T22:24:31.902126", "event": "index_build", "num_chunks": 104, "index_file": "build.index"}
+{"timestamp": "2025-07-09T22:24:41.975798", "event": "index_software", "num_chunks": 185, "index_file": "software.index"}
+{"timestamp": "2025-07-09T22:24:49.133240", "event": "index_heating", "num_chunks": 59, "index_file": "heating.index"}

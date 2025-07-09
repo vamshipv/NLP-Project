@@ -1,3 +1,4 @@
+from collections import defaultdict
 import os
 import json
 import torch
@@ -8,13 +9,16 @@ import gradio as gr
 from transformers import AutoTokenizer, AutoModel
 import sys
 from sentence_transformers import SentenceTransformer, util
+import re
 
 # Ensure the parent directories are in the path for imports
 sys.path.append(os.path.abspath(os.path.join("..", "generator")))
 sys.path.append(os.path.abspath(os.path.join("..", "retriever")))
+sys.path.append(os.path.abspath(os.path.join("..", "user_query_process")))
 
 from generator import Generator
 from retriever import Retriever
+from user_query_process import User_query_process
 
 # Constants
 CHUNK_FILE = os.path.join('..', 'data', "chunked_reviews.json")
@@ -25,8 +29,6 @@ with open(title_path, 'r', encoding='utf-8') as f:
 
 product_titles = [item.strip() for item in brands_data]
 
-# Load transformer model once
-model_query = SentenceTransformer('all-MiniLM-L6-v2')
 
 """ User Interface Class
 This class provides a simple user interface for interacting with the product review summarization system.
@@ -63,8 +65,10 @@ user_interface = user_interface()
 retriever = Retriever()
 generator = Generator()
 retrieved = []
+query_processor = User_query_process()
 
-""" Stream function to generate summaries based on user queries
+""" 
+Stream function to generate summaries based on user queries
 This function retrieves relevant chunks based on the user query,
 matches the product title, and generates a summary using the generator.
 
@@ -76,45 +80,79 @@ It also handles cases where no reviews are found for the given query.
 Need to improve the summary generation process to include sentiment analysis and key points and handling the case where no reviews are found.
 """
 
-def is_title_like_query(query, titles, threshold=0.90):
-    query_emb = model_query.encode(query, convert_to_tensor=True)
-    title_embs = model_query.encode(titles, convert_to_tensor=True)
-    sim_scores = util.cos_sim(query_emb, title_embs)[0]
-    return np.max(sim_scores.numpy()) >= threshold
-
 def generate_summary_stream(user_query):
     global retrieved
 
-    if user_query.strip() == "":
-        yield "Please enter a valid query, your query is empty."
+    if not user_query.strip():
+        yield "", "<p>Please enter a valid query.</p>"
         return
 
-    if is_title_like_query(user_query, product_titles):
-        yield "Your query looks like it is with just product title. Could you be more specific? For example, 'summarize performance reviews of Product/Device Model'."
-        return
-    if contains_cuss_words(user_query):
-        yield "Please avoid using offensive language in your query."
-        return
     try:
-
+        # Retrieve and process query
         retrieved = retriever.retrieve(user_query)
-        user_query.strip()
-        if not retrieved:
-            yield f"No reviews found for your user query. Please try a different query."
-            return
+        summary_text, aspect_score = query_processor.process(user_query)
+        if isinstance(aspect_score, str):
+            try:
+                aspect_score = json.loads(aspect_score)
+            except json.JSONDecodeError:
+                aspect_score = {}
 
-        matched_product = f"{retrieved[0].get('brand', '')} {retrieved[0].get('model', '')}"
-        yield f"Generating summary"
+        # Render sentiment HTML once
+        sentiment_html = render_all_bars(aspect_score) if isinstance(aspect_score, dict) else "<p>Invalid sentiment data.</p>"
 
-        summary = generator.generate_summary(user_query, retrieved)
+        # First yield: empty summary with full sentiment
+        yield "", sentiment_html
+
+        # Stream summary one character at a time
+        tokens = re.split(r'(\n+|\s+)', summary_text)
+
+        # Filter out empty strings that might result from the split if there are multiple delimiters
+        tokens = [token for token in tokens if token]
+
         output = ""
-        for char in summary:
-            output += char
-            yield output
-            time.sleep(0.02)
+        for i, token in enumerate(tokens):
+            output += token
+            yield output, sentiment_html
+            # Adjust sleep time: longer for newlines, shorter for words
+            if '\n' in token:
+                time.sleep(0.2) # Longer pause for blank lines
+            else:
+                time.sleep(0.05) # Normal word delay
+
+        # Ensure the final output is yielded to cover any edge cases
+        yield summary_text, sentiment_html 
+
     except Exception as e:
-        yield f"An error occurred while generating the summary. Please contact the developers."
-        return
+        print(f"Error generating summary: {e}")
+        yield "An error occurred while generating the summary. Please contact the developers.", ""
+
+
+def render_sentiment_bar(aspect, scores):
+    pos = scores.get("positive", 0)
+    neu = scores.get("neutral", 0)
+    neg = scores.get("negative", 0)
+
+    return f"""
+    <div style="padding: 12px; margin-bottom: 12px; font-size: 13px; font-family: 'Helvetica Neue', sans-serif; color: #111;
+                border: 1px solid #ddd; border-radius: 8px; background-color: #fff; width: 260px;">
+        <div style="margin-bottom: 8px; font-weight: 600; text-align: center;">{aspect.capitalize()}</div>
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+            <div style="height: 10px; border-radius: 5px; overflow: hidden; display: flex; background-color: #e0e0e0;
+                        box-shadow: inset 0 1px 2px rgba(0,0,0,0.08);">
+                <div style="width: {pos}%; background-color: #222;"></div>
+                <div style="width: {neu}%; background-color: #999;"></div>
+                <div style="width: {neg}%; background-color: #666;"></div>
+            </div>
+            <div style="font-size: 12px; color: #333; text-align: center;">
+                {pos}% / {neu}% / {neg}%
+            </div>
+        </div>
+    </div>
+    """
+
+
+def render_all_bars(sentiment_dict):
+    return "\n".join(render_sentiment_bar(a, s) for a, s in sentiment_dict.items())
 
 """ 
 Function to display retrieved chunks in a formatted JSON style
@@ -130,6 +168,7 @@ def display_chunks():
             f"Model: {c.get('model', 'N/A')}\n"
             f"Brand: {c.get('brand', 'N/A')}\n"
             f"Stars: {c.get('stars', 'N/A')}\n"
+            f"Aspect: {c.get('aspect', 'N/A')}\n"
             f"{c.get('text', '')}"
         )
         formatted_chunks.append(chunk)
@@ -225,12 +264,14 @@ button:hover {
 
     with gr.Row(elem_classes="centered-buttons"):
         generate_button = gr.Button("Summarize")
-        show_chunks_button = gr.Button("Show Reviews")
+        show_chunks_button = gr.Button("Show Chunks")
 
-    summary_output = gr.Textbox(show_label=False, lines=6, interactive=False)
-    chunks_output = gr.Code(language="json", visible=False, interactive=False)
-
-    generate_button.click(generate_summary_stream, inputs=query_input, outputs=summary_output)
+    with gr.Column(scale=3):
+        summary_output = gr.Textbox(show_label=False, lines=6, interactive=False)
+    with gr.Column(scale=1):
+        sentiment_display = gr.HTML(label="Sentiment Breakdown")
+    chunks_output = gr.Code(language="json", visible=False, interactive=False)    
+    generate_button.click(generate_summary_stream, inputs=query_input, outputs=[summary_output, sentiment_display])
     show_chunks_button.click(display_chunks, inputs=[], outputs=[chunks_output, chunks_output])
 
 demo.launch()
