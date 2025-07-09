@@ -9,6 +9,7 @@ import gradio as gr
 from transformers import AutoTokenizer, AutoModel
 import sys
 from sentence_transformers import SentenceTransformer, util
+import re
 
 # Ensure the parent directories are in the path for imports
 sys.path.append(os.path.abspath(os.path.join("..", "generator")))
@@ -103,11 +104,23 @@ def generate_summary_stream(user_query):
         yield "", sentiment_html
 
         # Stream summary one character at a time
+        tokens = re.split(r'(\n+|\s+)', summary_text)
+
+        # Filter out empty strings that might result from the split if there are multiple delimiters
+        tokens = [token for token in tokens if token]
+
         output = ""
-        for char in summary_text:
-            output += char
+        for i, token in enumerate(tokens):
+            output += token
             yield output, sentiment_html
-            time.sleep(0.02)
+            # Adjust sleep time: longer for newlines, shorter for words
+            if '\n' in token:
+                time.sleep(0.2) # Longer pause for blank lines
+            else:
+                time.sleep(0.05) # Normal word delay
+
+        # Ensure the final output is yielded to cover any edge cases
+        yield summary_text, sentiment_html 
 
     except Exception as e:
         print(f"Error generating summary: {e}")

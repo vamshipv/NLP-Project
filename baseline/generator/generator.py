@@ -125,10 +125,12 @@ class Generator:
         response = ollama.chat(
             model=self.model_name,
             messages=[{"role": "user", "content": prompt}],
-            options={"num_predict": self.max_tokens}
+            options={
+                "num_predict": self.max_tokens,
+                "temperature": 0.7}
         )
 
-        final_summary = f"{response['message']['content']}\n{sentiment_block}"
+        final_summary = f"{response['message']['content']}\n\n{sentiment_block}"
 
         log_data = {
             "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
@@ -221,7 +223,7 @@ class Generator:
             neu = [aspect] if general_counts["neutral"] > 0 else []
             aspect_scores = self.convert_to_aspect_scores(percentages, pos, neg, neu)
             sentiment_block = (
-                f"OVERALL SENTIMENT : {overall}\n"
+                f"Overall Sentiment : {overall}\n"
                 f"- {percentages['positive']}% of customers have positive reviews.\n"
                 f"- {percentages['negative']}% of customers have negative reviews.\n"
                 f"- {percentages['neutral']}% of customers have neutral reviews.\n\n"
