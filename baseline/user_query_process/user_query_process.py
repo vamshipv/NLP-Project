@@ -154,9 +154,9 @@ class User_query_process:
                 
         retrieved_chunks_general = self.chunks_by_general(user_query)
         if len(retrieved_chunks_general) <= 4:
-            return "Not enough reviews found for the specified aspect. Please try a different query."
+            return "Not enough reviews found for the specified device for the summary. Please try a different device."
         # print(f"Retrieved chunks general : {retrieved_chunks_general}")
-        summary, aspect_scores = self.generator.generate_summary(user_query, retrieved_chunks)
+        summary, aspect_scores = self.generator.generate_summary(user_query, retrieved_chunks_general)
         return summary, aspect_scores
     
     def chunks_by_aspect(self, query, aspect=None):

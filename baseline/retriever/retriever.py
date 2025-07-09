@@ -15,7 +15,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 
 """
-This script is a retriever module that processes product reviews, chunks them into manageable pieces, 
+This script is a retriever module that processes product reviews, chunks them into manageable pieces,
 indexes them using FAISS, and retrieves relevant chunks based on user queries.
 """
 
@@ -50,8 +50,11 @@ class Retriever:
         self.reviews_df = pd.read_json(json_file)
         self.model = SentenceTransformer("intfloat/e5-base-v2")
         self.nlp = spacy.load("en_core_web_sm")
-        self.index = None
-        self.chunked_reviews = []
+        self.general_index = None # Will store the loaded general FAISS index
+        self.general_chunks_metadata = [] # Will store the metadata for general chunks
+        self.aspect_indexes = {} # Stores loaded aspect FAISS indexes: {"aspect_name": faiss_index}
+        self.aspect_chunks_metadata = {} # Stores metadata for aspect chunks: {"aspect_name": [chunk_metadata]}
+
         self.aspect_keywords = {
             "battery": ["battery", "charge", "charging", "mah", "power", "drain"],
             "camera": ["camera", "photo", "picture", "lens", "image", "zoom", "video"],
@@ -61,12 +64,50 @@ class Retriever:
             "software": ["ui", "os", "update", "bloatware", "interface", "android", "software"],
             "heating": ["heat", "heating", "warm", "temperature", "overheat"]
         }
+        self._load_indexed_data() # Call a new method to load pre-built indexes and metadata
+
+    def _load_indexed_data(self):
+        """
+        Loads the pre-built FAISS indexes and their corresponding chunk metadata.
+        """
+        # Load General Index
+        if os.path.exists(index_path):
+            self.general_index = faiss.read_index(index_path)
+            logging.info(f"Loaded general FAISS index from {index_path}")
+        else:
+            logging.warning(f"General FAISS index not found at {index_path}. Please run chunk_reviews and index_chunks first.")
+
+        if os.path.exists(chunked_path):
+            with open(chunked_path, "r", encoding="utf-8") as f:
+                self.general_chunks_metadata = json.load(f)
+            logging.info(f"Loaded general chunks metadata from {chunked_path}")
+        else:
+            logging.warning(f"General chunks metadata not found at {chunked_path}.")
+
+        # Load Aspect Indexes
+        for aspect in self.aspect_keywords:
+            aspect_dir = os.path.join(aspect_index_dir, aspect)
+            aspect_index_file = os.path.join(aspect_dir, f"{aspect}.index")
+            aspect_chunks_file = os.path.join(aspect_dir, f"{aspect}_chunks.json")
+
+            if os.path.exists(aspect_index_file):
+                self.aspect_indexes[aspect] = faiss.read_index(aspect_index_file)
+                logging.info(f"Loaded {aspect} FAISS index from {aspect_index_file}")
+            else:
+                logging.warning(f"Aspect FAISS index for '{aspect}' not found at {aspect_index_file}.")
+
+            if os.path.exists(aspect_chunks_file):
+                with open(aspect_chunks_file, "r", encoding="utf-8") as f:
+                    self.aspect_chunks_metadata[aspect] = json.load(f)
+                logging.info(f"Loaded {aspect} chunks metadata from {aspect_chunks_file}")
+            else:
+                logging.warning(f"Aspect chunks metadata for '{aspect}' not found at {aspect_chunks_file}.")
+
 
     """
     This method retrieves the embedding for a given text using the SentenceTransformer model.
     It encodes the text into a vector representation suitable for similarity search.
     """
-
     def get_embedding(self, text):
         return self.model.encode([text])[0].reshape(1, -1).astype("float32")
     
@@ -95,9 +136,7 @@ class Retriever:
             sentences = [sent.text.strip() for sent in doc.sents if sent.text.strip()]
             if not sentences:
                 continue
-
             
-
             # General chunking (512 char limit)
             chunk = ""
             for sentence in sentences:
@@ -212,10 +251,17 @@ class Retriever:
         general_texts = [f"passage: {c['text']}" for c in general_chunks]
         embeddings = self.model.encode(general_texts, convert_to_numpy=True, normalize_embeddings=True)
         dimension = embeddings.shape[1]
-        self.index = faiss.IndexFlatL2(dimension)
-        self.index.add(embeddings)
-        faiss.write_index(self.index, index_path)
 
+        # Use IndexIDMap for general chunks
+        general_index = faiss.IndexIDMap(faiss.IndexFlatL2(dimension))
+        ids = np.arange(len(general_chunks))
+        general_index.add_with_ids(embeddings, ids)
+
+        faiss.write_index(general_index, index_path)
+
+        # Save metadata (already done by chunk_reviews, but re-saving for clarity if chunked_path is specifically for general)
+        # Note: If chunked_path contains ALL chunks, general_chunks should be saved to a specific general_chunks_only.json
+        # For now, assuming chunked_path is effectively "general_chunks.json" as per your global var.
         with open(os.path.join(output_dir, "general_chunks.json"), "w", encoding="utf-8") as f:
             json.dump(general_chunks, f, indent=2)
 
@@ -241,8 +287,11 @@ class Retriever:
             texts = [f"passage: {c['text']}" for c in aspect_chunks]
             embeddings = self.model.encode(texts, convert_to_numpy=True, normalize_embeddings=True)
             dim = embeddings.shape[1]
-            index = faiss.IndexFlatL2(dim)
-            index.add(embeddings)
+
+            index = faiss.IndexIDMap(faiss.IndexFlatL2(dim))
+            ids = np.arange(len(aspect_chunks))
+            index.add_with_ids(embeddings, ids)
+
             faiss.write_index(index, os.path.join(aspect_dir, f"{aspect}.index"))
 
             logging.info(json.dumps({
@@ -251,110 +300,87 @@ class Retriever:
                 "num_chunks": len(aspect_chunks),
                 "index_file": f"{aspect}.index"
             }))
+        
+        # After indexing, reload the data to ensure the in-memory state is consistent
+        self._load_indexed_data()
 
 
     """
     This method retrieves relevant chunks based on a user query.
     It matches the query to product titles, filters the chunks by the matched title, and retrieves the top_k relevant chunks.
-
-    #TODO
-    Working in progess:
-    - It uses the ProductMatcher to find the best matching product title based on the query.
-    - It filters the chunks based on the matched title.
-    - It uses FAISS to search for the top_k most relevant chunks based on the query embedding.
-    - Currently, exact matching is not implemented, but it retrieves chunks based on the closest match to the query.
     """
     def retrieve(self, query, top_k=20):
-        chunk_path = os.path.join(output_dir, "general_chunks.json")
-
-        if not os.path.exists(chunk_path):
-            print("General chunk file not found.")
+        if self.general_index is None or not self.general_chunks_metadata:
+            print("General index or chunk metadata not loaded. Please ensure indexing is complete.")
             return []
-
-        with open(chunk_path, "r", encoding="utf-8") as f:
-            general_chunks = json.load(f)
 
         matcher = ProductMatcher()
         matched_title = matcher.match_brand(query)
         print(f"Matched title: {matched_title}")
+
         if not matched_title:
+            print("No matching product title found for the query.")
             return []
-
-        # Filter by brand/model BEFORE indexing
-        pattern = re.compile(rf"\b{re.escape(matched_title.lower())}\b")
-        filtered_chunks = [
-            c for c in general_chunks
-            if pattern.search(f"{c.get('brand', '')} {c.get('model', '')}".lower())
-        ]
-
-        if not filtered_chunks:
-            return []
-
-        # Build temporary FAISS index from filtered chunks
-        texts = [f"passage: {c['text']}" for c in filtered_chunks]
-        embeddings = self.model.encode(texts, convert_to_numpy=True, normalize_embeddings=True)
-        dim = embeddings.shape[1]
-        temp_index = faiss.IndexFlatL2(dim)
-        temp_index.add(embeddings)
 
         query_vec = self.get_embedding(f"query: {query}")
-        _, I = temp_index.search(query_vec, min(top_k, len(filtered_chunks)))
-        results = [filtered_chunks[i] for i in I[0]]
+        
+        # Perform search on the entire general index
+        D, I = self.general_index.search(query_vec, top_k * 5) # Search for more to allow for filtering
+
+        results = []
+        pattern = re.compile(rf"\b{re.escape(matched_title.lower())}\b")
+
+        for idx in I[0]:
+            if idx >= len(self.general_chunks_metadata):
+                continue # Skip if ID is out of bounds (shouldn't happen with correct IDs)
+            chunk = self.general_chunks_metadata[idx]
+            if pattern.search(f"{chunk.get('brand', '')} {chunk.get('model', '')}".lower()):
+                results.append(chunk)
+            if len(results) >= top_k:
+                break # Stop once we have enough results after filtering
+
         results = self.remove_duplicate_chunks(results)
-        # print(f"Retrieved after duplicate removal: {results}")
         return results
+
 
     """
     This method retrieves relevant chunks based on a user query and aspect.
     It matches the query to product titles, filters the chunks by the matched title, and retrieves the top_k relevant chunks.
-
-    #TODO
-    Working in progess:
-    - It uses the ProductMatcher to find the best matching product title based on the query.
-    - It filters the chunks based on the matched title.
-    - It uses FAISS to search for the top_k most relevant chunks based on the query embedding.
-    - Currently, exact matching is not implemented, but it retrieves chunks based on the closest match to the query.
     """
     def retrieve_by_aspect(self, query, aspect, top_k=40):
-        chunk_path = os.path.join(aspect_index_dir, aspect, f"{aspect}_chunks.json")
-
-        if not os.path.exists(chunk_path):
-            print(f"Chunk file for aspect '{aspect}' not found.")
+        if aspect not in self.aspect_indexes or not self.aspect_chunks_metadata.get(aspect):
+            print(f"Aspect index or chunk metadata for '{aspect}' not loaded. Please ensure indexing is complete.")
             return []
 
-        with open(chunk_path, "r", encoding="utf-8") as f:
-            aspect_chunks = json.load(f)
+        aspect_index = self.aspect_indexes[aspect]
+        aspect_metadata = self.aspect_chunks_metadata[aspect]
 
         matcher = ProductMatcher()
         matched_title = matcher.match_brand(query)
-        # print(f"Matched title: {matched_title}")
+        print(f"Matched title: {matched_title}")
+
         if not matched_title:
+            print("No matching product title found for the query.")
             return []
-
-        # Filter by brand/model BEFORE indexing
-        pattern = re.compile(rf"\b{re.escape(matched_title.lower())}\b")
-        filtered_chunks = [
-            c for c in aspect_chunks
-            if pattern.search(f"{c.get('brand', '')} {c.get('model', '')}".lower())
-        ]
-
-        if not filtered_chunks:
-            return []
-
-        # Build temporary FAISS index from filtered aspect chunks
-        texts = [f"passage: {c['text']}" for c in filtered_chunks]
-        embeddings = self.model.encode(texts, convert_to_numpy=True, normalize_embeddings=True)
-        dim = embeddings.shape[1]
-        temp_index = faiss.IndexFlatL2(dim)
-        temp_index.add(embeddings)
 
         query_vec = self.get_embedding(f"query: {query}")
-        _, I = temp_index.search(query_vec, min(top_k, len(filtered_chunks)))
-        results = [filtered_chunks[i] for i in I[0]]
+
+        # Perform search on the entire aspect index
+        D, I = aspect_index.search(query_vec, top_k * 5) # Search for more to allow for filtering
+
+        results = []
+        pattern = re.compile(rf"\b{re.escape(matched_title.lower())}\b")
+
+        for idx in I[0]:
+            if idx >= len(aspect_metadata):
+                continue # Skip if ID is out of bounds
+            chunk = aspect_metadata[idx]
+            if pattern.search(f"{chunk.get('brand', '')} {chunk.get('model', '')}".lower()):
+                results.append(chunk)
+            if len(results) >= top_k:
+                break # Stop once we have enough results after filtering
+
         results = self.remove_duplicate_chunks(results)
-        # print(f"retrieved after duplicate {results}")
-        # results = self.filter_sentences_by_aspect(results, aspect)
-        # print(f"Filtered sentences by aspect '{aspect}': {results}")
         return results
     
     """

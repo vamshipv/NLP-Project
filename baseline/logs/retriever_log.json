@@ -59,3 +59,14 @@ Load pretrained SentenceTransformer: intfloat/e5-base-v2
 {"timestamp": "2025-07-08T17:43:56.153297", "event": "index_build", "num_chunks": 104, "index_file": "build.index"}
 {"timestamp": "2025-07-08T17:44:03.208605", "event": "index_software", "num_chunks": 185, "index_file": "software.index"}
 {"timestamp": "2025-07-08T17:44:08.783834", "event": "index_heating", "num_chunks": 59, "index_file": "heating.index"}
+Use pytorch device_name: cpu
+Load pretrained SentenceTransformer: intfloat/e5-base-v2
+{"timestamp": "2025-07-09T22:22:34.386476", "event": "chunk_reviews", "num_chunks": 3499, "output_file": "..\\data\\general_chunks.json"}
+{"timestamp": "2025-07-09T22:23:04.450298", "event": "index_chunks", "num_chunks": 924, "index_file": "..\\data\\general_chunks.index"}
+{"timestamp": "2025-07-09T22:23:42.774162", "event": "index_battery", "num_chunks": 1619, "index_file": "battery.index"}
+{"timestamp": "2025-07-09T22:23:55.839664", "event": "index_camera", "num_chunks": 261, "index_file": "camera.index"}
+{"timestamp": "2025-07-09T22:24:10.478688", "event": "index_performance", "num_chunks": 197, "index_file": "performance.index"}
+{"timestamp": "2025-07-09T22:24:22.952750", "event": "index_display", "num_chunks": 150, "index_file": "display.index"}
+{"timestamp": "2025-07-09T22:24:31.902126", "event": "index_build", "num_chunks": 104, "index_file": "build.index"}
+{"timestamp": "2025-07-09T22:24:41.975798", "event": "index_software", "num_chunks": 185, "index_file": "software.index"}
+{"timestamp": "2025-07-09T22:24:49.133240", "event": "index_heating", "num_chunks": 59, "index_file": "heating.index"}
