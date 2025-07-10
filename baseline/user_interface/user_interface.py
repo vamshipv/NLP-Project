@@ -90,10 +90,6 @@ def generate_summary_stream(user_query):
     try:
         retrieved = retriever.retrieve(user_query)
         summary_text, aspect_score = query_processor.process(user_query)
-        if isinstance(summary_text, str):
-            # It's a message, not a summary
-            yield summary_text, ""
-            return
 
         if isinstance(aspect_score, str):
             try:

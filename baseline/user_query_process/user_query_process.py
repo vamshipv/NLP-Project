@@ -51,6 +51,17 @@ class User_query_process:
             "software": ["ui", "os", "update", "bloatware", "interface", "android", "software"],
             "heating": ["heat", "heating", "warm", "temperature", "overheat"]
         }
+        self.aspects_keywords_not_avaliable = {
+            "audio": ["audio", "sound", "speaker", "volume", "clarity", "bass", "mic", "microphone", "earpiece"],
+            "price": ["price", "value", "worth", "expensive", "cheap", "budget", "overpriced", "cost"],
+            "gaming": ["game", "gaming", "fps", "graphics", "frame", "lag", "stutter", "heat during gaming"],
+            "connectivity": ["wifi", "bluetooth", "network", "signal", "reception", "5g", "4g", "lte", "nfc", "sim"],
+            "storage": ["storage", "memory", "ram", "rom", "expandable", "sd card"],
+            "security": ["fingerprint", "face unlock", "biometric", "sensor", "scanner", "unlock"],
+            "accessories": ["charger", "case", "headphones", "earphones", "cable", "adapter", "accessory", "in-box"],
+            "charging_speed": ["charging speed", "fast charge", "wired", "wireless", "power delivery", "watt", "charge time"],
+            "experience": ["experience", "daily use", "overall", "usage", "feel", "feedback", "handling"]
+        }
 
     """
     This method checks if the query contains any bad words.
@@ -95,7 +106,9 @@ class User_query_process:
 
         if any(word in q for word in self.aspect_keywords):
             print(f"Detected aspect in query: {q}")
-            return "aspect"
+        
+        if any(word in q for word in self.aspects_keywords_not_avaliable):
+            return "not_an_aspect"
 
         if any(phrase in q for phrase in [
             "should i buy", "is this product good", "what should i buy",
@@ -140,11 +153,30 @@ class User_query_process:
 
         if self.intent == "decision_query":
             return "This system is designed to summarize product reviews, not to make purchase decisions. Please rephrase your query to focus on product feedback.", ""
+        
+        matched_aspects = set()
+        for aspect, keywords in self.aspect_keywords.items():
+            for keyword in keywords:
+                if keyword.lower() in cleaned_query.lower():
+                    matched_aspects.add(aspect)
+                    break
 
+        if len(matched_aspects) > 1:
+            print(f"Detected multiple aspects in query: {matched_aspects}")
+            return "Your query mentions multiple aspects. The current model only supports one aspect per query.", ""
+
+        if self.intent == "not_an_aspect":
+            print(f"Detected aspect in query: {matched_aspects}")
+            for aspect in self.aspects_keywords_not_avaliable:
+                if aspect in cleaned_query.lower():
+                    return "This aspect is not available for review summaries. Please try a different aspect or query.", ""
+                
         if self.intent == "aspect":
             for aspect in self.aspect_keywords:
                 if aspect in cleaned_query.lower():
                     retrieved_chunks_aspect = self.chunks_by_aspect(user_query, aspect=aspect)
+                    if retrieved_chunks_aspect == "No reviews found for your query.":
+                        return "No Reviews found for the specified aspect. Please try with a different query.", ""
                     print(f"Retrieved chunks for aspect '{aspect}': {retrieved_chunks_aspect} len: {len(retrieved_chunks_aspect)}")
                     if len(retrieved_chunks_aspect) <= 4:
                         return "Not enough reviews found for the specified aspect. Please try a different query.", ""
@@ -154,6 +186,8 @@ class User_query_process:
                     return summary, aspect_scores
                 
         retrieved_chunks_general = self.chunks_by_general(user_query)
+        if retrieved_chunks_general == "No reviews found for your query.":
+            return "No Reviews found. Please try with a different query", ""
         if len(retrieved_chunks_general) <= 4:
             return "Not enough reviews found for the specified device for the summary. Please try a different device.", ""
         # print(f"Retrieved chunks general : {retrieved_chunks_general}")
