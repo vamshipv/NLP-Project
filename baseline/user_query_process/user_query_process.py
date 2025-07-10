@@ -104,8 +104,9 @@ class User_query_process:
             print("here inside")
             return "multiple_titles"
 
-        if any(word in q for word in self.aspect_keywords):
+        if any(keyword in q for keywords in self.aspect_keywords.values() for keyword in keywords):
             print(f"Detected aspect in query: {q}")
+            return "aspect"
         
         if any(word in q for word in self.aspects_keywords_not_avaliable):
             return "not_an_aspect"
@@ -172,8 +173,8 @@ class User_query_process:
                     return "This aspect is not available for review summaries. Please try a different aspect or query.", ""
                 
         if self.intent == "aspect":
-            for aspect in self.aspect_keywords:
-                if aspect in cleaned_query.lower():
+            for aspect, keywords in self.aspect_keywords.items():
+                if any(keyword in cleaned_query.lower() for keyword in keywords):
                     retrieved_chunks_aspect = self.chunks_by_aspect(user_query, aspect=aspect)
                     if retrieved_chunks_aspect == "No reviews found for your query.":
                         return "No Reviews found for the specified aspect. Please try with a different query.", ""
