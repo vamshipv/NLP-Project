@@ -86,11 +86,11 @@ def generate_summary_stream(user_query):
     if not user_query.strip():
         yield "", "<p>Please enter a valid query.</p>"
         return
-
+    retrieved = query_processor.check_chunks(user_query)
     try:
-        retrieved = retriever.retrieve(user_query)
+        
         summary_text, aspect_score = query_processor.process(user_query)
-
+        
         if isinstance(aspect_score, str):
             try:
                 aspect_score = json.loads(aspect_score)
@@ -155,7 +155,7 @@ This function formats the retrieved chunks into a JSON-like structure for displa
 def display_chunks():
     if not retrieved:
         return "No chunks to display.", gr.update(visible=True)
-
+    
     formatted_chunks = []
     for c in retrieved:
         chunk = (

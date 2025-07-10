@@ -43,24 +43,25 @@ class User_query_process:
         # This is used to detect title-like queries
         self.model_query = SentenceTransformer('all-MiniLM-L6-v2')
         self.aspect_keywords = {
-            "battery": ["battery", "charge", "charging", "mah", "power", "drain"],
+            "battery": ["battery","charge", "mah", "power", "drain"],
             "camera": ["camera", "photo", "picture", "lens", "image", "zoom", "video"],
-            "performance": ["lag", "smooth", "fast", "slow", "processor", "snapdragon", "performance"],
+            "performance": ["smooth", "fast", "slow", "processor"],
             "display": ["screen", "display", "brightness", "resolution", "refresh rate", "touch"],
-            "build": ["build", "design", "material", "durability", "weight", "feel"],
-            "software": ["ui", "os", "update", "bloatware", "interface", "android", "software"],
-            "heating": ["heat", "heating", "warm", "temperature", "overheat"]
+            "build": ["build", "design", "material", "durability", "weight"],
+            "software": ["ui", "os", "update", "bloatware", "interface", "android"],
+            "heating": ["heating", "warm", "temperature", "overheat"]
         }
+
         self.aspects_keywords_not_avaliable = {
             "audio": ["audio", "sound", "speaker", "volume", "clarity", "bass", "mic", "microphone", "earpiece"],
             "price": ["price", "value", "worth", "expensive", "cheap", "budget", "overpriced", "cost"],
-            "gaming": ["game", "gaming", "fps", "graphics", "frame", "lag", "stutter", "heat during gaming"],
-            "connectivity": ["wifi", "bluetooth", "network", "signal", "reception", "5g", "4g", "lte", "nfc", "sim"],
+            "gaming": ["game", "gaming", "fps", "graphics", "frame", "stutter", "heat during gaming"],
+            "connectivity": ["wifi", "bluetooth", "network", "signal", "reception"],
             "storage": ["storage", "memory", "ram", "rom", "expandable", "sd card"],
             "security": ["fingerprint", "face unlock", "biometric", "sensor", "scanner", "unlock"],
             "accessories": ["charger", "case", "headphones", "earphones", "cable", "adapter", "accessory", "in-box"],
             "charging_speed": ["charging speed", "fast charge", "wired", "wireless", "power delivery", "watt", "charge time"],
-            "experience": ["experience", "daily use", "overall", "usage", "feel", "feedback", "handling"]
+            "experience": ["experience", "daily use", "overall", "usage", "feedback", "handling", "feel"]
         }
 
     """
@@ -89,6 +90,41 @@ class User_query_process:
         print(matches)
         return len(set(matches)) >= 2
 
+    def detect_aspect(self, query):
+        query_lower = query.lower()
+
+        for main_aspect, keywords in self.aspect_keywords.items():
+            if any(keyword in query_lower for keyword in keywords):
+                print(f"Detected aspect in query: {main_aspect}")
+                return main_aspect
+        return None
+    
+    def detect_aspect_not_in_list(self, query):
+        query_lower = query.lower()
+
+        for main_aspect, keywords in self.aspects_keywords_not_avaliable.items():
+            if any(keyword in query_lower for keyword in keywords):
+                print(f"Detected aspect in query: {main_aspect}")
+                return main_aspect
+        return None
+    
+    def detect_multiple_aspects(self, cleaned_query):
+        matched_aspects = []
+        query_lower = cleaned_query.lower()
+
+        for main_aspect, keywords in self.aspect_keywords.items():
+            if any(keyword in query_lower for keyword in keywords):
+                matched_aspects.append(main_aspect)
+        
+        if len(matched_aspects) == 0:
+            return None  # no aspect found
+        elif len(matched_aspects) > 1:
+            return "multiple_aspects"  # more than one aspect found
+        else:
+            return matched_aspects[0]  # exactly one aspect found
+
+    
+
 
     """
     This method detects the intent of the user query.
@@ -103,19 +139,21 @@ class User_query_process:
         if self.detect_multiple_titles(query):
             print("here inside")
             return "multiple_titles"
-
-        if any(keyword in q for keywords in self.aspect_keywords.values() for keyword in keywords):
-            print(f"Detected aspect in query: {q}")
-            return "aspect"
         
-        if any(word in q for word in self.aspects_keywords_not_avaliable):
-            return "not_an_aspect"
-
+        if self.detect_multiple_aspects(query) == "multiple_aspects":
+            return "multiple_aspects"
+        
+        if self.detect_aspect_not_in_list(query):
+                    return "not_an_aspect"
+        
         if any(phrase in q for phrase in [
             "should i buy", "is this product good", "what should i buy",
             "is it worth it", "which one is better", "do you recommend"
         ]):
             return "decision_query"
+
+        if self.detect_aspect(query):
+            return "aspect"
 
         return "summary"
 
@@ -149,49 +187,43 @@ class User_query_process:
         if self.contains_bad_words(user_query):
             return "Query contains inappropriate language. Please rephrase.", ""
 
-        self.intent = self.detect_intent(user_query)
-        cleaned_query = self.clean_query(user_query)
-
         if self.intent == "decision_query":
             return "This system is designed to summarize product reviews, not to make purchase decisions. Please rephrase your query to focus on product feedback.", ""
         
-        matched_aspects = set()
-        for aspect, keywords in self.aspect_keywords.items():
-            for keyword in keywords:
-                if keyword.lower() in cleaned_query.lower():
-                    matched_aspects.add(aspect)
-                    break
+        matched_aspects = []
 
-        if len(matched_aspects) > 1:
-            print(f"Detected multiple aspects in query: {matched_aspects}")
-            return "Your query mentions multiple aspects. The current model only supports one aspect per query.", ""
+        query_lower = cleaned_query.lower()
+
+        for main_aspect, keywords in self.aspect_keywords.items():
+            if any(keyword in query_lower for keyword in keywords):
+                matched_aspects.append(main_aspect)
+
+        if self.intent == "multiple_aspects":
+            return "Your query mentions multiple aspects. Please focus on one aspect at a time.", ""
 
         if self.intent == "not_an_aspect":
-            print(f"Detected aspect in query: {matched_aspects}")
-            for aspect in self.aspects_keywords_not_avaliable:
-                if aspect in cleaned_query.lower():
-                    return "This aspect is not available for review summaries. Please try a different aspect or query.", ""
+            return "This aspect is not available for review summaries. Please try a different aspect or query.", ""
                 
-        if self.intent == "aspect":
-            for aspect, keywords in self.aspect_keywords.items():
-                if any(keyword in cleaned_query.lower() for keyword in keywords):
-                    retrieved_chunks_aspect = self.chunks_by_aspect(user_query, aspect=aspect)
-                    if retrieved_chunks_aspect == "No reviews found for your query.":
-                        return "No Reviews found for the specified aspect. Please try with a different query.", ""
-                    print(f"Retrieved chunks for aspect '{aspect}': {retrieved_chunks_aspect} len: {len(retrieved_chunks_aspect)}")
-                    if len(retrieved_chunks_aspect) <= 4:
-                        return "Not enough reviews found for the specified aspect. Please try a different query.", ""
-                    print(f"Retrieved chunks for aspect '{aspect}': {retrieved_chunks_aspect}")
-                    retrieved_chunks_aspect = self.filter_sentences_by_aspect(retrieved_chunks_aspect, aspect)
-                    summary, aspect_scores = self.generator.generate_summary(user_query, retrieved_chunks_aspect, aspect=aspect)
-                    return summary, aspect_scores
+        if len(matched_aspects) == 1:
+            aspect = matched_aspects[0]
+            if not aspect:
+                return "No aspect detected in your query. Please try again with a specific aspect.", ""
+            retrieved_chunks_aspect = self.chunks_by_aspect(user_query, aspect=aspect)
+            if retrieved_chunks_aspect == "No reviews found for your query.":
+                return "No Reviews found for the specified aspect. Please try with a different query.", ""
+            print(f"Retrieved chunks for aspect '{aspect}': {retrieved_chunks_aspect} len: {len(retrieved_chunks_aspect)}")
+            if len(retrieved_chunks_aspect) <= 4:
+                return "Not enough reviews found for the specified aspect. Please try a different query.", ""
+            print(f"Retrieved chunks for aspect '{aspect}': {retrieved_chunks_aspect}")
+            retrieved_chunks_aspect = self.filter_sentences_by_aspect(retrieved_chunks_aspect, aspect)
+            summary, aspect_scores = self.generator.generate_summary(user_query, retrieved_chunks_aspect, aspect=aspect)
+            return summary, aspect_scores
                 
         retrieved_chunks_general = self.chunks_by_general(user_query)
         if retrieved_chunks_general == "No reviews found for your query.":
             return "No Reviews found. Please try with a different query", ""
         if len(retrieved_chunks_general) <= 4:
             return "Not enough reviews found for the specified device for the summary. Please try a different device.", ""
-        # print(f"Retrieved chunks general : {retrieved_chunks_general}")
         summary, aspect_scores = self.generator.generate_summary(user_query, retrieved_chunks_general)
         return summary, aspect_scores
     
@@ -209,10 +241,14 @@ class User_query_process:
     
     def check_chunks(self, query):
         if self.detect_intent(query) == "aspect":
-            for aspect in self.aspect_keywords:
-                if aspect in self.clean_query(query):
-                    retrieved_chunks_aspect = self.chunks_by_aspect(query, aspect=aspect)
-                    return retrieved_chunks_aspect
+            matched_aspects = []
+            for main_aspect, keywords in self.aspect_keywords.items():
+                if any(keyword in query.lower() for keyword in keywords):
+                    matched_aspects.append(main_aspect)
+            if len(matched_aspects) == 1:
+                aspect = matched_aspects[0]       
+                retrieved_chunks_aspect = self.chunks_by_aspect(query, aspect=aspect)
+                return retrieved_chunks_aspect
         retrieved_chunks_general = self.chunks_by_general(query)
         return retrieved_chunks_general
     
