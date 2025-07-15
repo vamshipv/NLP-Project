@@ -2,6 +2,8 @@
     "python.analysis.extraPaths": [
         "./baseline/generator",
         "./baseline/retriever",
-        "./baseline/user_query_process"
+        "./baseline/user_query_process",
+        "./baseline/sentiment_analysis",
+        "./baseline/sentiment_analysis"
     ]
 }

@@ -55,7 +55,7 @@ class User_query_process:
         self.aspects_keywords_not_avaliable = {
             "audio": ["audio", "sound", "speaker", "volume", "clarity", "bass", "mic", "microphone", "earpiece"],
             "price": ["price", "value", "worth", "expensive", "cheap", "budget", "overpriced", "cost"],
-            "gaming": ["game", "gaming", "fps", "graphics", "frame", "stutter", "heat during gaming"],
+            "gaming": ["game", "fps", "graphics", "frame", "stutter", "heat during"],
             "connectivity": ["wifi", "bluetooth", "network", "signal", "reception"],
             "storage": ["storage", "memory", "ram", "rom", "expandable", "sd card"],
             "security": ["fingerprint", "face unlock", "biometric", "sensor", "scanner", "unlock"],
@@ -124,8 +124,6 @@ class User_query_process:
             return matched_aspects[0]  # exactly one aspect found
 
     
-
-
     """
     This method detects the intent of the user query.
     It checks if the query is similar to product titles, contains aspect keywords, or is a decision-making query.
