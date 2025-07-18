@@ -23,7 +23,18 @@ logging.basicConfig(filename=log_path, level=logging.INFO, format="%(message)s")
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 chunked_file = os.path.join(project_root,"baseline", "data", "reviews.json")
 
-sys.path.append(os.path.abspath(os.path.join("..", "sentiment_analysis")))
+# sys.path.append(os.path.abspath(os.path.join("..", "sentiment_analysis")))
+
+# Get the directory of the current file (generator.py)
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Go up one level to baseline/ and into sentiment_analysis/
+sentiment_path = os.path.join(current_dir, "..", "sentiment_analysis")
+sentiment_path = os.path.abspath(sentiment_path)
+
+print("Appending to sys.path:", sentiment_path)
+sys.path.append(sentiment_path)
+
 from sentiment_analyzer import SentimentAnalyzer
 
 """
