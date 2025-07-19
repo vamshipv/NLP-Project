@@ -11,8 +11,6 @@ import numpy as np
 import sys
 # import nltk
 
-# nltk.download("vader_lexicon")
-
 # Logging configuration
 log_dir = os.path.join("..", "logs")
 os.makedirs(log_dir, exist_ok=True)
@@ -57,10 +55,8 @@ class Generator:
     This method creates a prompt for the Gemma model to summarize customer feedback.
     It formats the user query and the list of reviews into a structured prompt.
     Currently, it uses a neutral tone and focuses on common opinions.
-
-    #TODO
-    # Work in progress to refine the prompt for better summarization and also to handle different tones or styles.
-    Needs better summarization techniques to ensure the summary to inculde sentiment analysis and key points.
+    If an aspect is specified, it narrows the focus to that aspect only.
+    It also includes sentiment analysis results to guide the summary generation.
     """
 
     def create_gemma_prompt(self, user_query, review_list, reviews_by_sentiment=None, aspect=None, sentiment_block=None):
@@ -100,6 +96,8 @@ class Generator:
     """
     This method generates a summary of customer feedback based on the user query and the list of reviews.
     It uses the Gemma model via the Ollama API to create the summary and logs the process.
+    It also performs sentiment analysis on the reviews to provide context for the summary.
+    If no reviews are found, it returns a message indicating that.
     """
     def generate_summary(self, user_query, review_list, aspect=None):
         if not review_list:
@@ -121,7 +119,8 @@ class Generator:
 
         log_data = {
             "sentiment_analysis": sentiment_block,
-            "model_prompt": prompt
+            "model_prompt": prompt,
+            "summary": final_summary
         }
 
         with open(log_path, "a", encoding="utf-8") as f:

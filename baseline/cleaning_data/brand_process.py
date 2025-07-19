@@ -1,10 +1,15 @@
 import json
 import os
-
 import json
 import os
 import re
 
+"""
+Extracts key model variants from reviews and saves them to a JSON file.
+This script processes a JSON file containing smartphone reviews, extracts model names,
+and generates a list of unique model variants. It handles different formats, including those with
+parentheses, and normalizes the model names by removing extra spaces and converting to lowercase.
+"""
 def normalize_model_variants(model):
     """Returns full model, stripped parentheses, 'Galaxy M51', 'M51', etc."""
     full = model.strip().lower()
@@ -22,7 +27,12 @@ def normalize_model_variants(model):
 
     return list(variants)
 
-
+"""
+Extracts key model variants from smartphone reviews and saves them to a JSON file.
+Args:
+    reviews_path (str): Path to the input JSON file containing smartphone reviews.
+    output_path (str): Path to the output JSON file where model variants will be saved.
+"""
 def extract_key_model_variants(reviews_path, output_path):
     with open(reviews_path, 'r', encoding='utf-8') as f:
         reviews = json.load(f)
