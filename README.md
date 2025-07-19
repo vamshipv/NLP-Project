@@ -104,7 +104,10 @@ The retrieved review chunks are then used to:
 ---
 
 ### 5. Sentiment Analysis
-The system performs sentiment analysis on the retrieved review chunks to provide context for the summary. It categorizes reviews into positive, neutral, and negative sentiments, which are then displayed alongside the summary.
+The system performs sentiment analysis on the retrieved review chunks to provide context for the summary. It categorizes reviews into positive, neutral, and negative sentiments, which are then displayed alongside the summary.* The sentiment analysis is performed using the `cardiffnlp/twitter-roberta-base-sentiment` model, which provides a simple and effective way to analyze the sentiment of text.
+* The sentiment scores are used to create a breakdown of positive, neutral, and negative sentiments for the product.
+* This breakdown is displayed in the user interface, allowing users to see the sentiment distribution across the reviews.
+* The sentiment analysis results are also logged for transparency and debugging purposes.
 
 ---
 
@@ -136,6 +139,13 @@ All operations are thoroughly logged for transparency and debugging:
 
 ### 9. Test Cases
 The system includes a set of test cases to validate the summarization functionality. These tests cover various product queries and aspects, ensuring that the summarization logic works as expected across different scenarios.
+
+---
+
+### 10. Evaluation
+The system is evaluated based on the F1 score of the generated summaries against a set of reference summaries.
+
+---
 
 ## Usage
 
