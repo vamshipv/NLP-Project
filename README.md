@@ -105,6 +105,7 @@ The retrieved review chunks are then used to:
 
 ### 5. Sentiment Analysis
 The system performs sentiment analysis on the retrieved review chunks to provide context for the summary. It categorizes reviews into positive, neutral, and negative sentiments, which are then displayed alongside the summary.
+
 ---
 
 ### 6. User Query Handling
