@@ -30,7 +30,7 @@ os.makedirs(aspect_index_dir, exist_ok=True)
 
 log_dir = os.path.join("..", "logs")
 os.makedirs(log_dir, exist_ok=True)
-log_path = os.path.join(log_dir, "retriever_log.json")
+log_path = os.path.join(log_dir, "summary_log.json")
 logging.basicConfig(filename=log_path, level=logging.INFO, format="%(message)s")
 
 """"
@@ -188,13 +188,6 @@ class Retriever:
             json.dump(chunked_reviews, f, indent=4)
 
         self.chunked_reviews = chunked_reviews
-
-        logging.info(json.dumps({
-            "timestamp": datetime.now().isoformat(),
-            "event": "chunk_reviews",
-            "num_chunks": len(chunked_reviews),
-            "output_file": chunked_path
-        }))
         return chunked_reviews
 
 
@@ -219,13 +212,6 @@ class Retriever:
         with open(os.path.join(output_dir, "general_chunks.json"), "w", encoding="utf-8") as f:
             json.dump(general_chunks, f, indent=2)
 
-        logging.info(json.dumps({
-            "timestamp": datetime.now().isoformat(),
-            "event": "index_chunks",
-            "num_chunks": len(general_chunks),
-            "index_file": index_path
-        }))
-
         # Index each aspect separately
         for aspect in self.aspect_keywords:
             aspect_chunks = [c for c in self.chunked_reviews if c.get("aspect") == aspect]
@@ -245,12 +231,6 @@ class Retriever:
             index.add(embeddings)
             faiss.write_index(index, os.path.join(aspect_dir, f"{aspect}.index"))
 
-            logging.info(json.dumps({
-                "timestamp": datetime.now().isoformat(),
-                "event": f"index_{aspect}",
-                "num_chunks": len(aspect_chunks),
-                "index_file": f"{aspect}.index"
-            }))
 
 
     """

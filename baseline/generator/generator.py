@@ -120,14 +120,8 @@ class Generator:
         final_summary = f"{response['message']['content']}\n\n{sentiment_block}"
 
         log_data = {
-            "Project": "Product Review Summarizer - Team Dave",
-            "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            "user_query": user_query,
-            "reviews": [c["text"] if isinstance(c, dict) and "text" in c else c for c in review_list],
             "sentiment_analysis": sentiment_block,
-            "aspect": aspect if aspect else "general",
-            "model_prompt": prompt,
-            "summary": final_summary
+            "model_prompt": prompt
         }
 
         with open(log_path, "a", encoding="utf-8") as f:

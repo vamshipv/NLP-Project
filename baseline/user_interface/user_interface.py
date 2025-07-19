@@ -10,6 +10,7 @@ from transformers import AutoTokenizer, AutoModel
 import sys
 from sentence_transformers import SentenceTransformer, util
 import re
+import logging
 
 # Ensure the parent directories are in the path for imports
 sys.path.append(os.path.abspath(os.path.join("..", "generator")))
@@ -29,6 +30,11 @@ with open(title_path, 'r', encoding='utf-8') as f:
 
 product_titles = [item.strip() for item in brands_data]
 
+# Logging configuration
+log_dir = os.path.join("..", "logs")
+os.makedirs(log_dir, exist_ok=True)
+log_path = os.path.join(log_dir, "summary_log.json")
+logging.basicConfig(filename=log_path, level=logging.INFO, format="%(message)s")
 
 """ User Interface Class
 This class provides a simple user interface for interacting with the product review summarization system.
@@ -86,11 +92,19 @@ def generate_summary_stream(user_query):
     if not user_query.strip():
         yield "", "<p>Please enter a valid query.</p>"
         return
-    retrieved = query_processor.check_chunks(user_query)
+    # retrieved = query_processor.check_chunks(user_query)
     try:
         
-        summary_text, aspect_score = query_processor.process(user_query)
+        summary_text, aspect_score, retrieved = query_processor.process(user_query)
         
+        log_data = {
+        }
+
+        with open(log_path, "a", encoding="utf-8") as f:
+            json.dump(log_data, f, indent=4)
+            f.write("\n----------------------------------------LOG_END----------------------------------------n")
+            f.write("\n")
+
         if isinstance(aspect_score, str):
             try:
                 aspect_score = json.loads(aspect_score)
@@ -113,6 +127,8 @@ def generate_summary_stream(user_query):
                 time.sleep(0.2) 
             else:
                 time.sleep(0.05) 
+
+        
 
         yield summary_text, sentiment_html 
 
