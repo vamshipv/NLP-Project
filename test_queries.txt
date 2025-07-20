@@ -1,0 +1,24 @@
+Here are the additional user queries for the system testing
+
+General Summary
+- What is the customers reviews for Samsung Galaxy M51 ?
+- what do user tell about the device apple iphone 8 ?
+- Can you Summarize the reviews for oneplus nord 5g
+- how is the battery of mi poco m2 pro 
+
+Aspect Based Summary
+- what do user tell about the camera of oneplus 8 pro
+- How is the battery life for Samsung Galaxy M51 ?
+- what are the user reviews for battery of Xiaomi Redmi 6 Pro
+
+Non Aspect Summary (need new models here)
+- what are the user reviews for graphics of Xiaomi Redmi 6 Pro
+- What is the customers reviews on graphics for Samsung Galaxy M51
+
+Multiple Aspect Handling (limitation)
+- summarize to me the user reviews about apple iphone 8 based on its heating issues and camera
+
+Error Handling for System
+- What is samsung galaxy m21 ?
+- Can I buy apple iphone 11 ?
+- tell me about the performance of vivo y91i  # (for less chunks)
