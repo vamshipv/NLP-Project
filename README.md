@@ -1,6 +1,6 @@
 # Product Review Summarizer
 
-A pipeline for summarizing customer reviews on specific products using dense semantic search, product title matching, and generative summarization.
+A pipeline for summarizing customer reviews on specific products — combining semantic search, product title matching, and sentiment analysis on both general and aspect-based chunks to deliver concise summaries, presented through a Gradio interface.
 
 ---
 
@@ -11,7 +11,9 @@ This project implements a Retriever-Generator architecture designed to provide c
 * **FAISS** for fast vector similarity search
 * **SentenceTransformers** for embedding customer reviews
 * **Gemma 2:2B** for generative text summarization
+* **Sentiment Analysis** to provide sentiment classifier on customer reviews
 * **flashtext** for robust product title matching
+* **Aspect-Based Summarization** to focus on specific product features
 * **Gradio** for an intuitive and interactive user interface
 
 With this system, users can query real product feedback—for example, by asking for a summary on "Samsung Galaxy M01"—and receive a concise, review-based summary powered by **semantic search** and **Gemma 2:2B** text generation.
@@ -20,13 +22,18 @@ With this system, users can query real product feedback—for example, by asking
 
 ## Features
 
-* **Title Matching**: Utilizes `flashtext` to accurately match product titles, ignoring variations in color, RAM, or storage.
 * **Efficient Retrieval**: Employs a FAISS index for high-performance dense retrieval of relevant review snippets.
 * **Sentiment Analysis**: Analyzes customer reviews to provide sentiment context, enhancing the quality of generated summaries.
+* **Title Matching**: Utilizes `flashtext` to accurately match product titles, ignoring variations in color, RAM, or storage.
+* **General Summarization**: Generates a general summary of customer reviews for a specified product.
 * **Aspect-Based Summarization**: Allows users to focus on specific aspects of a product (e.g., camera, battery life) for more targeted summaries.
 * **Natural Language Summarization**: Generates fluent summaries using the Gemma 2:2B model.
+* **Modular Design**: The system is structured as a modular Retriever-Generator pipeline, allowing for easy updates and improvements.
+* **Test Cases**: Includes a set of test cases to validate the summarization functionality across various product queries and aspects.
+* **Evaluation**: The system is evaluated based on the F1 score of the generated summaries against a set of reference summaries.
+* **User Query Handling**: Processes user queries to extract product names and aspects, ensuring relevant summarization.
 * **Interactive UI**: Provides a user-friendly Gradio interface for seamless querying and exploration.
-* **Transparent Logging**: Logs every retrieval and summarization step, including the original query, generated summary, and source chunks for full context.
+* **Logging**: Logs every retrieval and summarization step, including the original query, generated summary, and source chunks for full context.
 
 ---
 
@@ -132,7 +139,7 @@ The user interface is built using Gradio, providing an interactive web applicati
 
 ### 8. Logging
 
-All operations are thoroughly logged for transparency and debugging:
+All operations are thoroughly logged:
 
 * `summary_log.json`: This file records the original query, the generated summary, and all source chunks used to create the summary.
 
@@ -144,7 +151,15 @@ The system includes a set of test cases to validate the summarization functional
 ---
 
 ### 10. Evaluation
-The system is evaluated based on the F1 score of the generated summaries against a set of reference summaries.
+We evaluated our system on both **general** and **aspect-based** product review summarization tasks. The primary focus was to determine how accurately the generated summaries captured user sentiment and preserved factual consistency.
+
+**Evaluation Metrics:**
+
+- **ROUGE-L**  
+  Measures the overlap of the longest common subsequences between the generated and reference summaries, helping assess recall and coherence.
+
+- **BERTScore**  
+  Evaluates the semantic similarity between generated and reference summaries using contextual embeddings from pre-trained BERT models, offering insight into meaning preservation.
 
 ---
 
@@ -169,4 +184,15 @@ Upon successful execution, the application will launch a Gradio interface, typic
 3.  **Review Chunks**: Below the summary, you will find "Chunks". Clicking on "Show Chunks" button will reveal the specific review chunks that were used by the Gemma model to generate the summary, allowing you to review the source content.
 4. **Sentiment Breakdown**: The interface will also display a sentiment breakdown for the product, showing the distribution of positive, neutral, and negative sentiments across the reviews.
 5. **More Test Examples**: You can find more test examples in the `test_queries.txt` file. These queries can be used to test the summarization functionality with various products and aspects.
+
+---
+
+## Sample output image of the RAG
+
+Below is an example of the Gradio interface in action, showing a summarized output and the sentiment breakdown.
+
+![Sample RAG Pipeline Output](rag_output.png)
+
+---
+
 
