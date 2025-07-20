@@ -30,7 +30,7 @@ os.makedirs(aspect_index_dir, exist_ok=True)
 
 log_dir = os.path.join("..", "logs")
 os.makedirs(log_dir, exist_ok=True)
-log_path = os.path.join(log_dir, "retriever_log.json")
+log_path = os.path.join(log_dir, "summary_log.json")
 logging.basicConfig(filename=log_path, level=logging.INFO, format="%(message)s")
 
 """"
@@ -95,8 +95,6 @@ class Retriever:
             sentences = [sent.text.strip() for sent in doc.sents if sent.text.strip()]
             if not sentences:
                 continue
-
-            
 
             # General chunking (512 char limit)
             chunk = ""
@@ -188,13 +186,6 @@ class Retriever:
             json.dump(chunked_reviews, f, indent=4)
 
         self.chunked_reviews = chunked_reviews
-
-        logging.info(json.dumps({
-            "timestamp": datetime.now().isoformat(),
-            "event": "chunk_reviews",
-            "num_chunks": len(chunked_reviews),
-            "output_file": chunked_path
-        }))
         return chunked_reviews
 
 
@@ -219,13 +210,6 @@ class Retriever:
         with open(os.path.join(output_dir, "general_chunks.json"), "w", encoding="utf-8") as f:
             json.dump(general_chunks, f, indent=2)
 
-        logging.info(json.dumps({
-            "timestamp": datetime.now().isoformat(),
-            "event": "index_chunks",
-            "num_chunks": len(general_chunks),
-            "index_file": index_path
-        }))
-
         # Index each aspect separately
         for aspect in self.aspect_keywords:
             aspect_chunks = [c for c in self.chunked_reviews if c.get("aspect") == aspect]
@@ -245,31 +229,31 @@ class Retriever:
             index.add(embeddings)
             faiss.write_index(index, os.path.join(aspect_dir, f"{aspect}.index"))
 
-            logging.info(json.dumps({
-                "timestamp": datetime.now().isoformat(),
-                "event": f"index_{aspect}",
-                "num_chunks": len(aspect_chunks),
-                "index_file": f"{aspect}.index"
-            }))
 
 
     """
     This method retrieves relevant chunks based on a user query.
     It matches the query to product titles, filters the chunks by the matched title, and retrieves the top_k relevant chunks.
-
-    #TODO
-    Working in progess:
     - It uses the ProductMatcher to find the best matching product title based on the query.
     - It filters the chunks based on the matched title.
     - It uses FAISS to search for the top_k most relevant chunks based on the query embedding.
-    - Currently, exact matching is not implemented, but it retrieves chunks based on the closest match to the query.
+    - Exact matching is implemented to ensure that only chunks related to the matched title are returned.
+    - It removes duplicate chunks before returning the results.
+
+    Here, we have used temporary FAISS index to avoid loading the entire index into memory.
+    As this is was just working for windows OS, but not in macOS, and also it was a bug in python version 3.12 .
+    This temporaty index building takes an extra time around 3-4 seconds of the total pipeline output, 
+    but it is necessary to ensure that the retrieval works correctly.
     """
     def retrieve(self, query, top_k=20):
         chunk_path = os.path.join(output_dir, "general_chunks.json")
 
         if not os.path.exists(chunk_path):
             print("General chunk file not found.")
-            return []
+            logging.info(json.dumps({
+            "chunk_path": "missing",
+            }))
+            return None
 
         with open(chunk_path, "r", encoding="utf-8") as f:
             general_chunks = json.load(f)
@@ -278,7 +262,7 @@ class Retriever:
         matched_title = matcher.match_brand(query)
         print(f"Matched title: {matched_title}")
         if not matched_title:
-            return []
+            return None
 
         # Filter by brand/model BEFORE indexing
         pattern = re.compile(rf"\b{re.escape(matched_title.lower())}\b")
@@ -288,7 +272,7 @@ class Retriever:
         ]
 
         if not filtered_chunks:
-            return []
+            return None
 
         # Build temporary FAISS index from filtered chunks
         texts = [f"passage: {c['text']}" for c in filtered_chunks]
@@ -308,19 +292,20 @@ class Retriever:
     This method retrieves relevant chunks based on a user query and aspect.
     It matches the query to product titles, filters the chunks by the matched title, and retrieves the top_k relevant chunks.
 
-    #TODO
-    Working in progess:
+    #
     - It uses the ProductMatcher to find the best matching product title based on the query.
     - It filters the chunks based on the matched title.
     - It uses FAISS to search for the top_k most relevant chunks based on the query embedding.
-    - Currently, exact matching is not implemented, but it retrieves chunks based on the closest match to the query.
     """
     def retrieve_by_aspect(self, query, aspect, top_k=40):
         chunk_path = os.path.join(aspect_index_dir, aspect, f"{aspect}_chunks.json")
 
         if not os.path.exists(chunk_path):
             print(f"Chunk file for aspect '{aspect}' not found.")
-            return []
+            logging.info(json.dumps({
+            "chunk_path": "missing",
+            }))
+            return None
 
         with open(chunk_path, "r", encoding="utf-8") as f:
             aspect_chunks = json.load(f)
@@ -329,7 +314,7 @@ class Retriever:
         matched_title = matcher.match_brand(query)
         # print(f"Matched title: {matched_title}")
         if not matched_title:
-            return []
+            return None
 
         # Filter by brand/model BEFORE indexing
         pattern = re.compile(rf"\b{re.escape(matched_title.lower())}\b")
@@ -339,7 +324,7 @@ class Retriever:
         ]
 
         if not filtered_chunks:
-            return []
+            return None
 
         # Build temporary FAISS index from filtered aspect chunks
         texts = [f"passage: {c['text']}" for c in filtered_chunks]
@@ -384,8 +369,9 @@ class Retriever:
                     aspect_sentences.append(sentence.strip())
         return aspect_sentences
 
-if __name__ == "__main__":
-    retriever = Retriever()
-    retriever.chunk_reviews()
-    retriever.index_chunks()
-    print("Chunking and FAISS indexing complete.")
+# if __name__ == "__main__":
+    # Can be used to test the Retriever class functionality
+    # retriever = Retriever()
+    # retriever.chunk_reviews()
+    # retriever.index_chunks()
+    # print("Chunking and FAISS indexing complete.")

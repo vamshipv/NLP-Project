@@ -10,262 +10,343 @@ from transformers import AutoTokenizer, AutoModel
 import sys
 from sentence_transformers import SentenceTransformer, util
 import re
+import logging
 
 # Ensure the parent directories are in the path for imports
-sys.path.append(os.path.abspath(os.path.join("..", "generator")))
-sys.path.append(os.path.abspath(os.path.join("..", "retriever")))
 sys.path.append(os.path.abspath(os.path.join("..", "user_query_process")))
 
-from generator import Generator
-from retriever import Retriever
 from user_query_process import User_query_process
 
-# Constants
-CHUNK_FILE = os.path.join('..', 'data', "chunked_reviews.json")
-INDEX_FILE = os.path.join('..', 'data', "reviews.index")
-title_path = os.path.join('..', 'data', 'brands.json')
-with open(title_path, 'r', encoding='utf-8') as f:
-    brands_data = json.load(f)
 
-product_titles = [item.strip() for item in brands_data]
+# Logging configuration
+log_dir = os.path.join("..", "logs")
+os.makedirs(log_dir, exist_ok=True)
+log_path = os.path.join(log_dir, "summary_log.json")
+logging.basicConfig(filename=log_path, level=logging.INFO, format="%(message)s")
 
+"""This module provides a user interface for generating product review summaries.
+It uses Gradio to create a web interface where users can input queries about products.
+The interface allows users to:
+1. Enter a query about a product.
+2. Generate a summary of customer feedback based on the query.
+3. Display relevant chunks of reviews in a formatted JSON style.
+It also includes functionality to handle sentiment analysis and display the results in a user-friendly manner.
 
-""" User Interface Class
-This class provides a simple user interface for interacting with the product review summarization system.
-It allows users to input queries, retrieve relevant chunks, and generate summaries using a pre-trained model.
-It uses the Hugging Face Transformers library for model inference and FAISS for efficient similarity search.
-It initializes the model and tokenizer, loads the chunked reviews and FAISS index,
-and provides methods to get embeddings, retrieve relevant chunks, and generate summaries.
-It is designed to be used in a Gradio web interface, allowing users to interact with the system easily."""
-class user_interface:
-    def __init__(self, chunk_file=CHUNK_FILE, faiss_index_file=INDEX_FILE):
-        self.generator = Generator()
-        self.retriever = Retriever()
-
-        with open(chunk_file, "r", encoding="utf-8") as f:
-            self.chunks = json.load(f)
-
-        self.index = faiss.read_index(faiss_index_file)
-
-    # Below code is not used in the current implementation
-    def get_embedding(self, text):
-        inputs = self.tokenizer(f"query: {text}", return_tensors="pt", padding=True, truncation=True).to(self.device)
-        with torch.no_grad():
-            outputs = self.model(**inputs)
-            emb = outputs.last_hidden_state[:, 0]
-            return (emb / emb.norm(dim=-1, keepdim=True)).cpu().numpy().astype("float32")
-
-    def retrieve(self, query, top_k=15):
-        query_vec = self.get_embedding(query)
-        _, indices = self.index.search(query_vec, top_k)
-        return [self.chunks[i] for i in indices[0]]
-
-# Initialize
-user_interface = user_interface()
-retriever = Retriever()
-generator = Generator()
-retrieved = []
-query_processor = User_query_process()
-
-""" 
-Stream function to generate summaries based on user queries
-This function retrieves relevant chunks based on the user query,
-matches the product title, and generates a summary using the generator.
-
-It yields the summary character by character to create a streaming effect.
-It uses the retriever to find relevant chunks and the generator to create a summary.
-It also handles cases where no reviews are found for the given query.
-
-#TOOD
-Need to improve the summary generation process to include sentiment analysis and key points and handling the case where no reviews are found.
+The user interface is designed to be clean and minimalist, focusing on usability and accessibility.
+It includes features such as:
+- A title for the application.
+- An input textbox for user queries.
+- Buttons for generating summaries and displaying chunks.
+- Output textboxes for displaying the summary and sentiment analysis.
 """
+class user_interface:
+    def __init__(self):
+        self.retrieved = []
+        self.query_processor = User_query_process()
+        self.retrieved_chunks_for_display = []
 
-def generate_summary_stream(user_query):
-    global retrieved
+    """
+    Function to generate a summary stream based on user query
+    This function processes the user query, retrieves relevant chunks, and generates a summary.
+    It yields the summary text and sentiment analysis results in a streaming manner.
+    It handles errors gracefully and provides feedback to the user if the query is invalid or if an error occurs during processing.
+    """
+    def generate_summary_stream(self, user_query):
 
-    if not user_query.strip():
-        yield "", "<p>Please enter a valid query.</p>"
-        return
-    retrieved = query_processor.check_chunks(user_query)
-    try:
-        
-        summary_text, aspect_score = query_processor.process(user_query)
-        
-        if isinstance(aspect_score, str):
-            try:
-                aspect_score = json.loads(aspect_score)
-            except json.JSONDecodeError:
-                aspect_score = {}
+        if not user_query.strip():
+            yield "", "<p>Please enter a valid query.</p>", gr.update(visible=True)
+            return
 
-        sentiment_html = render_all_bars(aspect_score) if isinstance(aspect_score, dict) else "<p>Invalid sentiment data.</p>"
+        try:
 
-        yield "", sentiment_html
+            summary_text, aspect_score, retrieved_chunks = self.query_processor.process(user_query)
+            self.retrieved_chunks_for_display = retrieved_chunks
+            log_data = {
+            }
 
-        tokens = re.split(r'(\n+|\s+)', summary_text)
+            with open(log_path, "a", encoding="utf-8") as f:
+                json.dump(log_data, f, indent=4)
+                f.write("\n----------------------------------------LOG_END----------------------------------------n")
+                f.write("\n")
 
-        tokens = [token for token in tokens if token]
+            if isinstance(aspect_score, str):
+                try:
+                    aspect_score = json.loads(aspect_score)
+                except json.JSONDecodeError:
+                    aspect_score = {}
 
-        output = ""
-        for i, token in enumerate(tokens):
-            output += token
-            yield output, sentiment_html
-            if '\n' in token:
-                time.sleep(0.2) 
-            else:
-                time.sleep(0.05) 
+            sentiment_html = self.render_all_bars(aspect_score) if isinstance(aspect_score, dict) else "<p>Invalid sentiment data.</p>"
 
-        yield summary_text, sentiment_html 
+            yield "", sentiment_html, gr.update(visible=True)
 
-    except Exception as e:
-        print(f"Error generating summary: {e}")
-        yield "An error occurred while generating the summary. Please contact the developers.", ""
+            tokens = re.split(r'(\n+|\s+)', summary_text)
+            tokens = [token for token in tokens if token]
+
+            output = ""
+            for i, token in enumerate(tokens):
+                output += token
+                yield output, sentiment_html, gr.update(visible=True)
+                if '\n' in token:
+                    time.sleep(0.2)
+                else:
+                    time.sleep(0.05)
+
+            yield summary_text, sentiment_html, gr.update(visible=True) # Final yield for summary and sentiment
+
+        except Exception as e:
+            print(f"Error generating summary: {e}")
+            yield "An error occurred while generating the summary. Please contact the developers.", ""
 
 
-def render_sentiment_bar(aspect, scores):
-    pos = scores.get("positive", 0)
-    neu = scores.get("neutral", 0)
-    neg = scores.get("negative", 0)
+    def render_sentiment_bar(self, aspect, scores):
+        pos = scores.get("positive", 0)
+        neu = scores.get("neutral", 0)
+        neg = scores.get("negative", 0)
 
-    return f"""
-    <div style="padding: 12px; margin-bottom: 12px; font-size: 13px; font-family: 'Helvetica Neue', sans-serif; color: #111;
-                border: 1px solid #ddd; border-radius: 8px; background-color: #fff; width: 260px;">
-        <div style="margin-bottom: 8px; font-weight: 600; text-align: center;">{aspect.capitalize()}</div>
-        <div style="display: flex; flex-direction: column; gap: 6px;">
-            <div style="height: 10px; border-radius: 5px; overflow: hidden; display: flex; background-color: #e0e0e0;
-                        box-shadow: inset 0 1px 2px rgba(0,0,0,0.08);">
-                <div style="width: {pos}%; background-color: #222;"></div>
-                <div style="width: {neu}%; background-color: #999;"></div>
-                <div style="width: {neg}%; background-color: #666;"></div>
-            </div>
-            <div style="font-size: 12px; color: #333; text-align: center;">
-                {pos}% / {neu}% / {neg}%
+        return f"""
+        <div class="sentiment-bar-box">
+            <div style="margin-bottom: 8px; font-weight: 600; text-align: center;">{aspect.capitalize() + " " + "Sentiment"}</div>
+            <div style="display: flex; flex-direction: row; align-items: center; gap: 8px;"> <div style="height: 10px; border-radius: 5px; overflow: hidden; display: flex; flex-grow: 1; background-color: #e0e0e0; box-shadow: inset 0 1px 2px rgba(0,0,0,0.08);">
+                    <div style="width: {pos}%; background-color: #222;"></div>
+                    <div style="width: {neg}%; background-color: #666;"></div>
+                    <div style="width: {neu}%; background-color: #999;"></div>
+                </div>
+                <div style="font-size: 12px; color: #333; white-space: nowrap;"> {pos}% / {neg}% / {neu}%
+                </div>
             </div>
         </div>
-    </div>
+        """
+
+
+    def render_all_bars(self, sentiment_dict):
+        all_bars_html = "\n".join(self.render_sentiment_bar(a, s) for a, s in sentiment_dict.items())
+        return f"""
+        <div class="sentiment-bars-container">
+            {all_bars_html}
+        </div>
+        """
+
+    """ 
+    Function to display retrieved chunks in a formatted JSON style
+    This function formats the retrieved chunks into a JSON-like structure for display.
     """
+    def display_chunks(self):
+        if not self.retrieved_chunks_for_display:
+            return "No chunks to display.", gr.update(visible=True)
+
+        json_output = json.dumps(self.retrieved_chunks_for_display, indent=2, ensure_ascii=False)
+        return json_output, gr.update(visible=True)
+
+    # Helper function to clear and hide chunks output
+    def clear_and_hide_chunks(self):
+        return gr.update(value="", visible=False)
 
 
-def render_all_bars(sentiment_dict):
-    return "\n".join(render_sentiment_bar(a, s) for a, s in sentiment_dict.items())
+    """ Create the Gradio interface
+    This section sets up the Gradio interface with a clean and minimalist design.
+    It includes a title, input textbox for queries, buttons for generating summaries and displaying chunks,
+    and output textboxes for the summary and chunks.
+    """
+    def launch_interface(self):
+        with gr.Blocks(css="""
+        body {
+            background-color: white !important;
+            margin: 0;
+        }
+        .gradio-container {
+            background-color: white !important;
+            font-family: 'Arial', sans-serif;
+        }
 
-""" 
-Function to display retrieved chunks in a formatted JSON style
-This function formats the retrieved chunks into a JSON-like structure for display.
-"""
-def display_chunks():
-    if not retrieved:
-        return "No chunks to display.", gr.update(visible=True)
-    
-    formatted_chunks = []
-    for c in retrieved:
-        chunk = (
-            f"Model: {c.get('model', 'N/A')}\n"
-            f"Brand: {c.get('brand', 'N/A')}\n"
-            f"Stars: {c.get('stars', 'N/A')}\n"
-            f"Aspect: {c.get('aspect', 'N/A')}\n"
-            f"{c.get('text', '')}"
-        )
-        formatted_chunks.append(chunk)
+        textarea, input {
+            background-color: white !important;
+            color: black !important;
+            border: 1.5px solid black !important;
+            border-radius: 8px !important;
+            padding: 8px !important;
+        }
 
-    json_output = json.dumps(retrieved, indent=2, ensure_ascii=False)
-    return json_output, gr.update(visible=True)
+        textarea:focus, input:focus {
+            outline: none !important;
+            box-shadow: none !important;
+            border: 1.5px solid black !important;
+        }
 
+        button {
+            background-color: white !important;
+            color: black !important;
+            border: 1.5px solid black !important;
+            border-radius: 16px !important;
+            padding: 4px 10px !important;
+            font-size: 12px !important;
+            font-weight: 500;
+            cursor: pointer;
+            width: auto !important;
+            min-width: 60px !important;
+        }
 
-def contains_cuss_words(user_query):
-    cuss_words = {
-        "fuck", "shit", "bitch", "asshole", "bastard", "damn", "crap",
-        "dick", "piss", "prick", "slut", "whore", "cunt"
-    }
-    words = user_query.lower().split()
-    return any(word.strip('.,!?') in cuss_words for word in words)
+        button:hover {
+            background-color: #f5f5f5 !important;
+        }
 
+        .centered-buttons {
+            justify-content: center !important;
+            gap: 8px;
+            margin-bottom: 20px !important; /* Added margin below buttons */
+        }
 
-""" Create the Gradio interface
-This section sets up the Gradio interface with a clean and minimalist design.
-It includes a title, input textbox for queries, buttons for generating summaries and displaying chunks,
-and output textboxes for the summary and chunks.
-"""
+        .centered-buttons button {
+            font-size: 15px !important;
+            padding: 2px 6px !important;
+            width: 300px !important;
+            max-width: 300px !important;
+            min-width: 0 !important;   /* prevent Gradio min-width overriding you */
+            border-radius: 12px !important;
+            text-align: center !important;
+        }
 
-with gr.Blocks(css="""
-body {
-    background-color: white !important;
-    margin: 0;
-}
-.gradio-container {
-    background-color: white !important;
-    font-family: 'Arial', sans-serif;
-}
+        /* Styles for the sentiment bars container */
+        .sentiment-bars-container {
+            display: flex;
+            flex-wrap: wrap; /* Allows items to wrap to the next line */
+            gap: 10px; /* Space between the sentiment bars */
+            justify-content: center; /* Center the bars horizontally */
+            margin-top: 15px; /* Add some space above the bars */
+            margin-bottom: 20px !important; /* Added margin below sentiment bars */
+        }
 
-textarea, input {
-    background-color: white !important;
-    color: black !important;
-    border: 1.5px solid black !important;
-    border-radius: 8px !important;
-    padding: 8px !important;
-}
+        /* Style for individual sentiment bar containers to ensure they align */
+        .sentiment-bar-box {
+            padding: 12px;
+            font-size: 13px;
+            font-family: 'Helvetica Neue', sans-serif;
+            color: #111;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fff;
+            min-width: 260px; /* Adjust as needed */
+            flex: 1; /* Allows the bars to grow and shrink */
+            box-sizing: border-box; /* Include padding and border in the element's total width and height */
+        }
 
-textarea:focus, input:focus {
-    outline: none !important;
-    box-shadow: none !important;
-    border: 1.5px solid black !important;
-}
+        /* New classes for general spacing */
+        .gr-padded-input {
+            margin-bottom: 20px !important; /* Space below the query input */
+        }
 
-button {
-    background-color: white !important;
-    color: black !important;
-    border: 1.5px solid black !important;
-    border-radius: 16px !important;
-    padding: 4px 10px !important;
-    font-size: 12px !important;
-    font-weight: 500;
-    cursor: pointer;
-    width: auto !important;
-    min-width: 60px !important;
-}
+        .gr-section-spacing {
+            margin-bottom: 25px !important; /* General spacing between major sections */
+        }
 
-button:hover {
-    background-color: #f5f5f5 !important;
-}
-               
-.centered-buttons {
-    justify-content: center !important;
-    gap: 8px;
-}
+        .gr-top-margin {
+            margin-top: 25px !important; /* Margin for elements that need space above them */
+        }
 
-.centered-buttons button {
-    font-size: 15px !important;
-    padding: 2px 6px !important;
-    width: 300px !important; 
-    max-width: 300px !important;
-    min-width: 0 !important;  /* prevent Gradio min-width overriding you */
-    border-radius: 12px !important;
-    text-align: center !important;
-}
-""") as demo:
-    gr.Markdown(
-        """
-        <h1 style='text-align:left; font-weight:100; font-size:2.0em; color:black; margin-top: 10px; margin-bottom: 30px;'>
-        Product Review Summarizer
-        </h1>
-        """
-    )
+        .gradio-container > .block {
+            padding: 10px !important; 
+        }
 
-    query_input = gr.Textbox(
-        placeholder="Ask about a product",
-        show_label=False,
-        lines=2
-    )
+        .gradio-container {
+            padding: 20px !important;
+        }
 
-    with gr.Row(elem_classes="centered-buttons"):
-        generate_button = gr.Button("Summarize")
-        show_chunks_button = gr.Button("Show Chunks")
+        .sentiment-legend-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            
+            padding: 10px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            gap: 15px; /* Space between legend items */
+            margin-top: 15px !important;
+        }
 
-    with gr.Column(scale=3):
-        summary_output = gr.Textbox(show_label=False, lines=6, interactive=False)
-    with gr.Column(scale=1):
-        sentiment_display = gr.HTML(label="Sentiment Breakdown")
-    chunks_output = gr.Code(language="json", visible=False, interactive=False)    
-    generate_button.click(generate_summary_stream, inputs=query_input, outputs=[summary_output, sentiment_display])
-    show_chunks_button.click(display_chunks, inputs=[], outputs=[chunks_output, chunks_output])
+        .legend-item {
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #333;
+        }
 
-demo.launch()
+        .legend-color-box {
+            width: 20px;
+            height: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        """) as demo:
+            gr.Markdown(
+                """
+                <h1 style='text-align:left; font-weight:100; font-size:2.0em; color:black; margin-top: 10px; margin-bottom: 30px;'>
+                Product Review Summarizer
+                </h1>
+                """
+            )
+
+            query_input = gr.Textbox(
+                placeholder="Ask about a product",
+                show_label=False,
+                lines=2,
+                elem_classes="gr-padded-input"
+            )
+
+            with gr.Row(elem_classes="centered-buttons"):
+                generate_button = gr.Button("Summarize")
+                show_chunks_button = gr.Button("Show Chunks")
+
+            with gr.Row(elem_classes="gr-section-spacing"):
+                with gr.Column(scale=4):
+                    summary_output = gr.Textbox(show_label=False, lines=6, interactive=False)
+
+            with gr.Row(): # This row holds sentiment display and the new legend
+                with gr.Column(scale=1): # Column for sentiment bars
+                    sentiment_display = gr.HTML(label="Sentiment Breakdown", elem_classes="sentiment-bars-container")
+            with gr.Row():
+                with gr.Column(scale=2): # Column for legend (adjust scale as needed)
+                        sentiment_legend_html = gr.HTML(
+                        """
+                        <div class="sentiment-legend-container">
+                            <div class="legend-item">
+                                <div class="legend-color-box" style="background-color: #222;"></div>
+                                Positive
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color-box" style="background-color: #666;"></div>
+                                Negative
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color-box" style="background-color: #999;"></div>
+                                Neutral
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color-box" style="background-color: #e0e0e0;"></div>
+                                Unfilled / Total
+                            </div>
+                        </div>
+                        """,
+                        label="Legend",
+                        visible=False
+                        )
+
+            chunks_output = gr.Code(language="json", visible=False, interactive=False, elem_classes="gr-top-margin")
+
+            generate_button.click(
+                self.clear_and_hide_chunks,
+                inputs=[],
+                outputs=[chunks_output]
+            ).then(
+                self.generate_summary_stream,
+                inputs=query_input,
+                outputs=[summary_output, sentiment_display, sentiment_legend_html]
+            )
+
+            show_chunks_button.click(self.display_chunks, inputs=[], outputs=[chunks_output, chunks_output])
+
+        demo.launch()
+
+if __name__ == "__main__":
+    user_interface = user_interface()
+    user_interface.launch_interface()

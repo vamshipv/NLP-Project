@@ -6,25 +6,40 @@ import json
 from sentence_transformers import SentenceTransformer, util
 import nltk
 from nltk.tokenize import sent_tokenize
-from product_matcher import ProductMatcher
+import spacy
+import logging
+from datetime import datetime
 
+# Ensure the parent directories are in the path for imports
 sys.path.append(os.path.abspath(os.path.join("..", "generator")))
 sys.path.append(os.path.abspath(os.path.join("..", "retriever")))
+sys.path.append(os.path.abspath(os.path.join("..", "product_matcher")))
 title_path = os.path.join('..', 'data', 'brands.json')
 
+# Load the product titles from the JSON file
 with open(title_path, 'r', encoding='utf-8') as f:
     brands_data = json.load(f)
-
 product_titles = [item.strip() for item in brands_data]
 
+# Import the necessary classes from the generator and retriever modules
 from generator import Generator
 from retriever import Retriever
+from product_matcher import ProductMatcher
+
+nlp = spacy.load("en_core_web_sm")
+
+# Logging configuration
+log_dir = os.path.join("..", "logs")
+os.makedirs(log_dir, exist_ok=True)
+log_path = os.path.join(log_dir, "summary_log.json")
+logging.basicConfig(filename=log_path, level=logging.INFO, format="%(message)s")
 
 """
-TODO Work in progress
-This module processes user queries to detect intent, clean the query, and generate summaries based on retrieved product reviews.
-It uses a retriever to fetch relevant chunks of reviews and a generator to create summaries.
-It also includes functionality to detect aspects of the query and handle inappropriate language.
+This module processes user queries to detect intent, clean the query, and generate a summary.
+It acts as a bridge between the user interface and the generator/retriever modules.
+It handles different scenarios such as bad words, gibberish, title-like queries, multiple titles, decision queries, and aspect-based queries.
+It retrieves relevant chunks of reviews based on the cleaned query and generates a summary using the generator.
+It logs the process, including the user query, number of chunks used, and the final summary.
 """
 class User_query_process:
     def __init__(self):
@@ -45,22 +60,22 @@ class User_query_process:
         self.aspect_keywords = {
             "battery": ["battery","charge", "mah", "power", "drain"],
             "camera": ["camera", "photo", "picture", "lens", "image", "zoom", "video"],
-            "performance": ["smooth", "fast", "slow", "processor"],
+            "performance": ["smooth", "fast", "slow", "processor","performance"],
             "display": ["screen", "display", "brightness", "resolution", "refresh rate", "touch"],
             "build": ["build", "design", "material", "durability", "weight"],
-            "software": ["ui", "os", "update", "bloatware", "interface", "android"],
+            "software": ["ui", "os", "update", "bloatware", "interface", "android","software"],
             "heating": ["heating", "warm", "temperature", "overheat"]
         }
 
         self.aspects_keywords_not_avaliable = {
             "audio": ["audio", "sound", "speaker", "volume", "clarity", "bass", "mic", "microphone", "earpiece"],
             "price": ["price", "value", "worth", "expensive", "cheap", "budget", "overpriced", "cost"],
-            "gaming": ["game", "fps", "graphics", "frame", "stutter", "heat during"],
-            "connectivity": ["wifi", "bluetooth", "network", "signal", "reception"],
+            "gaming": ["game", "fps", "graphics", "frame", "stutter", "heat during", "gaming"],
+            "connectivity": ["wifi", "bluetooth", "network", "signal", "reception", "connectivity"],
             "storage": ["storage", "memory", "ram", "rom", "expandable", "sd card"],
-            "security": ["fingerprint", "face unlock", "biometric", "sensor", "scanner", "unlock"],
-            "accessories": ["charger", "case", "headphones", "earphones", "cable", "adapter", "accessory", "in-box"],
-            "charging_speed": ["charging speed", "fast charge", "wired", "wireless", "power delivery", "watt", "charge time"],
+            "security": ["fingerprint", "face unlock", "biometric", "sensor", "scanner", "unlock","security"],
+            "accessories": ["charger", "case", "headphones", "earphones", "cable", "adapter", "accessory", "in-box", "accessories"],
+            "charging_speed": ["charging speed", "fast charge", "wired", "wireless", "power delivery", "watt", "charge time", "charging_speed"],
             "experience": ["experience", "daily use", "overall", "usage", "feedback", "handling", "feel"]
         }
 
@@ -83,31 +98,75 @@ class User_query_process:
         title_embs = self.model_query.encode(titles, convert_to_tensor=True)
         sim_scores = util.cos_sim(query_emb, title_embs)[0]
         return np.max(sim_scores.numpy()) >= threshold
-
+    
+    """
+    This method detects if the query mentions multiple product titles.
+    It cleans the query using the product_matcher, extracts keywords using a keyword processor,
+    and checks if the number of unique matches is greater than or equal to 2.
+    """
     def detect_multiple_titles(self, query):
         cleaned_query = self.product_matcher.clean_query_for_brand_match(query)
         matches = self.product_matcher.keyword_processor.extract_keywords(cleaned_query)
         print(matches)
         return len(set(matches)) >= 2
 
-    def detect_aspect(self, query):
-        query_lower = query.lower()
-
-        for main_aspect, keywords in self.aspect_keywords.items():
-            if any(keyword in query_lower for keyword in keywords):
-                print(f"Detected aspect in query: {main_aspect}")
-                return main_aspect
-        return None
+    """
+    This method extracts noun chunks from the query using spaCy's NLP model.
+    It processes the query to identify noun phrases, which are potential candidates for aspect detection.
+    """
+    def extract_candidates(self, query):
+        doc = nlp(query)
+        return [chunk.text.lower() for chunk in doc.noun_chunks]
     
-    def detect_aspect_not_in_list(self, query):
-        query_lower = query.lower()
+    """
+    This method matches extracted candidates against predefined aspect categories.
+    It checks each candidate against both supported and unsupported aspect keywords.
+    It returns two lists: one for matched supported aspects and another for matched unsupported aspects.
+    """
+    def match_aspect_category(self, candidates):
+        matched_supported = []
+        matched_unsupported = []
 
-        for main_aspect, keywords in self.aspects_keywords_not_avaliable.items():
-            if any(keyword in query_lower for keyword in keywords):
-                print(f"Detected aspect in query: {main_aspect}")
-                return main_aspect
-        return None
+        for phrase in candidates:
+            for aspect, keywords in self.aspect_keywords.items():
+                if any(keyword in phrase for keyword in keywords):
+                    matched_supported.append(aspect)
+            for aspect, keywords in self.aspects_keywords_not_avaliable.items():
+                if any(keyword in phrase for keyword in keywords):
+                    matched_unsupported.append(aspect)
     
+        return list(set(matched_supported)), list(set(matched_unsupported))
+
+    """
+    This method detects a single valid aspect from the query.
+    It extracts candidates from the query, matches them against aspect categories,
+    and checks if the matched aspects are supported or unsupported.
+    If an unsupported aspect is detected, it returns None and an error message.
+    If multiple aspects are detected, it returns None and a message to focus on one aspect.
+    If exactly one valid aspect is detected, it returns that aspect and None for the error message
+    """
+    def detect_single_valid_aspect(self, query):
+        candidates = self.extract_candidates(query)
+        matched_supported, matched_unsupported = self.match_aspect_category(candidates)
+
+        if matched_unsupported:
+            return None, "This aspect is not available for review summaries. Please try a different aspect or query."
+
+        if len(matched_supported) == 0:
+            return None, None
+
+        if len(matched_supported) > 1:
+            return None, "Multiple aspects detected. Please focus on one aspect at a time."
+
+        return matched_supported[0], None
+    
+    """
+    This method detects multiple aspects in the cleaned query.
+    It checks if any of the predefined aspect keywords are present in the cleaned query.
+    If no aspects are found, it returns None.
+    If more than one aspect is found, it returns "multiple_aspects".
+    If exactly one aspect is found, it returns that aspect.
+    """
     def detect_multiple_aspects(self, cleaned_query):
         matched_aspects = []
         query_lower = cleaned_query.lower()
@@ -123,37 +182,39 @@ class User_query_process:
         else:
             return matched_aspects[0]  # exactly one aspect found
 
+    """
+    This method filters sentences in the chunks based on the presence of keywords related to a specific aspect.
+    It iterates through each chunk and checks if any of the keywords for the specified aspect are present in the chunk.
+    It returns a list of chunks that contain at least one of the specified keywords.
+    """
+    def filter_sentences_by_aspect(self, chunks, keywords):
+        return [chunk for chunk in chunks if any(keyword in chunk.lower() for keyword in keywords)]
+
+    """
+    This method checks if the query is a decision-making query.
+    It looks for specific keywords that indicate a decision-making context, such as "buy", "purchase", or "recommend".
+    It returns True if any of these keywords are found in the query, otherwise returns False.
+    """
+    def decision_query(self,query):
+        decision_keywords = ["buy", "purchase", "recommend", "should I", "is it worth", "should I buy"]
+        return any(keyword in query.lower() for keyword in decision_keywords)
     
     """
-    This method detects the intent of the user query.
-    It checks if the query is similar to product titles, contains aspect keywords, or is a decision-making query.
-    It returns a string indicating the detected intent: "title_query", "aspect", "decision_query", or "summary".
+    
     """
-    def detect_intent(self, query):
-        q = query.lower()
-        if (self.is_title_like_query(q, self.product_titles)):
-            return "title_query"
-        
-        if self.detect_multiple_titles(query):
-            print("here inside")
-            return "multiple_titles"
-        
-        if self.detect_multiple_aspects(query) == "multiple_aspects":
-            return "multiple_aspects"
-        
-        if self.detect_aspect_not_in_list(query):
-                    return "not_an_aspect"
-        
-        if any(phrase in q for phrase in [
-            "should i buy", "is this product good", "what should i buy",
-            "is it worth it", "which one is better", "do you recommend"
-        ]):
-            return "decision_query"
+    def _is_gibberish_check(self, text):
+        MIN_CHAR_COUNT = 3
+        if not text or len(text.strip()) < MIN_CHAR_COUNT:
+            return True
 
-        if self.detect_aspect(query):
-            return "aspect"
+        doc = nlp(text.lower())
+        alpha_tokens = [token for token in doc if token.is_alpha]
 
-        return "summary"
+        if not alpha_tokens:
+            return True
+
+        in_vocab_tokens = [token for token in alpha_tokens if not token.is_oov]
+        return len(in_vocab_tokens) == 0 and len(alpha_tokens) < 3
 
     """
     This method cleans the user query by removing non-alphanumeric characters (except for hyphens and spaces),
@@ -164,92 +225,108 @@ class User_query_process:
         return re.sub(r"\s+", " ", query).strip()
 
     """
-    TODO Work in progress
     This method processes the user query to detect intent, clean the query, and generate a summary.
-    It handles different intents such as title queries, decision queries, and aspect-based queries.
+    It handles different scenarios such as bad words, gibberish, title-like queries, multiple titles,
+    decision queries, and aspect-based queries.
     It retrieves relevant chunks of reviews based on the cleaned query and generates a summary using the generator.
-    If the query is empty or contains inappropriate language, it returns appropriate messages."""
+    It logs the process, including the user query, number of chunks used, and the final summary.
+    """
     def process(self, user_query):
-        self.intent = self.detect_intent(user_query)
         cleaned_query = self.clean_query(user_query)
 
-        if self.intent == "title_query":
-            return "Please rephrase your query to focus on a product feedback by providing the correct product name.",  ""
+        if not cleaned_query:
+            return "Please enter a valid query.", "", ""
+
+        if self.contains_bad_words(cleaned_query):
+            return "Query contains inappropriate language. Please rephrase.", "", ""
+        if self._is_gibberish_check(cleaned_query):
+            return "Your query is not meaningful for system to understand. Please rephrase it.", "", ""
         
-        if self.intent == "multiple_titles":
-            return "Your query seems to mention multiple products. Please focus on one product at a time.", ""
-
-        if not user_query.strip():
-            return "Please enter a valid query.",  ""
-
-        if self.contains_bad_words(user_query):
-            return "Query contains inappropriate language. Please rephrase.", ""
-
-        if self.intent == "decision_query":
-            return "This system is designed to summarize product reviews, not to make purchase decisions. Please rephrase your query to focus on product feedback.", ""
+        if self.is_title_like_query(cleaned_query, self.product_titles):
+            return "Please rephrase your query to focus on a product feedback by providing the correct product name.",  "", ""
         
-        matched_aspects = []
+        if self.detect_multiple_titles(cleaned_query):
+            return "Your query seems to mention multiple products. Please focus on one product at a time.", "", ""
 
-        query_lower = cleaned_query.lower()
+        if self.decision_query(cleaned_query):
+            return "This system is designed to summarize product reviews, not to make purchase decisions. Please rephrase your query to focus on product feedback.", "", ""
+        
+        aspect, error = self.detect_single_valid_aspect(cleaned_query)
+        if error:
+            return error, "", ""\
+            
+        # aspect-based query
+        if aspect:
+            chunks = self.chunks_by_aspect(cleaned_query, aspect)
+            if chunks is None or len(chunks) <= 4:
+                return "Not enough reviews found for the specified aspect. Please try a different query.", "", ""
+            
+            log_data = {
+            "Project": "Product Review Summarizer - Team Dave",
+            "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "user_query": cleaned_query,
+            "reviews": [c["text"] if isinstance(c, dict) and "text" in c else c for c in chunks],
+            "timestamp": datetime.now().isoformat(),
+            "length_chunks": len(chunks),
+            "Type_of_chunks": "aspect",
+            }
+            with open(log_path, "a", encoding="utf-8") as f:
+                f.write("----------------------------------------LOG_START----------------------------------------\n")
+                json.dump(log_data, f, indent=4)
+                f.write("\n")
 
-        for main_aspect, keywords in self.aspect_keywords.items():
-            if any(keyword in query_lower for keyword in keywords):
-                matched_aspects.append(main_aspect)
+            filtered = self.filter_sentences_by_aspect(chunks, self.aspect_keywords[aspect])
+            summary, scores = self.generator.generate_summary(cleaned_query, filtered, aspect=aspect)
+            return summary, scores, chunks
+        
+        # for general query
+        chunks = self.chunks_by_general(cleaned_query)
+        if chunks is None or len(chunks) <= 4:
+            return "Not enough reviews found for the specified aspect. Please try a different query.", "", ""
+        log_data = {
+            "Project": "Product Review Summarizer - Team Dave",
+            "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "user_query": cleaned_query,
+            "reviews": [c["text"] if isinstance(c, dict) and "text" in c else c for c in chunks],
+            "timestamp": datetime.now().isoformat(),
+            "length_chunks": len(chunks),
+            "Type_of_chunks": "general",
+        }
+        with open(log_path, "a", encoding="utf-8") as f:
+            f.write("----------------------------------------LOG_START----------------------------------------\n")
+            json.dump(log_data, f, indent=4)
+            f.write("\n")
+        
+        summary, scores = self.generator.generate_summary(cleaned_query, chunks)
+        return summary, scores, chunks
 
-        if self.intent == "multiple_aspects":
-            return "Your query mentions multiple aspects. Please focus on one aspect at a time.", ""
-
-        if self.intent == "not_an_aspect":
-            return "This aspect is not available for review summaries. Please try a different aspect or query.", ""
-                
-        if len(matched_aspects) == 1:
-            aspect = matched_aspects[0]
-            if not aspect:
-                return "No aspect detected in your query. Please try again with a specific aspect.", ""
-            retrieved_chunks_aspect = self.chunks_by_aspect(user_query, aspect=aspect)
-            if retrieved_chunks_aspect == "No reviews found for your query.":
-                return "No Reviews found for the specified aspect. Please try with a different query.", ""
-            print(f"Retrieved chunks for aspect '{aspect}': {retrieved_chunks_aspect} len: {len(retrieved_chunks_aspect)}")
-            if len(retrieved_chunks_aspect) <= 4:
-                return "Not enough reviews found for the specified aspect. Please try a different query.", ""
-            print(f"Retrieved chunks for aspect '{aspect}': {retrieved_chunks_aspect}")
-            retrieved_chunks_aspect = self.filter_sentences_by_aspect(retrieved_chunks_aspect, aspect)
-            summary, aspect_scores = self.generator.generate_summary(user_query, retrieved_chunks_aspect, aspect=aspect)
-            return summary, aspect_scores
-                
-        retrieved_chunks_general = self.chunks_by_general(user_query)
-        if retrieved_chunks_general == "No reviews found for your query.":
-            return "No Reviews found. Please try with a different query", ""
-        if len(retrieved_chunks_general) <= 4:
-            return "Not enough reviews found for the specified device for the summary. Please try a different device.", ""
-        summary, aspect_scores = self.generator.generate_summary(user_query, retrieved_chunks_general)
-        return summary, aspect_scores
-    
+    """
+    This method retrieves chunks of reviews based on the aspect specified in the query.
+    It uses the retriever to get reviews related to the specified aspect.
+    If no reviews are found, it returns a message indicating that no reviews were found for the query.
+    """
     def chunks_by_aspect(self, query, aspect=None):
         retrieved_chunks_aspect = self.retriever.retrieve_by_aspect(query, aspect)
         if not retrieved_chunks_aspect:
-            return "No reviews found for your query."   
+            return None   
         return retrieved_chunks_aspect
     
+    """
+    This method retrieves chunks of reviews based on the general query.
+    It uses the retriever to get reviews related to the query without focusing on a specific aspect.
+    If no reviews are found, it returns a message indicating that no reviews were found for the query.
+    """
     def chunks_by_general(self, query):
         retrieved_chunks_general = self.retriever.retrieve(query)
         if not retrieved_chunks_general:
-            return "No reviews found for your query."
+            return None
         return retrieved_chunks_general
     
-    def check_chunks(self, query):
-        if self.detect_intent(query) == "aspect":
-            matched_aspects = []
-            for main_aspect, keywords in self.aspect_keywords.items():
-                if any(keyword in query.lower() for keyword in keywords):
-                    matched_aspects.append(main_aspect)
-            if len(matched_aspects) == 1:
-                aspect = matched_aspects[0]       
-                retrieved_chunks_aspect = self.chunks_by_aspect(query, aspect=aspect)
-                return retrieved_chunks_aspect
-        retrieved_chunks_general = self.chunks_by_general(query)
-        return retrieved_chunks_general
-    
+    """
+    This method filters sentences in the chunks based on the presence of keywords related to a specific aspect.
+    It iterates through each chunk and checks if any of the keywords for the specified aspect are present in the chunk.
+    It returns a list of sentences that contain at least one of the specified keywords.
+    """
     def filter_sentences_by_aspect(self, chunks, aspect_keywords):
         aspect_sentences = []
         for chunk in chunks:

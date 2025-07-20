@@ -1,6 +1,6 @@
 # Product Review Summarizer
 
-A pipeline for summarizing customer reviews on specific products using dense semantic search, fuzzy product title matching, and generative summarization.
+A pipeline for summarizing customer reviews on specific products using dense semantic search, product title matching, and generative summarization.
 
 ---
 
@@ -11,7 +11,7 @@ This project implements a Retriever-Generator architecture designed to provide c
 * **FAISS** for fast vector similarity search
 * **SentenceTransformers** for embedding customer reviews
 * **Gemma 2:2B** for generative text summarization
-* **RapidFuzz** for robust fuzzy product title matching
+* **flashtext** for robust product title matching
 * **Gradio** for an intuitive and interactive user interface
 
 With this system, users can query real product feedback—for example, by asking for a summary on "Samsung Galaxy M01"—and receive a concise, review-based summary powered by **semantic search** and **Gemma 2:2B** text generation.
@@ -20,8 +20,10 @@ With this system, users can query real product feedback—for example, by asking
 
 ## Features
 
-* **Intelligent Title Matching**: Utilizes `RapidFuzz` to accurately match product titles, ignoring variations in color, RAM, or storage.
+* **Title Matching**: Utilizes `flashtext` to accurately match product titles, ignoring variations in color, RAM, or storage.
 * **Efficient Retrieval**: Employs a FAISS index for high-performance dense retrieval of relevant review snippets.
+* **Sentiment Analysis**: Analyzes customer reviews to provide sentiment context, enhancing the quality of generated summaries.
+* **Aspect-Based Summarization**: Allows users to focus on specific aspects of a product (e.g., camera, battery life) for more targeted summaries.
 * **Natural Language Summarization**: Generates fluent summaries using the Gemma 2:2B model.
 * **Interactive UI**: Provides a user-friendly Gradio interface for seamless querying and exploration.
 * **Transparent Logging**: Logs every retrieval and summarization step, including the original query, generated summary, and source chunks for full context.
@@ -69,12 +71,12 @@ Customer reviews (structured with `Brand`, `Model`, `Stars`, `Comment`) are load
 
 ---
 
-### 2. Fuzzy Product Matching
+### 2. flashtext Product Matching
 
 When a user submits a query, the system:
 
 * Cleans and simplifies the query (e.g., removes phrases like "summary on" or "feedback for").
-* Performs a fuzzy match against a list of known product titles using RapidFuzz.
+* Performs a match against a list of known product titles using flashtext.
 * Canonicalizes matched titles by removing specific technical details (like RAM, color, or storage variants).
 * Filters the review chunks to include only those related to any matching product variant.
 
@@ -97,10 +99,38 @@ The retrieved review chunks are then used to:
 * Construct a detailed prompt.
 * Send this prompt to the `gemma2:2b` language model, which runs locally via Ollama.
 * Generate and return a concise, fluent summary based on the provided review content.
+* If the user specifies an aspect (e.g., "camera"), the summarization focuses on that aspect, using sentiment analysis to guide the summary generation.
+* If no reviews are found for the specified product, the system returns a message indicating that no relevant reviews were available.
+---
+
+### 5. Sentiment Analysis
+The system performs sentiment analysis on the retrieved review chunks to provide context for the summary. 
+* It categorizes reviews into positive, neutral, and negative sentiments, which are then displayed alongside the summary.* The sentiment analysis is performed using the `cardiffnlp/twitter-roberta-base-sentiment` model, which provides a simple and effective way to analyze the sentiment of text.
+* The sentiment scores are used to create a breakdown of positive, neutral, and negative sentiments for the product.
+* This breakdown is displayed in the user interface, allowing users to see the sentiment distribution across the reviews.
+* The sentiment analysis results are also logged for transparency and debugging purposes.
 
 ---
 
-### 5. Logging
+### 6. User Query Handling
+The user query is processed to extract the product name and any specific aspects of interest. The system handles variations in product names, ensuring that the summarization is relevant to the user's request.
+
+* The query is cleaned to remove unnecessary phrases (e.g., "summary on", "feedback for").
+* It acts as layer between the user interface and the summarization logic, ensuring that the user input is correctly interpreted and processed.
+* If a specific aspect is mentioned in the query, the summarization focuses on that aspect, using sentiment analysis to guide the summary generation.
+* If the aspect is not specified, the system generates a general summary of the product based on all available reviews.
+* If a product is not found in the reviews, the system returns a message indicating that no relevant reviews were available.
+---
+
+### 7. User Interface
+The user interface is built using Gradio, providing an interactive web application where users can:
+* Input their product summarization queries.
+* View the generated summary.
+* Review the specific review chunks used to create the summary.
+* Explore sentiment breakdowns for different aspects of the product.
+---
+
+### 8. Logging
 
 All operations are thoroughly logged for transparency and debugging:
 
@@ -108,9 +138,19 @@ All operations are thoroughly logged for transparency and debugging:
 
 ---
 
+### 9. Test Cases
+The system includes a set of test cases to validate the summarization functionality. These tests cover various product queries and aspects, ensuring that the summarization logic works as expected across different scenarios.
+
+---
+
+### 10. Evaluation
+The system is evaluated based on the F1 score of the generated summaries against a set of reference summaries.
+
+---
+
 ## Usage
 
-To run the application, navigate to the `Project/baseline/user_interface` directory and execute the `user_interface.py` script:
+To run the application, clone the repository and navigate to the `baseline/user_interface` directory and execute the `user_interface.py` script:
 
 ```bash
 cd Project/baseline/user_interface
@@ -127,4 +167,6 @@ Upon successful execution, the application will launch a Gradio interface, typic
     ```
 2.  **Get Summary**: The system will process your request and display a concise summary of the relevant customer reviews.
 3.  **Review Chunks**: Below the summary, you will find "Chunks". Clicking on "Show Chunks" button will reveal the specific review chunks that were used by the Gemma model to generate the summary, allowing you to review the source content.
+4. **Sentiment Breakdown**: The interface will also display a sentiment breakdown for the product, showing the distribution of positive, neutral, and negative sentiments across the reviews.
+5. **More Test Examples**: You can find more test examples in the `test_queries.txt` file. These queries can be used to test the summarization functionality with various products and aspects.
 

@@ -8,11 +8,25 @@ json_file = os.path.join('..', 'data', 'reviews.json')
 
 cleaned_data = []
 
+"""
+This script cleans smartphone review data from a CSV file and saves it as a JSON file.
+It processes the 'stars' and 'Model' fields, ensuring that:
+- 'stars' contains only numeric values.
+- 'Model' names are cleaned of unnecessary parentheses unless they contain specific keywords like RAM, Storage, or ROM.
+- Extra spaces and newlines are removed from all fields.
+"""
 def should_keep_parentheses(content):
     # Keep if it contains RAM, Storage, ROM or has multiple items (like commas)
     keywords = ['RAM', 'ROM', 'Storage']
     return any(kw in content for kw in keywords) or ',' in content
 
+"""
+Cleans the model name by removing unnecessary parentheses unless they contain keep-worthy content.
+Args:
+    model (str): The raw model name string.
+    Returns:
+    str: The cleaned model name with unnecessary parentheses removed.
+"""
 def clean_model_name(model):
     # Remove parentheses if they don't match keep-worthy criteria
     return re.sub(
