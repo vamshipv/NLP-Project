@@ -178,7 +178,7 @@ Upon successful execution, the application will launch a Gradio interface, typic
 
 1.  **Input a Query**: In the Gradio interface, type your product summarization query, for instance:
     ```
-    Summary on Samsung Galaxy M01
+    What do the customers say about the device Samsung Galaxy M51 ?
     ```
 2.  **Get Summary**: The system will process your request and display a concise summary of the relevant customer reviews.
 3.  **Review Chunks**: Below the summary, you will find "Chunks". Clicking on "Show Chunks" button will reveal the specific review chunks that were used by the Gemma model to generate the summary, allowing you to review the source content.
