@@ -5,16 +5,31 @@ import re
 
 # Ensure the parent directories are in the path for imports
 sys.path.append(os.path.abspath(os.path.join("..", "retriever")))
-
 from retriever import Retriever
 
+# Define the same paths used in retriever.py
+output_dir = os.path.join("..", "data")
+os.makedirs(output_dir, exist_ok=True)
+chunked_path = os.path.join(output_dir, "general_chunks.json")
+index_path = os.path.join(output_dir, "general_chunks.index")
+aspect_index_dir = os.path.join(output_dir, "aspect_indexes")
+os.makedirs(aspect_index_dir, exist_ok=True)
 
 class Test_Retriever(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.retriever = Retriever()
-        cls.retriever.chunk_reviews()
-        cls.retriever.index_chunks()
+        if not os.path.exists(chunked_path):
+            print("Chunked data not found. Running chunk_reviews()...")
+            cls.retriever.chunk_reviews()
+        else:
+            print("Chunked data found. Skipping chunk_reviews().")
+
+        if not os.path.exists(index_path):
+            print("Index file not found. Running index_chunks()...")
+            cls.retriever.index_chunks()
+        else:
+            print("Index file found. Skipping index_chunks().")
 
     def retriever_search(self, user_query, top_k=5):
         return self.retriever.retrieve(user_query, top_k)
@@ -110,6 +125,3 @@ class Test_Retriever(unittest.TestCase):
 
 if __name__ == "__main__":
         unittest.main()
-     
-
-    
