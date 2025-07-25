@@ -15,6 +15,10 @@ index_path = os.path.join(output_dir, "general_chunks.index")
 aspect_index_dir = os.path.join(output_dir, "aspect_indexes")
 os.makedirs(aspect_index_dir, exist_ok=True)
 
+"""
+This class contains the test suite for validating review retrival.
+
+"""
 class Test_Retriever(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

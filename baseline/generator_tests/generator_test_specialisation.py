@@ -8,6 +8,11 @@ sys.path.append(os.path.abspath(os.path.join("..", "generator")))
 
 from generator import Generator 
 
+"""
+This class contains the test suite for validating generated general and aspect based summaries.
+
+"""
+
 class Test_Generator(unittest.TestCase):
     @classmethod 
 
@@ -71,7 +76,7 @@ class Test_Generator(unittest.TestCase):
         Test method verifes that the no summary is generated for empty input chunks. 
         When provided with empty review chunks, it ensures that the model generates empty summary. 
         Raises: 
-            AssertionError: If the generated summary is empty or contains only whitespace. 
+            AssertionError: If the generated summary is not empty. 
         """ 
         retrieved_chunks = [] 
         summary_empty = self.generator.generate_summary(self.user_query, retrieved_chunks) 
@@ -80,9 +85,12 @@ class Test_Generator(unittest.TestCase):
     def test_05_aspect_summary_pass_battery(self): 
         """ 
         Tests that the aspect-based summary for 'battery' includes correct keywords and excludes unrelated ones. 
-        GIVEN: A user query about battery and review texts related to battery life and charging. 
-        EXPECT: The summary contains 'battery', 'charging', 'power' etc. and does NOT mention 'camera', 'display','screen' etc. 
-        """
+        When provided with a user query about battery and review texts related to battery life and charging, it verifies that the summary contains
+        'battery', 'charging', 'power' etc. and does NOT mention 'camera', 'display','screen' etc. 
+
+        Raises: 
+            AssertionError: If any of the expected keywords are missing from the summary. 
+        """ 
         user_query = "Give me a summary about Samsung Galaxy M51 battery" 
         retrieved_chunks = [ 
            {"text": "Battery is 7000mAh but drains quickly — barely lasts a full day.","brand": "Samsung","model": "Samsung Galaxy M51 (Electric Blue, 6GB RAM, 128GB Storage)","stars": "2"}, 
@@ -90,7 +98,7 @@ class Test_Generator(unittest.TestCase):
            {"text": "Disappointed with the backup — my old 4250mAh phone lasted longer than this 7000mAh one.","brand": "Samsung","model": "Samsung Galaxy M51 (Electric Blue, 6GB RAM, 128GB Storage)","stars": "3"}
         ] 
         summary = self.generator.generate_summary(user_query, retrieved_chunks, aspect="battery") 
-        expected_keywords = ["battery"]  # Only enforce strong signals 
+        expected_keywords = ["battery"]
         optional_keywords = ["charge", "charging", "mah", "power", "drain"] 
         summary = summary[0].lower() 
         for kw in expected_keywords: 
@@ -100,12 +108,10 @@ class Test_Generator(unittest.TestCase):
     def test_06_aspect_with_empty_review_list(self): 
         """ 
         Test the generator's response when no review chunks are provided. 
-        GIVEN: 
+        When provided with 
             - An empty list of retrieved review chunks. 
-            - A request to generate a summary for the aspect 'performance'. 
-        EXPECT: 
-            - The generator should return a default message indicating that no relevant reviews were found. 
-            - It should not raise an exception or return unrelated content. 
+            - A user query to generate a summary for the aspect 'performance'. 
+        it ensures that generator returns a default message indicating that no relevant reviews were found. 
         Raises: 
             AssertionError: If the returned summary is not the expected fallback message. 
         """

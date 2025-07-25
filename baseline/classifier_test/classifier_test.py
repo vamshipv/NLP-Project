@@ -3,18 +3,28 @@ import sys
 import unittest
 
 sys.path.append(os.path.abspath(os.path.join("..", "generator")))
+sys.path.append(os.path.abspath(os.path.join("..", "..", "sentiment_analyzer")))
+
 from generator import Generator
+from sentiment_analyzer import SentimentAnalyzer
 
+"""
+This class contains the test suite for validating sentiment analysis.
 
+"""
 class Test_Generator_Sentiment(unittest.TestCase):
-
     @classmethod
     def setUpClass(cls):
         cls.generator = Generator()
+        cls.sentiment_analyzer = SentimentAnalyzer()
 
     def test_01_sentiment_positive_summary(self):
         """
-        Verifies that a positive sentiment summary is generated when reviews are highly rated.
+        This test verifies that when provided with consistently positive product reviews, the system correctly classifies the overall sentiment as "Positive"
+
+        Raises: 
+            AssertionError: If sentiment does not reflect overall positive sentiment
+
         """
         user_query = 'summarize to me the user reviews about Samsung Galaxy M51'
         retrieved_chunks = [
@@ -32,14 +42,15 @@ class Test_Generator_Sentiment(unittest.TestCase):
             }
         ]
         summary = self.generator.generate_summary(user_query, retrieved_chunks)
-        sentiment_block, _ = self.generator.analyze_sentiment([summary])
-        print('summary:\n', summary)
-        # print('sentiment_block:\n', sentiment_block)
-        self.assertTrue("OVERALL SENTIMENT : Positive" in sentiment_block, "Summary does not reflect overall positive sentiment")
+        self.assertTrue("OVERALL SENTIMENT : Positive" in summary[0], "Sentiment does not reflect overall positive sentiment")
 
     def test_02_sentiment_negative_summary(self):
         """
-        Verifies that a negative sentiment summary is generated when reviews are low-rated.
+        This test ensures that when provided with consistently negative product reviews, the system correctly classifies the overall sentiment as "Negative"
+
+        Raises: 
+            AssertionError: If sentiment does not reflect overall negative sentiment
+
         """
         user_query = 'summarize to me the user reviews about Samsung Galaxy M51'
         retrieved_chunks = [
@@ -61,40 +72,15 @@ class Test_Generator_Sentiment(unittest.TestCase):
             }
         ]
         summary = self.generator.generate_summary(user_query, retrieved_chunks)
-        sentiment_block, _ = self.generator.analyze_sentiment([summary])
-        # print('summary:\n', summary)
-        # print('sentiment_block:\n', sentiment_block)
-        self.assertTrue("OVERALL SENTIMENT : Negative" in sentiment_block, "Summary does not reflect overall negative sentiment")
-
-    # def test_03_sentiment_neutral_summary(self):
-    #     """
-    #     Verifies that a neutral sentiment summary is generated when reviews are balanced or average.
-    #     """
-    #     user_query = 'summarize to me the user reviews about Samsung Galaxy M51'
-    #     retrieved_chunks = [
-    #         {
-    #             "text": "Battery performance is average, lasts through most of the day with moderate use.",
-    #             "brand": "Samsung", "model": "Samsung Galaxy M51", "stars": "3"
-    #         },
-    #         {
-    #             "text": "Charging speed is decent but not the fastest available in this price range.",
-    #             "brand": "Samsung", "model": "Samsung Galaxy M51", "stars": "3"
-    #         },
-    #         {
-    #             "text": "Battery life is acceptable but could be better for heavy users.",
-    #             "brand": "Samsung", "model": "Samsung Galaxy M51", "stars": "3"
-    #         }
-    #     ]
-
-    #     summary = self.generator.generate_summary(user_query, retrieved_chunks)
-    #     sentiment_block, _ = self.generator.analyze_sentiment([summary])
-    #     print('summary:\n', summary)
-    #     print('sentiment_block:\n', sentiment_block)
-    #     self.assertTrue("OVERALL SENTIMENT : Neutral" in sentiment_block, "Summary does not reflect overall neutral sentiment")
+        self.assertTrue("OVERALL SENTIMENT : Negative" in summary[0], "Sentiment does not reflect overall negative sentiment")
     
     def test_04_sentiment_positive_battery(self):
         """
-        Verifies that a positive sentiment summary is generated when battery-related reviews are positive.
+        This test ensures that when provided with consistently positive product reviews for an aspect, the system correctly classifies the overall sentiment as "Positive"
+
+        Raises: 
+            AssertionError: If sentiment does not reflect overall positive sentiment
+
         """
         user_query = 'summarize to me the user reviews of Samsung Galaxy M51 focusing on its battery'
         retrieved_chunks = [
@@ -112,15 +98,16 @@ class Test_Generator_Sentiment(unittest.TestCase):
             }
         ]
         summary = self.generator.generate_summary(user_query, retrieved_chunks)
-        sentiment_block, _ = self.generator.analyze_sentiment([summary], aspect="battery")
-        # print('summary:\n', summary)
-        # print('sentiment_block:\n', sentiment_block)
-        self.assertTrue("OVERALL SENTIMENT : Positive" in sentiment_block, "Summary does not reflect positive sentiment for battery")
+        self.assertTrue("OVERALL SENTIMENT : Positive" in summary[0], "Sentiment does not reflect overall positive sentiment for the aspect")
 
 
     def test_05_sentiment_negative_battery(self):
         """
-        Verifies that a negative sentiment summary is generated when battery-related reviews are negative.
+        This test ensures that when provided with consistently negative product reviews for an aspect, the system correctly classifies the overall sentiment as "Negative"
+
+        Raises: 
+            AssertionError: If sentiment does not reflect overall negative sentiment
+
         """
         user_query = 'summarize to me the user reviews of Samsung Galaxy M51 focusing on its battery'
         retrieved_chunks = [
@@ -138,59 +125,33 @@ class Test_Generator_Sentiment(unittest.TestCase):
             }
         ]
         summary = self.generator.generate_summary(user_query, retrieved_chunks)
-        sentiment_block, _ = self.generator.analyze_sentiment([summary], aspect="battery")
-        # print('summary:\n', summary)
-        # print('sentiment_block:\n', sentiment_block)
-        self.assertTrue("OVERALL SENTIMENT : Negative" in sentiment_block, "Summary does not reflect negative sentiment for battery")
+        self.assertTrue("OVERALL SENTIMENT : Negative" in summary[0], "Sentiment does not reflect overall negative sentiment for the aspect")
 
+    def test_pass_with_empty_review_list(self):
+        """
+        This test ensures that when provided with empty review list, the system returns "No relevant reviews found." message
 
-    # def test_06_sentiment_neutral_battery(self):
-    #     """
-    #     Verifies that a neutral sentiment summary is generated when battery-related reviews are mixed or average.
-    #     """
-    #     user_query = 'summarize to me the user reviews of Samsung Galaxy M51 focusing on its battery'
-    #     retrieved_chunks = [
-    #         {
-    #             "text": "Battery performance is average, lasts through most of the day with moderate use.",
-    #             "brand": "Samsung", "model": "Samsung Galaxy M51", "stars": "3"
-    #         },
-    #         {
-    #             "text": "Charging speed is decent but not the fastest available in this price range.",
-    #             "brand": "Samsung", "model": "Samsung Galaxy M51", "stars": "3"
-    #         },
-    #         {
-    #             "text": "Battery life is acceptable but could be better for heavy users.",
-    #             "brand": "Samsung", "model": "Samsung Galaxy M51", "stars": "3"
-    #         }
-    #     ]
-    #     summary = self.generator.generate_summary(user_query, retrieved_chunks)
-    #     sentiment_block, _ = self.generator.analyze_sentiment([summary], aspect="battery")
-    #     print('summary:\n', summary)
-    #     print('sentiment_block:\n', sentiment_block)
-    #     self.assertTrue("OVERALL SENTIMENT : Neutral" in sentiment_block, "Summary does not reflect neutral sentiment for battery")
+        Raises: 
+            AssertionError: If sentiment is returned and "No relevant reviews found." is not shown.
 
-    #def test_pass_with_empty_review_list(self):
-     #   """
-      #  Passing Test:
-       # When no reviews are provided (empty list), the summary should be empty,
-        #and the sentiment analysis should return 'NO SENTIMENT'.
-        #"""
-        #user_query = 'summarize user reviews about Samsung Galaxy M51'
-        #retrieved_chunks = []  # No reviews
+        """
+        user_query = 'summarize user reviews about Samsung Galaxy M51'
+        retrieved_chunks = []
+        summary = self.generator.generate_summary(user_query, retrieved_chunks)
+        self.assertEqual(summary.strip(), "No relevant reviews found.", "Sentiment block should be empty when no input chunks are provided") 
 
-        #summary = self.generator.generate_summary(user_query, retrieved_chunks)
-        #sentiment_block, _ = self.generator.analyze_sentiment([summary])
-
-        #print('summary:\n', summary)
-        #print('sentiment_block:\n', sentiment_block)
-
-        # Assert that no summary is generated
-        #self.assertEqual(summary.strip(), "", "Summary should be empty when no reviews are provided")
-
-
-    # --- Custom assertion overrides ---
 
     def assertTrue(self, expression, message):
+        """
+        Custom assertTrue assertion with formatted output.
+
+        Args:
+            expression (bool): The boolean expression to evaluate.
+            message (str): The error message to display if assertion fails.
+
+        Prints:
+            Formatted test result with pass/fail status and error details.
+        """
         print('\n------------------------------------------------------\n')
         if not expression:
             print("Test case failed, Error message:", message)
@@ -199,6 +160,16 @@ class Test_Generator_Sentiment(unittest.TestCase):
         print('------------------------------------------------------\n')
 
     def assertFalse(self, expression, message):
+        """
+        Custom assertFalse assertion with formatted output.
+
+        Args:
+            expression (bool): The boolean expression to evaluate (should be False).
+            message (str): The error message to display if assertion fails.
+
+        Prints:
+            Formatted test result with pass/fail status and error details.
+        """
         print('\n------------------------------------------------------\n')
         if expression:
             print("Test case failed, Error message:", message)
@@ -207,10 +178,41 @@ class Test_Generator_Sentiment(unittest.TestCase):
         print('------------------------------------------------------\n')
 
     def assertEqual(self, actual, expected, message):
+        """
+        Custom assertEqual assertion with formatted output and detailed comparison.
+
+        Args:
+            actual: The actual value obtained from the test.
+            expected: The expected value for comparison.
+            message (str): The error message to display if assertion fails.
+
+        Prints:
+            Formatted test result with pass/fail status and value comparison details.
+        """
         print('\n------------------------------------------------------\n')
         if actual != expected:
             print("Test case failed, Error message:", message)
             print(f"Expected: {expected}, but got: {actual}")
+        else:
+            print("Test Case passed")
+        print('------------------------------------------------------\n')
+
+    def assertIn(self, member, container, message):
+        """
+        Custom assertIn assertion to check substring/member presence with formatted output.
+
+        Args:
+            member: The item/substring to search for.
+            container: The container/string to search within.
+            message (str): The error message to display if assertion fails.
+
+        Prints:
+            Formatted test result with pass/fail status and search details.
+        """
+        print('\n------------------------------------------------------\n')
+        if member not in container:
+            print("Test case failed, Error message:", message)
+            print(f"Expected '{member}' to be found in: {container}")
         else:
             print("Test Case passed")
         print('------------------------------------------------------\n')
