@@ -196,7 +196,10 @@ For summarization focusing on specific aspects (e.g., camera, battery life), the
 To run the application, clone the repository and navigate to the `baseline/user_interface` directory and execute the `user_interface.py` script:
 
 ```bash
-cd Project/baseline/user_interface
+cd baseline/user_interface
+```
+
+```bash
 python user_interface.py
 ```
 
