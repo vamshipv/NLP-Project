@@ -20,7 +20,7 @@ indexes them using FAISS, and retrieves relevant chunks based on user queries.
 """
 
 # File paths
-json_file = os.path.join("..", "data", "reviews.json")
+json_file = os.path.join("..", "data", "reviews.json") #Dataset file path
 output_dir = os.path.join("..", "data")
 os.makedirs(output_dir, exist_ok=True)
 chunked_path = os.path.join(output_dir, "general_chunks.json")
@@ -28,6 +28,7 @@ index_path = os.path.join(output_dir, "general_chunks.index")
 aspect_index_dir = os.path.join(output_dir, "aspect_indexes")
 os.makedirs(aspect_index_dir, exist_ok=True)
 
+# logging setup
 log_dir = os.path.join("..", "logs")
 os.makedirs(log_dir, exist_ok=True)
 log_path = os.path.join(log_dir, "summary_log.json")
@@ -73,6 +74,8 @@ class Retriever:
     """
     This method processes the reviews DataFrame, chunks the text into manageable pieces, and saves them to a JSON file.
     It ensures that each chunk is unique and does not exceed a specified length (512 characters).
+    It uses sentence segmentation to create chunks and handles aspect-based clustering for better organization.
+    It also saves the chunked reviews to a JSON file for later retrieval.
     Returns:
         list: A list of dictionaries containing the chunked review text, brand, model, and stars.
     """
@@ -123,7 +126,6 @@ class Retriever:
                 seen_chunks.add(clean_chunk)
 
             if len(sentences) < 2:
-                # Treat the single sentence as a standalone chunk
                 chunk_text = sentences[0]
                 for aspect, keywords in self.aspect_keywords.items():
                     if any(k in chunk_text.lower() for k in keywords):
@@ -156,20 +158,17 @@ class Retriever:
                     cluster_embedding = np.mean([s[1] for s in cluster_sentences], axis=0).reshape(1, -1)
                     similarity = cosine_similarity(cluster_embedding, aspect_embedding.reshape(1, -1))[0][0]
 
-                    # Filter sentences within the cluster
                     relevant_sentences = [
                         s for s in cluster_texts
                         if any(k in s.lower() for k in keywords)
                     ]
 
-                    # Use filtered sentences if they exist and similarity is high
                     if similarity >= 0.5 and relevant_sentences:
                         chunk_text = " ".join(relevant_sentences).strip()
-                    # Otherwise, fallback to full cluster if similarity is strong or keyword match is weak but present
                     elif similarity >= 0.5 or any(any(k in s.lower() for k in keywords) for s in cluster_texts):
                         chunk_text = " ".join(cluster_texts).strip()
                     else:
-                        continue  # Skip this cluster if it's not relevant
+                        continue
 
                     if chunk_text and chunk_text not in seen_chunks:
                         chunked_reviews.append({
@@ -181,7 +180,6 @@ class Retriever:
                         })
                         seen_chunks.add(chunk_text)
 
-        # Save to file
         with open(chunked_path, "w", encoding="utf-8") as f:
             json.dump(chunked_reviews, f, indent=4)
 
@@ -260,7 +258,6 @@ class Retriever:
 
         matcher = ProductMatcher()
         matched_title = matcher.match_brand(query)
-        print(f"Matched title: {matched_title}")
         if not matched_title:
             return None
 
@@ -285,7 +282,6 @@ class Retriever:
         _, I = temp_index.search(query_vec, min(top_k, len(filtered_chunks)))
         results = [filtered_chunks[i] for i in I[0]]
         results = self.remove_duplicate_chunks(results)
-        # print(f"Retrieved after duplicate removal: {results}")
         return results
 
     """
@@ -312,7 +308,6 @@ class Retriever:
 
         matcher = ProductMatcher()
         matched_title = matcher.match_brand(query)
-        # print(f"Matched title: {matched_title}")
         if not matched_title:
             return None
 
@@ -337,9 +332,6 @@ class Retriever:
         _, I = temp_index.search(query_vec, min(top_k, len(filtered_chunks)))
         results = [filtered_chunks[i] for i in I[0]]
         results = self.remove_duplicate_chunks(results)
-        # print(f"retrieved after duplicate {results}")
-        # results = self.filter_sentences_by_aspect(results, aspect)
-        # print(f"Filtered sentences by aspect '{aspect}': {results}")
         return results
     
     """
@@ -369,6 +361,7 @@ class Retriever:
                     aspect_sentences.append(sentence.strip())
         return aspect_sentences
 
+# Can be used to create index and chunks for new datasets
 # if __name__ == "__main__":
     # Can be used to test the Retriever class functionality
     # retriever = Retriever()

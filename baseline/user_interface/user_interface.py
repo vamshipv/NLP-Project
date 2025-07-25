@@ -63,7 +63,7 @@ class user_interface:
             self.retrieved_chunks_for_display = retrieved_chunks
 
             with open(log_path, "a", encoding="utf-8") as f:
-                f.write("\n----------------------------------------LOG_END----------------------------------------n")
+                f.write("\n----------------------------------------LOG_END------------------------------------------")
                 f.write("\n")
 
             if isinstance(aspect_score, str):
@@ -88,11 +88,10 @@ class user_interface:
                 else:
                     time.sleep(0.05)
 
-            yield summary_text, sentiment_html, gr.update(visible=True) # Final yield for summary and sentiment
+            yield summary_text, sentiment_html, gr.update(visible=True)
 
         except Exception as e:
-            print(f"Error generating summary: {e}")
-            yield "An error occurred while generating the summary. Please contact the developers.", ""
+            yield "An error occurred while generating the summary. Please check if ollama is running in the background or contact the developers.", ""
 
 
     def render_sentiment_bar(self, aspect, scores):
@@ -313,7 +312,7 @@ class user_interface:
                             </div>
                             <div class="legend-item">
                                 <div class="legend-color-box" style="background-color: #e0e0e0;"></div>
-                                Unfilled / Total
+                                Not Defined
                             </div>
                         </div>
                         """,

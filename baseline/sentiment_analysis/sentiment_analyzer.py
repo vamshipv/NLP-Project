@@ -29,7 +29,6 @@ class SentimentAnalyzer:
 
     def neg_count(self, reviews_by_sentiment, review_list):
         neg_count = len(reviews_by_sentiment.get("negative", [])) if reviews_by_sentiment else 0
-        # print('neg_count',neg_count)
         total_count = sum(len(v) for v in reviews_by_sentiment.values()) if reviews_by_sentiment else len(review_list)
         neg_pct = (neg_count / total_count) * 100 if total_count else 0
         return neg_pct
@@ -50,7 +49,6 @@ class SentimentAnalyzer:
         for review in review_list:
             review_text = review["text"] if isinstance(review, dict) and "text" in review else review
             review_text_lower = review_text.lower()
-            # tokenize review into words (simple split on non-word chars)
             tokens = set(re.findall(r'\b\w+\b', review_text_lower))
 
             result = sentiment_analyzer(review_text)[0]
@@ -86,9 +84,7 @@ class SentimentAnalyzer:
             rounded = {k: round(v) for k, v in raw.items()}
             diff = 100 - sum(rounded.values())
 
-            # Fix rounding difference
             if diff != 0:
-                # Sort by decimal difference to adjust the closest
                 adjust_order = sorted(raw, key=lambda k: raw[k] - rounded[k], reverse=(diff > 0))
                 for i in range(abs(diff)):
                     rounded[adjust_order[i % 3]] += 1 if diff > 0 else -1
@@ -136,9 +132,6 @@ class SentimentAnalyzer:
                 f"- {percentages['negative']}% have negative reviews about {', '.join(sorted(set(neg_aspects))) or 'various aspects'}.\n"
                 f"- {percentages['neutral']}% have neutral reviews about {', '.join(sorted(set(neu_aspects))) or 'various aspects'}.\n\n"
             )
-        # print("Sentiment Block:", sentiment_block)
-        # print("Reviews by Sentiment:", reviews_by_sentiment)
-        # print("Aspect Scores:", aspect_scores)
         
         return sentiment_block, reviews_by_sentiment, aspect_scores
 
@@ -152,5 +145,4 @@ class SentimentAnalyzer:
             aspect_scores[aspect]["neutral"] = percentages["neutral"]
         
         aspect_scores = json.dumps(aspect_scores, indent=2)
-        # print("Aspect Scores:", aspect_scores)
         return aspect_scores

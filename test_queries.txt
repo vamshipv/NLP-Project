@@ -1,24 +1,44 @@
 Here are the additional user queries for the system testing
 
 General Summary
+- What is the customers reviews for Samsung Galaxy M51 ?
 - what do user tell about the device apple iphone 8 ?
 - Can you Summarize the reviews for oneplus nord 5g
-- how is the battery of mi poco m2 pro
-- What is the customers reviews for Samsung Galaxy M51 ?
+- Summarize the overall feedback on vivo y91i
 
 Aspect Based Summary
 - what do user tell about the camera of oneplus 8 pro
 - How is the battery life for Samsung Galaxy M51 ?
 - what are the user reviews for battery of Xiaomi Redmi 6 Pro
+- what are the user reviews for battery of mi redmi note 7s
 
 Non Aspect Summary (need new models here)
 - what are the user reviews for graphics of Xiaomi Redmi 6 Pro
-- What is the customers reviews on graphics for Samsung Galaxy M51
+- What is the customers reviews on graphics for iphone 11
 
 Multiple Aspect Handling (limitation)
 - summarize to me the user reviews about apple iphone 8 based on its heating issues and camera
+- summarize to me the user reviews about oneplus 7t pro based on its graphics and battery
 
 Error Handling for System
 - What is samsung galaxy m21 ?
-- Can I buy apple iphone 11 ?
+- Should I buy apple iphone 11 ?
 - tell me about the performance of vivo y91i  # (for less chunks)
+
+-----------------------------------------------------------------------------------------------------------------------
+
+Following are the steps to run the test cases files:
+
+Sentiment Analyzer Test - Sentiment Analysis Test cases
+    cd baseline/classifier_test
+    python classifier_test.py
+
+
+Generator Test - General Test cases with General Based Summary and Aspect Based Summary Test cases:
+    cd baseline/generator_test
+    python generator_test_specialisation.py
+
+
+Retriever Test - Retriever Test cases on chunks retrival
+    cd baseline/retriever_test
+    python retriever_test_specialisation.py

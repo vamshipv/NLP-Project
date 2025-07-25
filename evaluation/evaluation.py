@@ -24,7 +24,6 @@ def evaluate_summary(user_query, retrieved_chunks, reference_summary, aspect=Non
     Returns:
         float: BERTScore F1 of the generated summary.
     """
-    # review_list = [{"text": chunk} for chunk in retrieved_chunks]
     review_list = retrieved_chunks
     generator = Generator()
     generated_summary, _ = generator.generate_summary(user_query, review_list, aspect=None)

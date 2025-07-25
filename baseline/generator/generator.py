@@ -28,7 +28,6 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 sentiment_path = os.path.join(current_dir, "..", "sentiment_analysis")
 sentiment_path = os.path.abspath(sentiment_path)
 
-print("Appending to sys.path:", sentiment_path)
 sys.path.append(sentiment_path)
 
 from sentiment_analyzer import SentimentAnalyzer
@@ -71,7 +70,7 @@ class Generator:
     def create_gemma_prompt(self, user_query, review_list, reviews_by_sentiment=None, aspect=None, sentiment_block=None):
         all_reviews_text = "\n".join(f"- {sentence}" for sentence in review_list)
         neg_pct = self.sentiment_analyzer.neg_count(reviews_by_sentiment, review_list)
-        neg_instruction = "" # should we add something in the default ? #TODO
+        neg_instruction = ""
         if neg_pct < 20:
             neg_instruction = (
                 "Since fewer than 20% of the reviews are negative, do not include negative feedback in the summary. "

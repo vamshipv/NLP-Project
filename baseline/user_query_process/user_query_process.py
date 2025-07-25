@@ -50,12 +50,11 @@ class User_query_process:
         self.product_titles = [item.strip() for item in brands_data]
         self.bad_words = {
         "fuck", "shit", "bitch", "asshole", "bastard", "damn", "crap",
-        "dick", "piss", "prick", "slut", "whore", "cunt"
+        "dick", "piss", "prick", "slut", "whore", "cunt", "muklyas"
     }
         self.retrieved_chunks_aspect = []
         self.retrieved_chunks_general = []
         self.product_matcher = ProductMatcher()
-        # This is used to detect title-like queries
         self.model_query = SentenceTransformer('all-MiniLM-L6-v2')
         self.aspect_keywords = {
             "battery": ["battery","charge", "mah", "power", "drain"],
@@ -106,7 +105,6 @@ class User_query_process:
     def detect_multiple_titles(self, query):
         cleaned_query = self.product_matcher.clean_query_for_brand_match(query)
         matches = self.product_matcher.keyword_processor.extract_keywords(cleaned_query)
-        print(matches)
         return len(set(matches)) >= 2
 
     """
@@ -127,7 +125,6 @@ class User_query_process:
         matched_unsupported = []
 
         for phrase in candidates:
-            print(phrase)
             for aspect, keywords in self.aspect_keywords.items():
                 if any(keyword in phrase for keyword in keywords):
                     matched_supported.append(aspect)
@@ -176,11 +173,11 @@ class User_query_process:
                 matched_aspects.append(main_aspect)
         
         if len(matched_aspects) == 0:
-            return None  # no aspect found
+            return None
         elif len(matched_aspects) > 1:
-            return "multiple_aspects"  # more than one aspect found
+            return "multiple_aspects"
         else:
-            return matched_aspects[0]  # exactly one aspect found
+            return matched_aspects[0]
 
     """
     This method filters sentences in the chunks based on the presence of keywords related to a specific aspect.
