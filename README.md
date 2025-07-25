@@ -219,7 +219,7 @@ Upon successful execution, the application will launch a Gradio interface, typic
 
 Gradio interface, showing a summarized output and the sentiment breakdown.
 
-![Sample RAG Pipeline Output](utils\rag_output.png)
+![Sample RAG Pipeline Output](utils/rag_output.png)
 
 ---
 
