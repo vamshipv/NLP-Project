@@ -155,11 +155,39 @@ We evaluated our system on both **general** and **aspect-based** product review 
 
 **Evaluation Metrics:**
 
-- **ROUGE-L**  
+- **ROUGE-L**
   Measures the overlap of the longest common subsequences between the generated and reference summaries, helping assess recall and coherence.
 
-- **BERTScore**  
+- **BERTScore**
   Evaluates the semantic similarity between generated and reference summaries using contextual embeddings from pre-trained BERT models, offering insight into meaning preservation.
+
+#### General Evaluation Results:
+
+Based on a general summarization task, our system achieved the following scores:
+
+- **ROUGE-L Score**
+    - Precision: 0.4725
+    - Recall: 0.4343
+    - F1-Score: 0.4526
+
+- **BERTScore**
+    - Precision: 0.9380
+    - Recall: 0.9300
+    - F1-Score: 0.9340
+
+#### Aspect-Based Evaluation Results:
+
+For summarization focusing on specific aspects (e.g., camera, battery life), the evaluation yielded these results:
+
+- **ROUGE-L Score**
+    - Precision: 0.4636
+    - Recall: 0.5050
+    - F1-Score: 0.4834
+
+- **BERTScore**
+    - Precision: 0.9262
+    - Recall: 0.9371
+    - F1-Score: 0.9316
 
 ---
 
@@ -189,7 +217,7 @@ Upon successful execution, the application will launch a Gradio interface, typic
 
 ## Sample output image of the RAG
 
-Below is an example of the Gradio interface in action, showing a summarized output and the sentiment breakdown.
+Gradio interface, showing a summarized output and the sentiment breakdown.
 
 ![Sample RAG Pipeline Output](rag_output.png)
 

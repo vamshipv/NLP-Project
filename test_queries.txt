@@ -1,10 +1,10 @@
 Here are the additional user queries for the system testing
 
 General Summary
-- What is the customers reviews for Samsung Galaxy M51 ?
 - what do user tell about the device apple iphone 8 ?
 - Can you Summarize the reviews for oneplus nord 5g
-- how is the battery of mi poco m2 pro 
+- how is the battery of mi poco m2 pro
+- What is the customers reviews for Samsung Galaxy M51 ?
 
 Aspect Based Summary
 - what do user tell about the camera of oneplus 8 pro

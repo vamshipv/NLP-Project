@@ -8,4 +8,5 @@ nltk
 pandas
 ollama
 flashtext
-sklearn
+scikit-learn
+gradio

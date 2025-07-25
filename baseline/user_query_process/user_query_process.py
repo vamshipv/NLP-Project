@@ -75,8 +75,7 @@ class User_query_process:
             "storage": ["storage", "memory", "ram", "rom", "expandable", "sd card"],
             "security": ["fingerprint", "face unlock", "biometric", "sensor", "scanner", "unlock","security"],
             "accessories": ["charger", "case", "headphones", "earphones", "cable", "adapter", "accessory", "in-box", "accessories"],
-            "charging_speed": ["charging speed", "fast charge", "wired", "wireless", "power delivery", "watt", "charge time", "charging_speed"],
-            "experience": ["experience", "daily use", "overall", "usage", "feedback", "handling", "feel"]
+            "charging_speed": ["charging speed", "fast charge", "wired", "wireless", "power delivery", "watt", "charge time", "charging_speed"]
         }
 
     """
@@ -128,6 +127,7 @@ class User_query_process:
         matched_unsupported = []
 
         for phrase in candidates:
+            print(phrase)
             for aspect, keywords in self.aspect_keywords.items():
                 if any(keyword in phrase for keyword in keywords):
                     matched_supported.append(aspect)
@@ -200,7 +200,10 @@ class User_query_process:
         return any(keyword in query.lower() for keyword in decision_keywords)
     
     """
-    
+    This method checks if the text is gibberish by analyzing its content.
+    It uses spaCy to process the text and checks if it contains at least three alphabetic
+    tokens that are not out-of-vocabulary (OOV).
+    If the text is too short or contains no valid alphabetic tokens, it is considered gibberish.
     """
     def _is_gibberish_check(self, text):
         MIN_CHAR_COUNT = 3

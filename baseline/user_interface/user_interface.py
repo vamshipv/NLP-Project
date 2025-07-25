@@ -61,11 +61,8 @@ class user_interface:
 
             summary_text, aspect_score, retrieved_chunks = self.query_processor.process(user_query)
             self.retrieved_chunks_for_display = retrieved_chunks
-            log_data = {
-            }
 
             with open(log_path, "a", encoding="utf-8") as f:
-                json.dump(log_data, f, indent=4)
                 f.write("\n----------------------------------------LOG_END----------------------------------------n")
                 f.write("\n")
 
@@ -229,11 +226,6 @@ class user_interface:
             box-sizing: border-box; /* Include padding and border in the element's total width and height */
         }
 
-        /* New classes for general spacing */
-        .gr-padded-input {
-            margin-bottom: 20px !important; /* Space below the query input */
-        }
-
         .gr-section-spacing {
             margin-bottom: 25px !important; /* General spacing between major sections */
         }
@@ -258,7 +250,6 @@ class user_interface:
             padding: 10px;
             border: 1px solid #eee;
             border-radius: 8px;
-            background-color: #f9f9f9;
             gap: 15px; /* Space between legend items */
             margin-top: 15px !important;
         }
@@ -289,8 +280,7 @@ class user_interface:
             query_input = gr.Textbox(
                 placeholder="Ask about a product",
                 show_label=False,
-                lines=2,
-                elem_classes="gr-padded-input"
+                lines=2
             )
 
             with gr.Row(elem_classes="centered-buttons"):
