@@ -92,7 +92,7 @@ class user_interface:
 
         except Exception as e:
             print(f"Error generating summary: {e}")
-            yield "An error occurred while generating the summary. Please contact the developers.", ""
+            yield "An error occurred while generating the summary. Please contact the developers.", "", gr.update(visible=False)
 
 
     def render_sentiment_bar(self, aspect, scores):

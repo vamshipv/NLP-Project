@@ -71,30 +71,6 @@ class SentimentAnalyzer:
                         break
                 if not matched:
                     aspect_sentiments[label].append("general")
-
-        def calculate_percentage_breakdown(pos, neg, neu):
-            total = pos + neg + neu
-            if total == 0:
-                return {"positive": 0, "negative": 0, "neutral": 0}
-
-            raw = {
-                "positive": (pos / total) * 100,
-                "negative": (neg / total) * 100,
-                "neutral":  (neu / total) * 100
-            }
-
-            rounded = {k: round(v) for k, v in raw.items()}
-            diff = 100 - sum(rounded.values())
-
-            # Fix rounding difference
-            if diff != 0:
-                # Sort by decimal difference to adjust the closest
-                adjust_order = sorted(raw, key=lambda k: raw[k] - rounded[k], reverse=(diff > 0))
-                for i in range(abs(diff)):
-                    rounded[adjust_order[i % 3]] += 1 if diff > 0 else -1
-
-            return rounded
-        
         total_reviews = len(review_list)
 
         if aspect:
@@ -102,7 +78,7 @@ class SentimentAnalyzer:
             neg = general_counts["negative"]
             neu = general_counts["neutral"]
 
-            percentages = calculate_percentage_breakdown(pos, neg, neu)
+            percentages = self.calculate_percentage_breakdown(pos, neg, neu)
             overall = max(percentages, key=percentages.get).capitalize()
 
             pos = [aspect] if general_counts["positive"] > 0 else []
@@ -124,7 +100,7 @@ class SentimentAnalyzer:
             neg = len(aspect_sentiments["negative"])
             neu = len(aspect_sentiments["neutral"])
 
-            percentages = calculate_percentage_breakdown(pos, neg, neu)
+            percentages = self.calculate_percentage_breakdown(pos, neg, neu)
             overall = max(percentages, key=percentages.get).capitalize()
             pos = [aspect] if general_counts["positive"] > 0 else []
             neg = [aspect] if general_counts["negative"] > 0 else []
@@ -141,6 +117,29 @@ class SentimentAnalyzer:
         # print("Aspect Scores:", aspect_scores)
         
         return sentiment_block, reviews_by_sentiment, aspect_scores
+
+    def calculate_percentage_breakdown(self, pos, neg, neu):
+        total = pos + neg + neu
+        if total == 0:
+            return {"positive": 0, "negative": 0, "neutral": 0}
+
+        raw = {
+            "positive": (pos / total) * 100,
+            "negative": (neg / total) * 100,
+            "neutral":  (neu / total) * 100
+        }
+
+        rounded = {k: round(v) for k, v in raw.items()}
+        diff = 100 - sum(rounded.values())
+
+        # Fix rounding difference
+        if diff != 0:
+            # Sort by decimal difference to adjust the closest
+            adjust_order = sorted(raw, key=lambda k: raw[k] - rounded[k], reverse=(diff > 0))
+            for i in range(abs(diff)):
+                rounded[adjust_order[i % 3]] += 1 if diff > 0 else -1
+
+        return rounded
 
     def convert_to_aspect_scores(self, percentages, pos_aspects, neg_aspects, neu_aspects):
         aspect_scores = defaultdict(lambda: {"positive": 0, "neutral": 0, "negative": 0})
