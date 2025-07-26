@@ -217,7 +217,8 @@ cd baseline/user_interface
 ```bash
 python user_interface.py
 ```
-**Please make sure ollama is running in the background**
+**Please make sure ollama is running in the background**.
+
 Upon successful execution, the application will launch a Gradio interface, typically accessible via a `localhost` URL (e.g., `http://127.0.0.1:7860`). Open this link in your web browser.
 
 ### Example Interaction
