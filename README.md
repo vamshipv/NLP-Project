@@ -185,7 +185,7 @@ For summarization focusing on specific aspects (e.g., camera, battery life), the
 
 ### Installation
 
-Install the required dependencies:
+After cloning the project, install the required dependencies:
 
 ```bash
 pip install -r requirements.txt
