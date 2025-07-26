@@ -146,7 +146,22 @@ All operations are thoroughly logged:
 ---
 
 ### 9. Test Cases
-The system includes a set of test cases to validate the summarization functionality. These tests cover various product queries and aspects, ensuring that the summarization logic works as expected across different scenarios.
+
+The system includes a set of test cases to validate the summarization functionality. These tests ensure the logic works as expected across various scenarios:
+
+- **Product matching:**
+  Validated that the retrieved chunks match the product in the query.
+- **Summary alignment:**
+  Ensured that the summary reflects only retrieved content.
+- **Aspect-based summarization:**
+  Ensured that the summary focuses on aspects without any unrelated information.
+- **Sentiment classification:**
+  Validated label accuracy in positive, negative, and neutral reviews.
+- **Edge cases:**
+  Checked system behavior for:
+  - Non-summary queries like comparisons or suggestions.
+  - Non-existent products.
+  - Products with few or no reviews, ensuring the system refuses to generate summaries to prevent hallucinations.
 
 ---
 
@@ -202,7 +217,7 @@ cd baseline/user_interface
 ```bash
 python user_interface.py
 ```
-
+**Please make sure ollama is running in the background**
 Upon successful execution, the application will launch a Gradio interface, typically accessible via a `localhost` URL (e.g., `http://127.0.0.1:7860`). Open this link in your web browser.
 
 ### Example Interaction
