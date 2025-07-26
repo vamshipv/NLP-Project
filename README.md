@@ -37,31 +37,6 @@ With this system, users can query real product feedback—for example, by asking
 
 ---
 
-## Setup
-
-### Installation
-
-Install the required dependencies:
-
-```bash
-pip install -r requirements.txt
-python -m nltk.downloader punkt
-python -m spacy download en_core_web_sm
-```
-
-### Additional Requirement: Ollama for Gemma
-
-Before running the generator, you'll need to install [Ollama](https://ollama.com/) to handle Gemma-based summarization locally.
-
-1.  **Download and Install Ollama**: Visit [https://ollama.com/download](https://ollama.com/download) and follow the installation instructions for your operating system.
-2.  **Pull the Gemma Model**: Once Ollama is installed, open your terminal and pull the Gemma 2B model:
-
-    ```bash
-    ollama pull gemma2:2b
-    ```
-
----
-
 ## How It Works
 
 The system operates as a modular Retriever-Generator pipeline, processing customer reviews through several key stages:
@@ -203,6 +178,31 @@ For summarization focusing on specific aspects (e.g., camera, battery life), the
     - Precision: 0.9262
     - Recall: 0.9371
     - F1-Score: 0.9316
+
+---
+
+## Setup
+
+### Installation
+
+Install the required dependencies:
+
+```bash
+pip install -r requirements.txt
+python -m nltk.downloader punkt
+python -m spacy download en_core_web_sm
+```
+
+### Additional Requirement: Ollama for Gemma
+
+Before running the generator, you'll need to install [Ollama](https://ollama.com/) to handle Gemma-based summarization locally.
+
+1.  **Download and Install Ollama**: Visit [https://ollama.com/download](https://ollama.com/download) and follow the installation instructions for your operating system.
+2.  **Pull the Gemma Model**: Once Ollama is installed, open your terminal and pull the Gemma 2B model:
+
+    ```bash
+    ollama pull gemma2:2b
+    ```
 
 ---
 
